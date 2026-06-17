@@ -59,6 +59,17 @@ export function App() {
     saveData(next);
   }
 
+  // Append a new spending to the selected month, then persist.
+  function handleAddSpending(spending: Spending) {
+    if (!data || !selectedKey) return;
+    const next = data.map((month) => {
+      if (periodKey(month.period) !== selectedKey) return month;
+      return { ...month, spendings: [...month.spendings, spending] };
+    });
+    setData(next);
+    saveData(next);
+  }
+
   function handleDownload() {
     if (data) downloadJson(data);
   }
@@ -103,7 +114,11 @@ export function App() {
       {selected ? (
         <section className="results">
           <h2>{periodLabel(selected.period)}</h2>
-          <SpendingsTable data={selected} onEditSpending={handleEditSpending} />
+          <SpendingsTable
+            data={selected}
+            onEditSpending={handleEditSpending}
+            onAddSpending={handleAddSpending}
+          />
         </section>
       ) : (
         <section className="empty-state">

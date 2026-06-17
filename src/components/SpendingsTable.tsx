@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { groupByCategory } from "../group";
 import { formatCents } from "../format";
-import type { MonthlyData, Spending } from "../types";
+import type { Account, MonthlyData, Spending } from "../types";
 
 interface SpendingsTableProps {
   data: MonthlyData;
@@ -10,9 +10,15 @@ interface SpendingsTableProps {
    * month's original `spendings` array; `patch` carries the changed fields.
    */
   onEditSpending?: (index: number, patch: Partial<Spending>) => void;
+  /** Called when a new spending is added to a category. */
+  onAddSpending?: (spending: Spending) => void;
 }
 
-export function SpendingsTable({ data, onEditSpending }: SpendingsTableProps) {
+export function SpendingsTable({
+  data,
+  onEditSpending,
+  onAddSpending,
+}: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
     () => groupByCategory(data),
     [data],
@@ -86,6 +92,13 @@ export function SpendingsTable({ data, onEditSpending }: SpendingsTableProps) {
               </tr>
             ))
           )}
+          {onAddSpending && (
+            <AddSpendingRow
+              categoryId={group.categoryId}
+              accounts={data.accounts}
+              onAdd={onAddSpending}
+            />
+          )}
         </tbody>
       ))}
       <tfoot>
@@ -105,5 +118,102 @@ export function SpendingsTable({ data, onEditSpending }: SpendingsTableProps) {
         ))}
       </tfoot>
     </table>
+  );
+}
+
+interface AddSpendingRowProps {
+  categoryId: string;
+  accounts: Account[];
+  onAdd: (spending: Spending) => void;
+}
+
+/** A per-category row that expands into a form for adding a new spending. */
+function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [accountId, setAccountId] = useState(accounts[0]?.id ?? "");
+
+  function reset() {
+    setName("");
+    setAmount("");
+    setAccountId(accounts[0]?.id ?? "");
+  }
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (name.trim() === "" || amount.trim() === "" || Number.isNaN(Number(amount))) {
+      return;
+    }
+    onAdd({ categoryId, name: name.trim(), amount: amount.trim(), accountId });
+    // Keep the form open for quick consecutive entries.
+    setName("");
+    setAmount("");
+  }
+
+  if (!open) {
+    return (
+      <tr className="add-row">
+        <td colSpan={3}>
+          <button
+            type="button"
+            className="add-toggle"
+            onClick={() => setOpen(true)}
+          >
+            + Add item
+          </button>
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <tr className="add-row">
+      <td colSpan={3}>
+        <form className="add-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            className="cell-input"
+            aria-label="New item name"
+            placeholder="Item name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+          />
+          <select
+            className="cell-input account-select"
+            aria-label="Account"
+            value={accountId}
+            onChange={(e) => setAccountId(e.target.value)}
+          >
+            {accounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            inputMode="decimal"
+            className="cell-input amount-input"
+            aria-label="New amount"
+            placeholder="0.00"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <button type="submit">Add</button>
+          <button
+            type="button"
+            className="clear-btn"
+            onClick={() => {
+              setOpen(false);
+              reset();
+            }}
+          >
+            Done
+          </button>
+        </form>
+      </td>
+    </tr>
   );
 }

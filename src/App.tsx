@@ -92,7 +92,11 @@ export function App() {
   }
 
   function handleDownload() {
-    if (data) downloadJson(data);
+    if (data) {
+      const now = new Date();
+      downloadJson(data, `blanje_${
+        now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}_${String(now.getSeconds()).padStart(2, '0')}`);
+    }
   }
 
   return (

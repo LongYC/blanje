@@ -1,13 +1,18 @@
 import { useMemo } from "react";
 import { groupByCategory } from "../group";
 import { formatCents } from "../format";
-import type { MonthlyData } from "../types";
+import type { MonthlyData, Spending } from "../types";
 
 interface SpendingsTableProps {
   data: MonthlyData;
+  /**
+   * Called when a spending is edited. `index` is the position within the
+   * month's original `spendings` array; `patch` carries the changed fields.
+   */
+  onEditSpending?: (index: number, patch: Partial<Spending>) => void;
 }
 
-export function SpendingsTable({ data }: SpendingsTableProps) {
+export function SpendingsTable({ data, onEditSpending }: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
     () => groupByCategory(data),
     [data],
@@ -42,11 +47,42 @@ export function SpendingsTable({ data }: SpendingsTableProps) {
               <td colSpan={3}>No spendings</td>
             </tr>
           ) : (
-            group.spendings.map((spending, i) => (
-              <tr key={i}>
-                <td>{spending.name}</td>
+            group.spendings.map((spending) => (
+              <tr key={spending.index}>
+                <td>
+                  {onEditSpending ? (
+                    <input
+                      type="text"
+                      className="cell-input"
+                      aria-label="Item name"
+                      value={spending.name}
+                      onChange={(e) =>
+                        onEditSpending(spending.index, { name: e.target.value })
+                      }
+                    />
+                  ) : (
+                    spending.name
+                  )}
+                </td>
                 <td>{spending.accountName}</td>
-                <td className="amount">{formatCents(spending.amountCents)}</td>
+                <td className="amount">
+                  {onEditSpending ? (
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      className="cell-input amount-input"
+                      aria-label="Amount"
+                      value={spending.amount}
+                      onChange={(e) =>
+                        onEditSpending(spending.index, {
+                          amount: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    formatCents(spending.amountCents)
+                  )}
+                </td>
               </tr>
             ))
           )}

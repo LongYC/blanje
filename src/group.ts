@@ -5,6 +5,8 @@ export interface GroupedSpending extends Spending {
   accountName: string;
   /** Amount as an integer number of cents. */
   amountCents: number;
+  /** Index of this spending within the month's original `spendings` array. */
+  index: number;
 }
 
 export interface CategoryGroup {
@@ -66,7 +68,7 @@ export function groupByCategory(data: MonthlyData): GroupedResult {
     });
   }
 
-  for (const spending of data.spendings) {
+  data.spendings.forEach((spending, index) => {
     let group = groups.get(spending.categoryId);
     if (!group) {
       group = {
@@ -81,6 +83,7 @@ export function groupByCategory(data: MonthlyData): GroupedResult {
     const amountCents = toCents(spending.amount);
     group.spendings.push({
       ...spending,
+      index,
       amountCents,
       accountName: accountName.get(spending.accountId) ?? UNKNOWN_ACCOUNT,
     });
@@ -96,7 +99,7 @@ export function groupByCategory(data: MonthlyData): GroupedResult {
       accountTotalsMap.set(spending.accountId, accountTotal);
     }
     accountTotal.total += amountCents;
-  }
+  });
 
   const groupList = [...groups.values()];
   const grandTotal = groupList.reduce((sum, g) => sum + g.total, 0);

@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { FileLoader } from "./components/FileLoader";
 import { SpendingsTable } from "./components/SpendingsTable";
+import { downloadJson } from "./download";
 import { clearData, loadData, saveData } from "./storage";
-import { periodKey, periodLabel, type MonthlyData } from "./types";
+import {
+  periodKey,
+  periodLabel,
+  type MonthlyData,
+  type Spending,
+} from "./types";
 
 export function App() {
   const [data, setData] = useState<MonthlyData[] | null>(() => loadData());
@@ -37,6 +43,26 @@ export function App() {
     setData(null);
   }
 
+  // Apply an edit to a single spending within the selected month, then persist.
+  function handleEditSpending(index: number, patch: Partial<Spending>) {
+    if (!data || !selectedKey) return;
+    const next = data.map((month) => {
+      if (periodKey(month.period) !== selectedKey) return month;
+      return {
+        ...month,
+        spendings: month.spendings.map((spending, i) =>
+          i === index ? { ...spending, ...patch } : spending,
+        ),
+      };
+    });
+    setData(next);
+    saveData(next);
+  }
+
+  function handleDownload() {
+    if (data) downloadJson(data);
+  }
+
   return (
     <main className="app">
       <header className="app-header">
@@ -64,6 +90,9 @@ export function App() {
                 })}
               </select>
             </label>
+            <button type="button" onClick={handleDownload}>
+              Download JSON
+            </button>
             <button type="button" className="clear-btn" onClick={handleClear}>
               Clear data
             </button>
@@ -74,7 +103,7 @@ export function App() {
       {selected ? (
         <section className="results">
           <h2>{periodLabel(selected.period)}</h2>
-          <SpendingsTable data={selected} />
+          <SpendingsTable data={selected} onEditSpending={handleEditSpending} />
         </section>
       ) : (
         <section className="empty-state">

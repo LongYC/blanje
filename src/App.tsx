@@ -5,6 +5,24 @@ import { downloadJson } from "./download";
 import { clearData, loadData, saveData } from "./storage";
 import { monthLabel, type SpendingsData, type Spending } from "./types";
 
+const EXAMPLE_JSON = `{
+  "accounts": [{ "id": "abc", "name": "ABC Bank" }],
+  "categories": [{ "id": "groceries", "name": "Groceries" }],
+  "spendings": [
+    {
+      "month": 202607,
+      "items": [
+        {
+          "categoryId": "groceries",
+          "name": "Weekly groceries",
+          "amount": "210.30",
+          "accountId": "abc"
+        }
+      ]
+    }
+  ]
+}`;
+
 export function App() {
   const [data, setData] = useState<SpendingsData | null>(() => loadData());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
@@ -81,7 +99,7 @@ export function App() {
     <main className="app">
       <header className="app-header">
         <h1>Blanje</h1>
-        <p className="tagline">View your monthly spendings from a JSON file.</p>
+        <p className="tagline">For those who want to track monthly spendings with a JSON file.</p>
       </header>
 
       <section className="controls">
@@ -125,9 +143,9 @@ export function App() {
       ) : (
         <section className="empty-state">
           <p>
-            No data loaded yet. Load a JSON file to see your spendings grouped by
-            category.
+            No data loaded yet. Upload a JSON file to get started. You'll be able to view and edit your spending data, neatly grouped by category. The uploaded file must match the schema shown below:
           </p>
+          <pre className="example-json">{EXAMPLE_JSON}</pre>
         </section>
       )}
     </main>

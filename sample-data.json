@@ -1,0 +1,35 @@
+[
+  {
+    "period": { "year": 2026, "month": 6 },
+    "categories": [
+      { "id": "wellness", "name": "Wellness and healthcare" },
+      { "id": "groceries", "name": "Groceries" },
+      { "id": "transport", "name": "Transport" }
+    ],
+    "accounts": [
+      { "id": "abc", "name": "ABC Bank" },
+      { "id": "xyz", "name": "XYZ Credit Card" }
+    ],
+    "spendings": [
+      { "categoryId": "wellness", "name": "Sunscreen (from Shop X)", "amount": "123.45", "accountId": "abc" },
+      { "categoryId": "wellness", "name": "Dental check-up", "amount": "80.00", "accountId": "xyz" },
+      { "categoryId": "groceries", "name": "Weekly groceries", "amount": "210.30", "accountId": "abc" },
+      { "categoryId": "groceries", "name": "Bakery", "amount": "15.50", "accountId": "abc" },
+      { "categoryId": "transport", "name": "Monthly transit pass", "amount": "99.00", "accountId": "xyz" }
+    ]
+  },
+  {
+    "period": { "year": 2026, "month": 5 },
+    "categories": [
+      { "id": "wellness", "name": "Wellness and healthcare" },
+      { "id": "groceries", "name": "Groceries" }
+    ],
+    "accounts": [
+      { "id": "abc", "name": "ABC Bank" }
+    ],
+    "spendings": [
+      { "categoryId": "groceries", "name": "Weekly groceries", "amount": "198.75", "accountId": "abc" },
+      { "categoryId": "wellness", "name": "Vitamins", "amount": "34.20", "accountId": "abc" }
+    ]
+  }
+]

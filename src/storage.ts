@@ -1,9 +1,9 @@
-import type { MonthlyData } from "./types";
+import type { SpendingsData } from "./types";
 
 const STORAGE_KEY = "blanje:spendings";
 
 /** Persist parsed spendings data to localStorage. */
-export function saveData(data: MonthlyData[]): void {
+export function saveData(data: SpendingsData): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (err) {
@@ -12,12 +12,14 @@ export function saveData(data: MonthlyData[]): void {
 }
 
 /** Load previously stored spendings, or `null` if none / unreadable. */
-export function loadData(): MonthlyData[] | null {
+export function loadData(): SpendingsData | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as MonthlyData[]) : null;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as SpendingsData)
+      : null;
   } catch (err) {
     console.error("Failed to read spendings from localStorage", err);
     return null;

@@ -3,37 +3,32 @@ import { FileLoader } from "./components/FileLoader";
 import { SpendingsTable } from "./components/SpendingsTable";
 import { downloadJson } from "./download";
 import { clearData, loadData, saveData } from "./storage";
-import {
-  periodKey,
-  periodLabel,
-  type MonthlyData,
-  type Spending,
-} from "./types";
+import { monthLabel, type SpendingsData, type Spending } from "./types";
 
 export function App() {
-  const [data, setData] = useState<MonthlyData[] | null>(() => loadData());
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [data, setData] = useState<SpendingsData | null>(() => loadData());
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
-  // Default the selected period to the first available one whenever data changes.
+  // Default the selected month to the first available one whenever data changes.
   useEffect(() => {
-    if (data && data.length > 0) {
-      const firstKey = periodKey(data[0].period);
-      setSelectedKey((current) =>
-        current && data.some((d) => periodKey(d.period) === current)
+    if (data && data.spendings.length > 0) {
+      const firstMonth = data.spendings[0].month;
+      setSelectedMonth((current) =>
+        current !== null && data.spendings.some((s) => s.month === current)
           ? current
-          : firstKey,
+          : firstMonth,
       );
     } else {
-      setSelectedKey(null);
+      setSelectedMonth(null);
     }
   }, [data]);
 
   const selected = useMemo(() => {
-    if (!data || !selectedKey) return null;
-    return data.find((d) => periodKey(d.period) === selectedKey) ?? null;
-  }, [data, selectedKey]);
+    if (!data || selectedMonth === null) return null;
+    return data.spendings.find((s) => s.month === selectedMonth) ?? null;
+  }, [data, selectedMonth]);
 
-  function handleLoaded(loaded: MonthlyData[]) {
+  function handleLoaded(loaded: SpendingsData) {
     setData(loaded);
     saveData(loaded);
   }
@@ -43,29 +38,37 @@ export function App() {
     setData(null);
   }
 
-  // Apply an edit to a single spending within the selected month, then persist.
+  // Apply an edit to a single item within the selected month, then persist.
   function handleEditSpending(index: number, patch: Partial<Spending>) {
-    if (!data || !selectedKey) return;
-    const next = data.map((month) => {
-      if (periodKey(month.period) !== selectedKey) return month;
-      return {
-        ...month,
-        spendings: month.spendings.map((spending, i) =>
-          i === index ? { ...spending, ...patch } : spending,
-        ),
-      };
-    });
+    if (!data || selectedMonth === null) return;
+    const next: SpendingsData = {
+      ...data,
+      spendings: data.spendings.map((month) =>
+        month.month !== selectedMonth
+          ? month
+          : {
+              ...month,
+              items: month.items.map((item, i) =>
+                i === index ? { ...item, ...patch } : item,
+              ),
+            },
+      ),
+    };
     setData(next);
     saveData(next);
   }
 
-  // Append a new spending to the selected month, then persist.
+  // Append a new item to the selected month, then persist.
   function handleAddSpending(spending: Spending) {
-    if (!data || !selectedKey) return;
-    const next = data.map((month) => {
-      if (periodKey(month.period) !== selectedKey) return month;
-      return { ...month, spendings: [...month.spendings, spending] };
-    });
+    if (!data || selectedMonth === null) return;
+    const next: SpendingsData = {
+      ...data,
+      spendings: data.spendings.map((month) =>
+        month.month !== selectedMonth
+          ? month
+          : { ...month, items: [...month.items, spending] },
+      ),
+    };
     setData(next);
     saveData(next);
   }
@@ -83,22 +86,19 @@ export function App() {
 
       <section className="controls">
         <FileLoader onLoaded={handleLoaded} />
-        {data && data.length > 0 && (
+        {data && data.spendings.length > 0 && (
           <>
             <label className="period-select">
               <span>Period</span>
               <select
-                value={selectedKey ?? ""}
-                onChange={(e) => setSelectedKey(e.target.value)}
+                value={selectedMonth ?? ""}
+                onChange={(e) => setSelectedMonth(Number(e.target.value))}
               >
-                {data.map((d) => {
-                  const key = periodKey(d.period);
-                  return (
-                    <option key={key} value={key}>
-                      {periodLabel(d.period)}
-                    </option>
-                  );
-                })}
+                {data.spendings.map((s) => (
+                  <option key={s.month} value={s.month}>
+                    {monthLabel(s.month)}
+                  </option>
+                ))}
               </select>
             </label>
             <button type="button" onClick={handleDownload}>
@@ -111,11 +111,13 @@ export function App() {
         )}
       </section>
 
-      {selected ? (
+      {selected && data ? (
         <section className="results">
-          <h2>{periodLabel(selected.period)}</h2>
+          <h2>{monthLabel(selected.month)}</h2>
           <SpendingsTable
-            data={selected}
+            items={selected.items}
+            categories={data.categories}
+            accounts={data.accounts}
             onEditSpending={handleEditSpending}
             onAddSpending={handleAddSpending}
           />

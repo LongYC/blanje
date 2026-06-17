@@ -1,13 +1,15 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { groupByCategory } from "../group";
 import { formatCents } from "../format";
-import type { Account, MonthlyData, Spending } from "../types";
+import type { Account, Category, Spending } from "../types";
 
 interface SpendingsTableProps {
-  data: MonthlyData;
+  items: Spending[];
+  categories: Category[];
+  accounts: Account[];
   /**
    * Called when a spending is edited. `index` is the position within the
-   * month's original `spendings` array; `patch` carries the changed fields.
+   * month's original `items` array; `patch` carries the changed fields.
    */
   onEditSpending?: (index: number, patch: Partial<Spending>) => void;
   /** Called when a new spending is added to a category. */
@@ -15,13 +17,15 @@ interface SpendingsTableProps {
 }
 
 export function SpendingsTable({
-  data,
+  items,
+  categories,
+  accounts,
   onEditSpending,
   onAddSpending,
 }: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
-    () => groupByCategory(data),
-    [data],
+    () => groupByCategory(items, categories, accounts),
+    [items, categories, accounts],
   );
 
   return (
@@ -95,7 +99,7 @@ export function SpendingsTable({
           {onAddSpending && (
             <AddSpendingRow
               categoryId={group.categoryId}
-              accounts={data.accounts}
+              accounts={accounts}
               onAdd={onAddSpending}
             />
           )}

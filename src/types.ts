@@ -1,8 +1,3 @@
-export interface Period {
-  year: number;
-  month: number; // 1-12
-}
-
 export interface Category {
   id: string;
   name: string;
@@ -20,16 +15,17 @@ export interface Spending {
   accountId: string;
 }
 
-export interface MonthlyData {
-  period: Period;
-  categories: Category[];
-  accounts: Account[];
-  spendings: Spending[];
+/** One month's worth of spending items, keyed by a `YYYYMM` integer. */
+export interface MonthlySpendings {
+  month: number; // e.g. 202607 for July 2026
+  items: Spending[];
 }
 
-/** A stable string key for a period, e.g. `2026-06`. */
-export function periodKey(period: Period): string {
-  return `${period.year}-${String(period.month).padStart(2, "0")}`;
+/** The whole document: global accounts/categories plus per-month spendings. */
+export interface SpendingsData {
+  accounts: Account[];
+  categories: Category[];
+  spendings: MonthlySpendings[];
 }
 
 const MONTH_NAMES = [
@@ -47,8 +43,10 @@ const MONTH_NAMES = [
   "December",
 ];
 
-/** A human-readable period label, e.g. `June 2026`. */
-export function periodLabel(period: Period): string {
-  const name = MONTH_NAMES[period.month - 1] ?? `Month ${period.month}`;
-  return `${name} ${period.year}`;
+/** A human-readable label for a `YYYYMM` month, e.g. `June 2026`. */
+export function monthLabel(month: number): string {
+  const year = Math.floor(month / 100);
+  const m = month % 100;
+  const name = MONTH_NAMES[m - 1] ?? `Month ${m}`;
+  return `${name} ${year}`;
 }

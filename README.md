@@ -25,24 +25,27 @@ pnpm typecheck     # type-check only
 
 ## Data format
 
-The app expects an array of monthly periods:
+The app expects an object with global `accounts` and `categories`, plus
+`spendings` grouped by month. Each month is a `YYYYMM` integer (e.g. `202607`):
 
 ```json
-[
-  {
-    "period": { "year": 2026, "month": 6 },
-    "categories": [{ "id": "wellness", "name": "Wellness and healthcare" }],
-    "accounts": [{ "id": "abc", "name": "ABC Bank" }],
-    "spendings": [
-      {
-        "categoryId": "wellness",
-        "name": "Sunscreen (from Shop X)",
-        "amount": "123.45",
-        "accountId": "abc"
-      }
-    ]
-  }
-]
+{
+  "accounts": [{ "id": "abc", "name": "ABC Bank" }],
+  "categories": [{ "id": "wellness", "name": "Wellness and healthcare" }],
+  "spendings": [
+    {
+      "month": 202607,
+      "items": [
+        {
+          "categoryId": "wellness",
+          "name": "Sunscreen (from Shop X)",
+          "amount": "123.45",
+          "accountId": "abc"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-If a file contains multiple periods, a selector lets you switch between them.
+If a file contains multiple months, a selector lets you switch between them.

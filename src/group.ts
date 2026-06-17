@@ -1,5 +1,5 @@
 import { toCents } from "./format";
-import type { MonthlyData, Spending } from "./types";
+import type { Account, Category, Spending } from "./types";
 
 export interface GroupedSpending extends Spending {
   accountName: string;
@@ -36,20 +36,24 @@ const UNKNOWN_CATEGORY = "Uncategorised";
 const UNKNOWN_ACCOUNT = "Unknown account";
 
 /**
- * Group a month's spendings by category, resolving category/account names and
- * computing per-category and grand totals. Categories declared in the data are
- * always included (even with no spendings); any spending referencing an unknown
- * category id falls into an "Uncategorised" group.
+ * Group a month's spending items by category, resolving category/account names
+ * and computing per-category and grand totals. Categories declared in the data
+ * are always included (even with no spendings); any spending referencing an
+ * unknown category id falls into an "Uncategorised" group.
  */
-export function groupByCategory(data: MonthlyData): GroupedResult {
-  const categoryName = new Map(data.categories.map((c) => [c.id, c.name]));
-  const accountName = new Map(data.accounts.map((a) => [a.id, a.name]));
+export function groupByCategory(
+  items: Spending[],
+  categories: Category[],
+  accounts: Account[],
+): GroupedResult {
+  const categoryName = new Map(categories.map((c) => [c.id, c.name]));
+  const accountName = new Map(accounts.map((a) => [a.id, a.name]));
 
   const groups = new Map<string, CategoryGroup>();
   const accountTotalsMap = new Map<string, AccountTotal>();
 
   // Seed declared categories so order is stable and empty ones still show.
-  for (const category of data.categories) {
+  for (const category of categories) {
     groups.set(category.id, {
       categoryId: category.id,
       categoryName: category.name,
@@ -60,7 +64,7 @@ export function groupByCategory(data: MonthlyData): GroupedResult {
   }
 
   // Seed declared accounts so order is stable and zero-spend ones still show.
-  for (const account of data.accounts) {
+  for (const account of accounts) {
     accountTotalsMap.set(account.id, {
       accountId: account.id,
       accountName: account.name,
@@ -68,7 +72,7 @@ export function groupByCategory(data: MonthlyData): GroupedResult {
     });
   }
 
-  data.spendings.forEach((spending, index) => {
+  items.forEach((spending, index) => {
     let group = groups.get(spending.categoryId);
     if (!group) {
       group = {

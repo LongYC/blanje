@@ -1,9 +1,9 @@
 import type {
   Account,
   Category,
-  MonthlyData,
-  Period,
+  MonthlySpendings,
   Spending,
+  SpendingsData,
 } from "./types";
 
 /** Thrown when uploaded JSON does not match the expected shape. */
@@ -11,20 +11,6 @@ export class ValidationError extends Error {}
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function parsePeriod(value: unknown, path: string): Period {
-  if (!isObject(value)) {
-    throw new ValidationError(`${path} must be an object`);
-  }
-  const { year, month } = value;
-  if (typeof year !== "number" || !Number.isInteger(year)) {
-    throw new ValidationError(`${path}.year must be an integer`);
-  }
-  if (typeof month !== "number" || !Number.isInteger(month) || month < 1 || month > 12) {
-    throw new ValidationError(`${path}.month must be an integer between 1 and 12`);
-  }
-  return { year, month };
 }
 
 function parseNamed<T extends Category | Account>(
@@ -73,37 +59,29 @@ function parseSpending(value: unknown, path: string): Spending {
   return { categoryId, name, amount: amountStr, accountId };
 }
 
-function parseMonthly(value: unknown, path: string): MonthlyData {
+function parseMonthly(value: unknown, path: string): MonthlySpendings {
   if (!isObject(value)) {
     throw new ValidationError(`${path} must be an object`);
   }
-  const period = parsePeriod(value.period, `${path}.period`);
-
-  if (!Array.isArray(value.categories)) {
-    throw new ValidationError(`${path}.categories must be an array`);
+  const { month } = value;
+  if (typeof month !== "number" || !Number.isInteger(month)) {
+    throw new ValidationError(`${path}.month must be an integer (e.g. 202607)`);
   }
-  if (!Array.isArray(value.accounts)) {
-    throw new ValidationError(`${path}.accounts must be an array`);
+  const m = month % 100;
+  if (m < 1 || m > 12) {
+    throw new ValidationError(`${path}.month must encode a month 1-12, e.g. 202607`);
   }
-  if (!Array.isArray(value.spendings)) {
-    throw new ValidationError(`${path}.spendings must be an array`);
+  if (!Array.isArray(value.items)) {
+    throw new ValidationError(`${path}.items must be an array`);
   }
-
-  const categories = value.categories.map((c, i) =>
-    parseNamed<Category>(c, `${path}.categories[${i}]`),
+  const items = value.items.map((s, i) =>
+    parseSpending(s, `${path}.items[${i}]`),
   );
-  const accounts = value.accounts.map((a, i) =>
-    parseNamed<Account>(a, `${path}.accounts[${i}]`),
-  );
-  const spendings = value.spendings.map((s, i) =>
-    parseSpending(s, `${path}.spendings[${i}]`),
-  );
-
-  return { period, categories, accounts, spendings };
+  return { month, items };
 }
 
 /** Parse and validate the raw JSON text of an uploaded spendings file. */
-export function parseSpendingsJson(text: string): MonthlyData[] {
+export function parseSpendingsJson(text: string): SpendingsData {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
@@ -112,11 +90,28 @@ export function parseSpendingsJson(text: string): MonthlyData[] {
       `File is not valid JSON: ${(err as Error).message}`,
     );
   }
-  if (!Array.isArray(raw)) {
-    throw new ValidationError("Top-level JSON must be an array of monthly periods");
+  if (!isObject(raw)) {
+    throw new ValidationError("Top-level JSON must be an object");
   }
-  if (raw.length === 0) {
-    throw new ValidationError("File contains no periods");
+  if (!Array.isArray(raw.accounts)) {
+    throw new ValidationError("accounts must be an array");
   }
-  return raw.map((m, i) => parseMonthly(m, `[${i}]`));
+  if (!Array.isArray(raw.categories)) {
+    throw new ValidationError("categories must be an array");
+  }
+  if (!Array.isArray(raw.spendings)) {
+    throw new ValidationError("spendings must be an array");
+  }
+
+  const accounts = raw.accounts.map((a, i) =>
+    parseNamed<Account>(a, `accounts[${i}]`),
+  );
+  const categories = raw.categories.map((c, i) =>
+    parseNamed<Category>(c, `categories[${i}]`),
+  );
+  const spendings = raw.spendings.map((m, i) =>
+    parseMonthly(m, `spendings[${i}]`),
+  );
+
+  return { accounts, categories, spendings };
 }

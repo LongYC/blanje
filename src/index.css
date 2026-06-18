@@ -138,6 +138,7 @@ button:hover {
 
 .spendings-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -159,19 +160,20 @@ button:hover {
   color: var(--muted);
 }
 
-.amount {
+.amount,
+.amount .cell-display {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-.category-row th {
+.category-row {
   background: var(--category-bg);
   font-size: 0.95rem;
 }
 
 .category-row .category-total {
-  background: var(--category-bg);
   font-weight: 600;
+  text-align: right;
 }
 
 .category-percent {
@@ -204,6 +206,28 @@ button:hover {
 .amount-input {
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+.cell-display {
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  cursor: text;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.cell-display:hover {
+  border-color: var(--border);
+}
+
+.cell-placeholder {
+  color: var(--muted);
 }
 
 .empty-row td {

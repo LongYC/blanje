@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { groupByCategory } from "../group";
 import { formatCents } from "../format";
 import type { Account, Category, Spending } from "../types";
@@ -33,16 +33,16 @@ export function SpendingsTable({
       <thead>
         <tr>
           <th scope="col">Item</th>
-          <th scope="col">Account</th>
           <th scope="col" className="amount">
             Amount
           </th>
+          <th scope="col">Account</th>
         </tr>
       </thead>
       {groups.map((group) => (
         <tbody key={group.categoryId}>
           <tr className="category-row">
-            <th scope="rowgroup" colSpan={2}>
+            <th scope="rowgroup">
               {group.categoryName}
               <span className="category-percent">
                 {group.percentage.toFixed(1)}%
@@ -51,6 +51,7 @@ export function SpendingsTable({
             <td className="amount category-total">
               {formatCents(group.total)}
             </td>
+            <td aria-label="No value"></td>
           </tr>
           {group.spendings.length === 0 ? (
             <tr className="empty-row">
@@ -61,38 +62,41 @@ export function SpendingsTable({
               <tr key={spending.index}>
                 <td>
                   {onEditSpending ? (
-                    <input
-                      type="text"
-                      className="cell-input"
-                      aria-label="Item name"
+                    <EditableCell
                       value={spending.name}
-                      onChange={(e) =>
-                        onEditSpending(spending.index, { name: e.target.value })
+                      display={
+                        spending.name === "" ? (
+                          <span className="cell-placeholder">Item name</span>
+                        ) : (
+                          spending.name
+                        )
+                      }
+                      ariaLabel="Item name"
+                      onChange={(name) =>
+                        onEditSpending(spending.index, { name })
                       }
                     />
                   ) : (
                     spending.name
                   )}
                 </td>
-                <td>{spending.accountName}</td>
                 <td className="amount">
                   {onEditSpending ? (
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      className="cell-input amount-input"
-                      aria-label="Amount"
+                    <EditableCell
                       value={spending.amount}
-                      onChange={(e) =>
-                        onEditSpending(spending.index, {
-                          amount: e.target.value,
-                        })
+                      display={formatCents(spending.amountCents)}
+                      ariaLabel="Amount"
+                      inputMode="decimal"
+                      inputClassName="cell-input amount-input"
+                      onChange={(amount) =>
+                        onEditSpending(spending.index, { amount })
                       }
                     />
                   ) : (
                     formatCents(spending.amountCents)
                   )}
                 </td>
+                <td>{spending.accountName}</td>
               </tr>
             ))
           )}
@@ -122,6 +126,66 @@ export function SpendingsTable({
         ))}
       </tfoot>
     </table>
+  );
+}
+
+interface EditableCellProps {
+  /** Raw value bound to the input while editing. */
+  value: string;
+  /** What to render in read mode (may differ from `value`, e.g. formatted). */
+  display: ReactNode;
+  ariaLabel: string;
+  inputMode?: "text" | "decimal";
+  inputClassName?: string;
+  onChange: (value: string) => void;
+}
+
+/**
+ * Shows `display` as plain text by default and swaps to an input on
+ * click/tap, reverting on blur. Read mode lets long values wrap so the
+ * full text is visible, which a single-line input can't do in a narrow cell.
+ */
+function EditableCell({
+  value,
+  display,
+  ariaLabel,
+  inputMode = "text",
+  inputClassName = "cell-input",
+  onChange,
+}: EditableCellProps) {
+  const [editing, setEditing] = useState(false);
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        className="cell-display"
+        aria-label={`Edit ${ariaLabel}`}
+        onClick={() => setEditing(true)}
+      >
+        {display}
+      </button>
+    );
+  }
+
+  return (
+    <input
+      type="text"
+      inputMode={inputMode}
+      className={inputClassName}
+      aria-label={ariaLabel}
+      value={value}
+      autoFocus
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={() => setEditing(false)}
+      onKeyDown={(e) => {
+        // Both keys leave edit mode; edits are already live via onChange.
+        if (e.key === "Enter" || e.key === "Escape") {
+          e.preventDefault();
+          setEditing(false);
+        }
+      }}
+    />
   );
 }
 

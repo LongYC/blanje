@@ -124,7 +124,7 @@ export function App() {
               </select>
             </label>
             <button type="button" onClick={handleDownload}>
-              Download JSON
+              Save as JSON file
             </button>
             <button type="button" className="clear-btn" onClick={handleClear}>
               Clear data

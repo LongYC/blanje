@@ -136,7 +136,8 @@ button:hover {
   margin: 0 0 0.75rem;
 }
 
-.spendings-table {
+.spendings-table,
+.category-table {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
@@ -146,8 +147,14 @@ button:hover {
   overflow: hidden;
 }
 
+.category-table {
+  margin-top: 1.5rem;
+}
+
 .spendings-table th,
-.spendings-table td {
+.spendings-table td,
+.category-table th,
+.category-table td {
   text-align: left;
   padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border);

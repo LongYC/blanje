@@ -29,103 +29,107 @@ export function SpendingsTable({
   );
 
   return (
-    <table className="spendings-table">
-      <thead>
-        <tr>
-          <th scope="col">Item</th>
-          <th scope="col" className="amount">
-            Amount
-          </th>
-          <th scope="col">Account</th>
-        </tr>
-      </thead>
-      {groups.map((group) => (
-        <tbody key={group.categoryId}>
-          <tr className="category-row">
-            <th scope="rowgroup">
-              {group.categoryName}
-              <span className="category-percent">
-                {group.percentage.toFixed(1)}%
-              </span>
-            </th>
-            <td className="amount category-total">
-              {formatCents(group.total)}
-            </td>
-            <td aria-label="No value"></td>
-          </tr>
-          {group.spendings.length === 0 ? (
-            <tr className="empty-row">
-              <td colSpan={3}>No spendings</td>
-            </tr>
-          ) : (
-            group.spendings.map((spending) => (
-              <tr key={spending.index}>
-                <td>
-                  {onEditSpending ? (
-                    <EditableCell
-                      value={spending.name}
-                      display={
-                        spending.name === "" ? (
-                          <span className="cell-placeholder">Item name</span>
-                        ) : (
-                          spending.name
-                        )
-                      }
-                      ariaLabel="Item name"
-                      onChange={(name) =>
-                        onEditSpending(spending.index, { name })
-                      }
-                    />
-                  ) : (
-                    spending.name
-                  )}
-                </td>
-                <td className="amount">
-                  {onEditSpending ? (
-                    <EditableCell
-                      value={spending.amount}
-                      display={formatCents(spending.amountCents)}
-                      ariaLabel="Amount"
-                      inputMode="decimal"
-                      inputClassName="cell-input amount-input"
-                      onChange={(amount) =>
-                        onEditSpending(spending.index, { amount })
-                      }
-                    />
-                  ) : (
-                    formatCents(spending.amountCents)
-                  )}
-                </td>
-                <td>{spending.accountName}</td>
-              </tr>
-            ))
-          )}
-          {onAddSpending && (
-            <AddSpendingRow
-              categoryId={group.categoryId}
-              accounts={accounts}
-              onAdd={onAddSpending}
-            />
-          )}
-        </tbody>
-      ))}
-      <tfoot>
-        <tr className="grand-total-row">
-          <th scope="row" colSpan={2}>
-            Total
-          </th>
-          <td className="amount">{formatCents(grandTotal)}</td>
-        </tr>
-        {accountTotals.map((account) => (
-          <tr key={account.accountId} className="account-total-row">
+    <>
+      <table className="spendings-table">
+        <tbody>
+          <tr className="grand-total-row">
             <th scope="row" colSpan={2}>
-              {account.accountName}
+              Total
             </th>
-            <td className="amount">{formatCents(account.total)}</td>
+            <td className="amount">{formatCents(grandTotal)}</td>
           </tr>
+          {accountTotals.map((account) => (
+            <tr key={account.accountId} className="account-total-row">
+              <th scope="row" colSpan={2}>
+                {account.accountName}
+              </th>
+              <td className="amount">{formatCents(account.total)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <table className="category-table">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col" className="amount">
+              Amount
+            </th>
+            <th scope="col">Account</th>
+          </tr>
+        </thead>
+        {groups.map((group) => (
+          <tbody key={group.categoryId}>
+            <tr className="category-row">
+              <th scope="rowgroup">
+                {group.categoryName}
+                <span className="category-percent">
+                  {group.percentage.toFixed(1)}%
+                </span>
+              </th>
+              <td className="amount category-total">
+                {formatCents(group.total)}
+              </td>
+              <td aria-label="No value"></td>
+            </tr>
+            {group.spendings.length === 0 ? (
+              <tr className="empty-row">
+                <td colSpan={3}>No spendings</td>
+              </tr>
+            ) : (
+              group.spendings.map((spending) => (
+                <tr key={spending.index}>
+                  <td>
+                    {onEditSpending ? (
+                      <EditableCell
+                        value={spending.name}
+                        display={
+                          spending.name === "" ? (
+                            <span className="cell-placeholder">Item name</span>
+                          ) : (
+                            spending.name
+                          )
+                        }
+                        ariaLabel="Item name"
+                        onChange={(name) =>
+                          onEditSpending(spending.index, { name })
+                        }
+                      />
+                    ) : (
+                      spending.name
+                    )}
+                  </td>
+                  <td className="amount">
+                    {onEditSpending ? (
+                      <EditableCell
+                        value={spending.amount}
+                        display={formatCents(spending.amountCents)}
+                        ariaLabel="Amount"
+                        inputMode="decimal"
+                        inputClassName="cell-input amount-input"
+                        onChange={(amount) =>
+                          onEditSpending(spending.index, { amount })
+                        }
+                      />
+                    ) : (
+                      formatCents(spending.amountCents)
+                    )}
+                  </td>
+                  <td>{spending.accountName}</td>
+                </tr>
+              ))
+            )}
+            {onAddSpending && (
+              <AddSpendingRow
+                categoryId={group.categoryId}
+                accounts={accounts}
+                onAdd={onAddSpending}
+              />
+            )}
+          </tbody>
         ))}
-      </tfoot>
-    </table>
+      </table>
+    </>
   );
 }
 

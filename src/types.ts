@@ -19,6 +19,7 @@ export interface Spending {
 export interface MonthlySpendings {
   month: number; // e.g. 202607 for July 2026
   items: Spending[];
+  note?: string;
 }
 
 /** The whole document: global accounts/categories plus per-month spendings. */

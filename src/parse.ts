@@ -77,7 +77,11 @@ function parseMonthly(value: unknown, path: string): MonthlySpendings {
   const items = value.items.map((s, i) =>
     parseSpending(s, `${path}.items[${i}]`),
   );
-  return { month, items };
+  const { note } = value;
+  if (note !== undefined && typeof note !== "string") {
+    throw new ValidationError(`${path}.note must be a string`);
+  }
+  return note === undefined ? { month, items } : { month, items, note };
 }
 
 /** Parse and validate the raw JSON text of an uploaded spendings file. */

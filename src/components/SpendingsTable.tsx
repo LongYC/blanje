@@ -5,6 +5,8 @@ import type { Account, Category, Spending } from "../types";
 
 interface SpendingsTableProps {
   items: Spending[];
+  /** Free-form plain-text note for the month. */
+  note?: string;
   categories: Category[];
   accounts: Account[];
   /**
@@ -14,14 +16,18 @@ interface SpendingsTableProps {
   onEditSpending?: (index: number, patch: Partial<Spending>) => void;
   /** Called when a new spending is added to a category. */
   onAddSpending?: (spending: Spending) => void;
+  /** Called when the month's note is edited. */
+  onEditNote?: (note: string) => void;
 }
 
 export function SpendingsTable({
   items,
+  note,
   categories,
   accounts,
   onEditSpending,
   onAddSpending,
+  onEditNote,
 }: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
     () => groupByCategory(items, categories, accounts),
@@ -48,6 +54,13 @@ export function SpendingsTable({
           ))}
         </tbody>
       </table>
+      {(onEditNote || (note ?? "") !== "") && (
+        <NoteField
+          value={note ?? ""}
+          editable={Boolean(onEditNote)}
+          onChange={(v) => onEditNote?.(v)}
+        />
+      )}
       <table className="category-table">
         <thead>
           <tr>
@@ -185,6 +198,61 @@ function EditableCell({
       onKeyDown={(e) => {
         // Both keys leave edit mode; edits are already live via onChange.
         if (e.key === "Enter" || e.key === "Escape") {
+          e.preventDefault();
+          setEditing(false);
+        }
+      }}
+    />
+  );
+}
+
+interface NoteFieldProps {
+  value: string;
+  editable: boolean;
+  onChange: (value: string) => void;
+}
+
+/**
+ * A free-form, multi-line note for the month. Renders as plain text and swaps
+ * to a textarea on click/tap when editable, committing edits live via onChange
+ * and reverting to read mode on blur.
+ */
+function NoteField({ value, editable, onChange }: NoteFieldProps) {
+  const [editing, setEditing] = useState(false);
+
+  if (!editable) {
+    return value === "" ? null : <p className="month-note">{value}</p>;
+  }
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        className="month-note month-note-display"
+        aria-label="Edit note"
+        onClick={() => setEditing(true)}
+      >
+        {value === "" ? (
+          <span className="cell-placeholder">Add a note</span>
+        ) : (
+          value
+        )}
+      </button>
+    );
+  }
+
+  return (
+    <textarea
+      className="month-note month-note-input"
+      aria-label="Note"
+      value={value}
+      autoFocus
+      rows={3}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={() => setEditing(false)}
+      onKeyDown={(e) => {
+        // Escape leaves edit mode; Enter inserts a newline (multi-line note).
+        if (e.key === "Escape") {
           e.preventDefault();
           setEditing(false);
         }

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { ConfirmDialog } from "./components/ConfirmDialog";
 import { FileLoader } from "./components/FileLoader";
 import { SpendingsTable } from "./components/SpendingsTable";
+import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
 import { clearData, loadData, saveData } from "./storage";
 import { monthLabel, type SpendingsData, type Spending } from "./types";
@@ -11,6 +13,7 @@ const EXAMPLE_JSON = `{
   "spendings": [
     {
       "month": 202607,
+      "note": "Optional note for the month",
       "items": [
         {
           "categoryId": "groceries",
@@ -26,6 +29,13 @@ const EXAMPLE_JSON = `{
 export function App() {
   const [data, setData] = useState<SpendingsData | null>(() => loadData());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [confirmingClear, setConfirmingClear] = useState(false);
+  // When a load replaces existing data we stash it here so the Undo toast can
+  // restore it; a non-null value also drives the toast's visibility.
+  const [previousData, setPreviousData] = useState<SpendingsData | null>(null);
+  // Bumped on each load so a back-to-back replacement remounts the toast and
+  // restarts its countdown rather than inheriting the previous one's progress.
+  const [toastToken, setToastToken] = useState(0);
 
   // Default the selected month to the first available one whenever data changes.
   useEffect(() => {
@@ -57,13 +67,30 @@ export function App() {
   }
 
   function handleLoaded(loaded: SpendingsData) {
+    // Loading over existing data is destructive — keep the old data around so
+    // the Undo toast can put it back. Loading into an empty app needs no toast.
+    setPreviousData(data);
     setData(loaded);
     saveData(loaded);
+    setToastToken((t) => t + 1);
+  }
+
+  function handleUndoLoad() {
+    if (!previousData) return;
+    setData(previousData);
+    saveData(previousData);
+    setPreviousData(null);
   }
 
   function handleClear() {
+    setConfirmingClear(true);
+  }
+
+  function confirmClear() {
     clearData();
     setData(null);
+    setPreviousData(null);
+    setConfirmingClear(false);
   }
 
   // Apply an edit to a single item within the selected month, then persist.
@@ -80,6 +107,19 @@ export function App() {
                 i === index ? { ...item, ...patch } : item,
               ),
             },
+      ),
+    };
+    setData(next);
+    saveData(next);
+  }
+
+  // Update the free-form note on the selected month, then persist.
+  function handleEditNote(note: string) {
+    if (!data || selectedMonth === null) return;
+    const next: SpendingsData = {
+      ...data,
+      spendings: data.spendings.map((month) =>
+        month.month !== selectedMonth ? month : { ...month, note },
       ),
     };
     setData(next);
@@ -119,14 +159,9 @@ export function App() {
       <section className="controls">
         <FileLoader onLoaded={handleLoaded} />
         {data && data.spendings.length > 0 && (
-          <>
-            <button type="button" onClick={handleDownload}>
-              Save as JSON file
-            </button>
-            <button type="button" className="clear-btn" onClick={handleClear}>
-              Clear data
-            </button>
-          </>
+          <button type="button" onClick={handleDownload}>
+            Save as JSON file
+          </button>
         )}
       </section>
 
@@ -155,10 +190,12 @@ export function App() {
           </div>
           <SpendingsTable
             items={selected.items}
+            note={selected.note}
             categories={data.categories}
             accounts={data.accounts}
             onEditSpending={handleEditSpending}
             onAddSpending={handleAddSpending}
+            onEditNote={handleEditNote}
           />
         </section>
       ) : (
@@ -168,6 +205,37 @@ export function App() {
           </p>
           <pre className="example-json">{EXAMPLE_JSON}</pre>
         </section>
+      )}
+
+      {data && data.spendings.length > 0 && (
+        <section className="danger-zone">
+          <span className="danger-zone-label">
+            Clear all loaded data from this browser
+          </span>
+          <button type="button" className="clear-btn" onClick={handleClear}>
+            Clear data
+          </button>
+        </section>
+      )}
+
+      <ConfirmDialog
+        open={confirmingClear}
+        title="Clear all loaded data?"
+        description="This permanently removes the data loaded on this page. Make sure you have saved all your edits to a new JSON before you proceed so that you can load it again at any time."
+        confirmLabel="Clear data"
+        onConfirm={confirmClear}
+        onCancel={() => setConfirmingClear(false)}
+      />
+
+      {previousData && (
+        <Toast
+          key={toastToken}
+          message="Replaced your previous data."
+          actionLabel="Undo"
+          actionAriaLabel="Undo replacing data"
+          onAction={handleUndoLoad}
+          onDismiss={() => setPreviousData(null)}
+        />
       )}
     </main>
   );

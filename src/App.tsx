@@ -41,10 +41,20 @@ export function App() {
     }
   }, [data]);
 
-  const selected = useMemo(() => {
-    if (!data || selectedMonth === null) return null;
-    return data.spendings.find((s) => s.month === selectedMonth) ?? null;
+  const selectedIndex = useMemo(() => {
+    if (!data || selectedMonth === null) return -1;
+    return data.spendings.findIndex((s) => s.month === selectedMonth);
   }, [data, selectedMonth]);
+
+  const selected = selectedIndex >= 0 ? data!.spendings[selectedIndex] : null;
+
+  // Step to an adjacent month in the spendings list.
+  function stepMonth(delta: number) {
+    if (!data || selectedIndex < 0) return;
+    const next = selectedIndex + delta;
+    if (next < 0 || next >= data.spendings.length) return;
+    setSelectedMonth(data.spendings[next].month);
+  }
 
   function handleLoaded(loaded: SpendingsData) {
     setData(loaded);
@@ -110,19 +120,6 @@ export function App() {
         <FileLoader onLoaded={handleLoaded} />
         {data && data.spendings.length > 0 && (
           <>
-            <label className="period-select">
-              <span>Period</span>
-              <select
-                value={selectedMonth ?? ""}
-                onChange={(e) => setSelectedMonth(Number(e.target.value))}
-              >
-                {data.spendings.map((s) => (
-                  <option key={s.month} value={s.month}>
-                    {monthLabel(s.month)}
-                  </option>
-                ))}
-              </select>
-            </label>
             <button type="button" onClick={handleDownload}>
               Save as JSON file
             </button>
@@ -135,7 +132,27 @@ export function App() {
 
       {selected && data ? (
         <section className="results">
-          <h2>{monthLabel(selected.month)}</h2>
+          <div className="month-nav">
+            <button
+              type="button"
+              className="month-nav-btn"
+              onClick={() => stepMonth(-1)}
+              disabled={selectedIndex <= 0}
+              aria-label="Previous month"
+            >
+              ‹
+            </button>
+            <h2>{monthLabel(selected.month)}</h2>
+            <button
+              type="button"
+              className="month-nav-btn"
+              onClick={() => stepMonth(1)}
+              disabled={selectedIndex >= data.spendings.length - 1}
+              aria-label="Next month"
+            >
+              ›
+            </button>
+          </div>
           <SpendingsTable
             items={selected.items}
             categories={data.categories}

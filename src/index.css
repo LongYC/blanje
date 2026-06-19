@@ -71,23 +71,6 @@ button:hover {
   border-color: var(--border);
 }
 
-.period-select {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.period-select select {
-  font: inherit;
-  color: var(--text);
-  padding: 0.45rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-}
-
 .error {
   flex-basis: 100%;
   margin: 0;
@@ -131,9 +114,41 @@ button:hover {
   color: var(--text);
 }
 
-.results h2 {
-  font-size: 1.25rem;
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   margin: 0 0 0.75rem;
+}
+
+.month-nav h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  min-width: 12rem;
+  text-align: center;
+}
+
+.month-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font-size: 1.4rem;
+  line-height: 1;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.month-nav-btn:disabled {
+  color: var(--muted);
+  opacity: 0.4;
+  cursor: default;
+  filter: none;
 }
 
 .spendings-table,

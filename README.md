@@ -1,8 +1,14 @@
 # Blanje
 
-A client-side-only web app to view your monthly spendings from a JSON file.
+A client-side-only web app to track monthly spendings using a JSON file.
 Data is parsed in the browser, stored in `localStorage`, and shown as a table
 grouped by category with per-category and grand totals.
+
+Guidelines when addinng or changing features behind the app:
+- Does one thing only: focuses on tracking monthly expenses, not to be a comprehensive financial management tool.
+- Clear goal: to let users see per-category spendings, not to track details like transaction time or account types.
+- Utilise browser capabilities: no server, no database in the cloud, no authentication.
+- Why JSON: human-readable yet easy to edit and store. Target audience is people who are familiar with JSON files.
 
 ## Getting started
 

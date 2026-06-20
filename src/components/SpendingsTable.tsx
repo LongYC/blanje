@@ -272,23 +272,29 @@ function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [accountId, setAccountId] = useState(accounts[0]?.id ?? "");
+  const [accountId, setAccountId] = useState("");
 
   function reset() {
     setName("");
     setAmount("");
-    setAccountId(accounts[0]?.id ?? "");
+    setAccountId("");
   }
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (name.trim() === "" || amount.trim() === "" || Number.isNaN(Number(amount))) {
+    if (
+      name.trim() === "" ||
+      amount.trim() === "" ||
+      Number.isNaN(Number(amount)) ||
+      accountId === ""
+    ) {
       return;
     }
     onAdd({ categoryId, name: name.trim(), amount: amount.trim(), accountId });
     // Keep the form open for quick consecutive entries.
     setName("");
     setAmount("");
+    setAccountId("");
   }
 
   if (!open) {
@@ -320,18 +326,6 @@ function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
             onChange={(e) => setName(e.target.value)}
             autoFocus
           />
-          <select
-            className="cell-input account-select"
-            aria-label="Account"
-            value={accountId}
-            onChange={(e) => setAccountId(e.target.value)}
-          >
-            {accounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </select>
           <input
             type="text"
             inputMode="decimal"
@@ -341,16 +335,38 @@ function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <button type="submit">Add</button>
+          <select
+            className={`cell-input account-select${
+              accountId === "" ? " is-placeholder" : ""
+            }`}
+            aria-label="Account"
+            value={accountId}
+            required
+            onChange={(e) => setAccountId(e.target.value)}
+          >
+            <option value="" disabled>
+              Pick account
+            </option>
+            {accounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+          </select>
+          <button type="submit" disabled={accountId === ""}>
+            Add
+          </button>
           <button
             type="button"
-            className="clear-btn"
+            className="close-btn"
+            aria-label="Close"
+            title="Close"
             onClick={() => {
               setOpen(false);
               reset();
             }}
           >
-            Done
+            ×
           </button>
         </form>
       </td>

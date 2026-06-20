@@ -499,6 +499,16 @@ button:hover {
   background: var(--surface);
 }
 
+/* Greyed out while the placeholder option is selected. */
+.add-form .account-select.is-placeholder {
+  color: var(--muted);
+}
+
+/* Keep real options at full contrast in the open dropdown. */
+.add-form .account-select option {
+  color: var(--text);
+}
+
 .add-form .amount-input {
   flex: 0 1 7rem;
 }
@@ -506,6 +516,44 @@ button:hover {
 .add-form button {
   padding: 0.4rem 0.9rem;
   font-size: 0.85rem;
+}
+
+.add-form button[type="submit"] {
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.add-form button[type="submit"]:disabled {
+  cursor: not-allowed;
+  background: var(--border);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.add-form button[type="submit"]:disabled:hover {
+  filter: none;
+}
+
+.add-form .close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.add-form .close-btn:hover {
+  filter: none;
+  background: var(--border);
+  color: var(--text);
 }
 
 .grand-total-row th,

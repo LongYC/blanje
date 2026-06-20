@@ -147,13 +147,18 @@ button:hover {
 
 /* Confirmation dialog (native <dialog> + showModal). */
 .confirm-dialog {
-  max-width: 26rem;
+  max-width: 21rem;
   padding: 1.5rem;
-  margin: auto 1rem;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
   color: var(--text);
+}
+
+@media (max-width: 21rem) {
+  .confirm-dialog {
+    margin: auto 1rem;
+  }
 }
 
 .confirm-dialog::backdrop {

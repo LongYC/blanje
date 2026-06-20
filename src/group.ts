@@ -91,6 +91,8 @@ export function groupByCategory(
       amountCents,
       accountName: accountName.get(spending.accountId) ?? UNKNOWN_ACCOUNT,
     });
+    // Ignored items are still listed but never counted in any total.
+    if (spending.ignore) return;
     group.total += amountCents;
 
     let accountTotal = accountTotalsMap.get(spending.accountId);

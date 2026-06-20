@@ -1,4 +1,11 @@
-import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { groupByCategory } from "../group";
 import { formatCents } from "../format";
 import type { Account, Category, Spending } from "../types";
@@ -16,6 +23,8 @@ interface SpendingsTableProps {
   onEditSpending?: (index: number, patch: Partial<Spending>) => void;
   /** Called when a new spending is added to a category. */
   onAddSpending?: (spending: Spending) => void;
+  /** Toggle whether the item at `index` is ignored in totals. */
+  onToggleIgnore?: (index: number) => void;
   /** Called when the month's note is edited. */
   onEditNote?: (note: string) => void;
 }
@@ -27,6 +36,7 @@ export function SpendingsTable({
   accounts,
   onEditSpending,
   onAddSpending,
+  onToggleIgnore,
   onEditNote,
 }: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
@@ -91,7 +101,10 @@ export function SpendingsTable({
               </tr>
             ) : (
               group.spendings.map((spending) => (
-                <tr key={spending.index}>
+                <tr
+                  key={spending.index}
+                  className={spending.ignore ? "ignored-row" : undefined}
+                >
                   <td>
                     {onEditSpending ? (
                       <EditableCell
@@ -128,7 +141,19 @@ export function SpendingsTable({
                       formatCents(spending.amountCents)
                     )}
                   </td>
-                  <td>{spending.accountName}</td>
+                  <td className="account-cell">
+                    <div className="account-cell-inner">
+                      <span className="account-name">
+                        {spending.accountName}
+                      </span>
+                      {onToggleIgnore && (
+                        <ItemMenu
+                          ignored={Boolean(spending.ignore)}
+                          onToggleIgnore={() => onToggleIgnore(spending.index)}
+                        />
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))
             )}
@@ -203,6 +228,67 @@ function EditableCell({
         }
       }}
     />
+  );
+}
+
+interface ItemMenuProps {
+  ignored: boolean;
+  onToggleIgnore: () => void;
+}
+
+/**
+ * A "⋯" trigger that opens a small popover menu for per-item actions. Currently
+ * just toggles whether the item is ignored in totals. Closes on outside
+ * click/tap or Escape.
+ */
+function ItemMenu({ ignored, onToggleIgnore }: ItemMenuProps) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handlePointerDown(e: PointerEvent) {
+      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div className="item-menu" ref={containerRef}>
+      <button
+        type="button"
+        className="item-menu-trigger"
+        aria-label="Item actions"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        ⋯
+      </button>
+      {open && (
+        <div className="item-menu-popover" role="menu">
+          <button
+            type="button"
+            role="menuitem"
+            className="item-menu-item"
+            onClick={() => {
+              onToggleIgnore();
+              setOpen(false);
+            }}
+          >
+            {ignored ? "Unignore" : "Ignore"}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -328,7 +414,7 @@ function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
           />
           <input
             type="text"
-            inputMode="decimal"
+            inputMode="numeric"
             className="cell-input amount-input"
             aria-label="New amount"
             placeholder="0.00"

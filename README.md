@@ -6,8 +6,9 @@ grouped by category with per-category and grand totals.
 
 Guidelines when addinng or changing features behind the app:
 - Does one thing only: focuses on tracking monthly expenses, not to be a comprehensive financial management tool.
-- Clear goal: to let users see per-category spendings, not to track details like transaction time or account types.
+- Clear goal: to let users see per-category spendings, not to track details like transaction time or account types. The account data is just there so that users can cross-check the amounts with their account statements.
 - Utilise browser capabilities: no server, no database in the cloud, no authentication.
+- UX for Desctructive operations: there should be some frictions and quick undo for destructive operations to reduce the chance of accidental data loss.
 - Why JSON: human-readable yet easy to edit and store. Target audience is people who are familiar with JSON files.
 
 ## Getting started
@@ -55,3 +56,8 @@ The app expects an object with global `accounts` and `categories`, plus
 ```
 
 If a file contains multiple months, a selector lets you switch between them.
+
+Each item may carry an optional `"ignore": true`, which excludes it from all
+totals while keeping it visible (shown greyed out). Toggle it from the item's
+`⋯` menu. The property is omitted when `false`, so a saved file never writes
+`"ignore": false`.

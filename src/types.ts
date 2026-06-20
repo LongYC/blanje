@@ -13,6 +13,12 @@ export interface Spending {
   name: string;
   amount: string; // kept as a string in the source data, parsed when summing
   accountId: string;
+  /**
+   * When `true`, the item is excluded from all totals. Absent is treated the
+   * same as `false`; the property is only ever stored when `true` so a saved
+   * file never carries `ignore: false`.
+   */
+  ignore?: boolean;
 }
 
 /** One month's worth of spending items, keyed by a `YYYYMM` integer. */

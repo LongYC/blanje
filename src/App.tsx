@@ -126,6 +126,32 @@ export function App() {
     saveData(next);
   }
 
+  // Toggle whether an item is ignored in totals, then persist. Unignoring drops
+  // the `ignore` property entirely so a saved file never carries `ignore: false`.
+  function handleToggleIgnore(index: number) {
+    if (!data || selectedMonth === null) return;
+    const next: SpendingsData = {
+      ...data,
+      spendings: data.spendings.map((month) =>
+        month.month !== selectedMonth
+          ? month
+          : {
+              ...month,
+              items: month.items.map((item, i) => {
+                if (i !== index) return item;
+                if (item.ignore) {
+                  const { ignore: _ignore, ...rest } = item;
+                  return rest;
+                }
+                return { ...item, ignore: true };
+              }),
+            },
+      ),
+    };
+    setData(next);
+    saveData(next);
+  }
+
   // Update the free-form note on the selected month, then persist.
   function handleEditNote(note: string) {
     if (!data || selectedMonth === null) return;
@@ -208,6 +234,7 @@ export function App() {
             accounts={data.accounts}
             onEditSpending={handleEditSpending}
             onAddSpending={handleAddSpending}
+            onToggleIgnore={handleToggleIgnore}
             onEditNote={handleEditNote}
           />
         </section>

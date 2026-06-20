@@ -56,7 +56,14 @@ function parseSpending(value: unknown, path: string): Spending {
   if (typeof accountId !== "string") {
     throw new ValidationError(`${path}.accountId must be a string`);
   }
-  return { categoryId, name, amount: amountStr, accountId };
+  const { ignore } = value;
+  if (ignore !== undefined && typeof ignore !== "boolean") {
+    throw new ValidationError(`${path}.ignore must be a boolean`);
+  }
+  const spending: Spending = { categoryId, name, amount: amountStr, accountId };
+  // Only carry `ignore` when truthy so a round-trip never writes `ignore: false`.
+  if (ignore === true) spending.ignore = true;
+  return spending;
 }
 
 function parseMonthly(value: unknown, path: string): MonthlySpendings {

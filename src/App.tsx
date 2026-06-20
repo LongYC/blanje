@@ -4,7 +4,7 @@ import { FileLoader } from "./components/FileLoader";
 import { SpendingsTable } from "./components/SpendingsTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
-import { clearData, loadData, saveData } from "./storage";
+import { clearData, clearFilename, loadData, loadFilename, saveData, saveFilename } from "./storage";
 import { monthLabel, type SpendingsData, type Spending } from "./types";
 
 const EXAMPLE_JSON = `{
@@ -28,11 +28,14 @@ const EXAMPLE_JSON = `{
 
 export function App() {
   const [data, setData] = useState<SpendingsData | null>(() => loadData());
+  const [filename, setFilename] = useState<string | null>(() => loadFilename());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
-  // When a load replaces existing data we stash it here so the Undo toast can
-  // restore it; a non-null value also drives the toast's visibility.
+  // When a load replaces existing data we stash it (and its filename) here so
+  // the Undo toast can restore both; a non-null `previousData` also drives the
+  // toast's visibility.
   const [previousData, setPreviousData] = useState<SpendingsData | null>(null);
+  const [previousFilename, setPreviousFilename] = useState<string | null>(null);
   // Bumped on each load so a back-to-back replacement remounts the toast and
   // restarts its countdown rather than inheriting the previous one's progress.
   const [toastToken, setToastToken] = useState(0);
@@ -66,12 +69,16 @@ export function App() {
     setSelectedMonth(data.spendings[next].month);
   }
 
-  function handleLoaded(loaded: SpendingsData) {
-    // Loading over existing data is destructive — keep the old data around so
-    // the Undo toast can put it back. Loading into an empty app needs no toast.
+  function handleLoaded(loaded: SpendingsData, name: string) {
+    // Loading over existing data is destructive — keep the old data (and its
+    // filename) around so the Undo toast can put it back. Loading into an empty
+    // app needs no toast.
     setPreviousData(data);
+    setPreviousFilename(filename);
     setData(loaded);
+    setFilename(name);
     saveData(loaded);
+    saveFilename(name);
     setToastToken((t) => t + 1);
   }
 
@@ -79,7 +86,11 @@ export function App() {
     if (!previousData) return;
     setData(previousData);
     saveData(previousData);
+    setFilename(previousFilename);
+    if (previousFilename) saveFilename(previousFilename);
+    else clearFilename();
     setPreviousData(null);
+    setPreviousFilename(null);
   }
 
   function handleClear() {
@@ -89,7 +100,9 @@ export function App() {
   function confirmClear() {
     clearData();
     setData(null);
+    setFilename(null);
     setPreviousData(null);
+    setPreviousFilename(null);
     setConfirmingClear(false);
   }
 
@@ -201,7 +214,7 @@ export function App() {
       ) : (
         <section className="empty-state">
           <p>
-            No data loaded yet. Upload a JSON file to get started. You'll be able to view and edit your spending data, neatly grouped by category. The uploaded file must match the schema shown below:
+            No data loaded yet. Load a JSON file to this page to get started. You'll be able to view and edit your spending data, grouped by category. All data are client-side only and the JSON file must match the schema shown below:
           </p>
           <pre className="example-json">{EXAMPLE_JSON}</pre>
         </section>
@@ -209,11 +222,15 @@ export function App() {
 
       {data && data.spendings.length > 0 && (
         <section className="danger-zone">
-          <span className="danger-zone-label">
-            Clear all loaded data from this browser
-          </span>
+          <div className="danger-zone-text">
+            {filename && (
+              <span className="loaded-file">
+                Last loaded from <strong>{filename}</strong>
+              </span>
+            )}
+          </div>
           <button type="button" className="clear-btn" onClick={handleClear}>
-            Clear data
+            Clear all loaded data
           </button>
         </section>
       )}
@@ -221,8 +238,8 @@ export function App() {
       <ConfirmDialog
         open={confirmingClear}
         title="Clear all loaded data?"
-        description="This permanently removes the data loaded on this page. Make sure you have saved all your edits to a new JSON before you proceed so that you can load it again at any time."
-        confirmLabel="Clear data"
+        description="This permanently deletes all the data loaded. Make sure you have saved all your edits to a new JSON file before you proceed so your data is not lost."
+        confirmLabel="Delete data"
         onConfirm={confirmClear}
         onCancel={() => setConfirmingClear(false)}
       />

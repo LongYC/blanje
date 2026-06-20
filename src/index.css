@@ -65,10 +65,22 @@ button:hover {
   filter: brightness(1.05);
 }
 
-.clear-btn {
+.danger-zone .clear-btn {
+  margin-top: 1rem;
   background: transparent;
   color: var(--muted);
   border-color: var(--border);
+}
+
+.loaded-file {
+  color: var(--muted);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.loaded-file strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .danger-btn {
@@ -89,6 +101,13 @@ button:hover {
   padding: 1rem;
   border: 1px solid var(--border);
   border-radius: 12px;
+}
+
+.danger-zone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
 }
 
 .danger-zone-label {
@@ -124,6 +143,7 @@ button:hover {
 .confirm-dialog {
   max-width: 26rem;
   padding: 1.5rem;
+  margin: auto 1rem;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);

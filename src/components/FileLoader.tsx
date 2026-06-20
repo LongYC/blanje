@@ -3,7 +3,7 @@ import { parseSpendingsJson, ValidationError } from "../parse";
 import type { SpendingsData } from "../types";
 
 interface FileLoaderProps {
-  onLoaded: (data: SpendingsData) => void;
+  onLoaded: (data: SpendingsData, filename: string) => void;
 }
 
 export function FileLoader({ onLoaded }: FileLoaderProps) {
@@ -15,7 +15,7 @@ export function FileLoader({ onLoaded }: FileLoaderProps) {
     try {
       const text = await file.text();
       const data = parseSpendingsJson(text);
-      onLoaded(data);
+      onLoaded(data, file.name);
     } catch (err) {
       if (err instanceof ValidationError) {
         setError(err.message);

@@ -412,15 +412,33 @@ function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
             onChange={(e) => setName(e.target.value)}
             autoFocus
           />
-          <input
-            type="text"
-            inputMode="numeric"
-            className="cell-input amount-input"
-            aria-label="New amount"
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+          <div className="amount-field">
+            {/* The mobile decimal keypad has no minus key, so offer an explicit
+                sign toggle that flips the leading "-" on the current value. */}
+            <button
+              type="button"
+              className={`sign-toggle${
+                amount.startsWith("-") ? " is-negative" : ""
+              }`}
+              aria-label="Toggle negative amount"
+              aria-pressed={amount.startsWith("-")}
+              title="Toggle +/−"
+              onClick={() =>
+                setAmount((a) => (a.startsWith("-") ? a.slice(1) : `-${a}`))
+              }
+            >
+              ±
+            </button>
+            <input
+              type="text"
+              inputMode="decimal"
+              className="cell-input amount-input"
+              aria-label="New amount"
+              placeholder="0.00"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
           <select
             className={`cell-input account-select${
               accountId === "" ? " is-placeholder" : ""

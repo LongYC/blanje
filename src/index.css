@@ -601,6 +601,46 @@ button:hover {
   flex: 0 1 7rem;
 }
 
+.add-form .amount-field {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 0 1 9rem;
+}
+
+.add-form .amount-field .amount-input {
+  flex: 1 1 auto;
+}
+
+.add-form .sign-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0 0 .2rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: 1rem;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+}
+
+.add-form .sign-toggle:hover {
+  filter: none;
+  background: var(--border);
+  color: var(--text);
+}
+
+/* Highlight when the amount is currently negative. */
+.add-form .sign-toggle.is-negative {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 .add-form button {
   padding: 0.4rem 0.9rem;
   font-size: 0.85rem;
@@ -642,6 +682,20 @@ button:hover {
   filter: none;
   background: var(--border);
   color: var(--text);
+}
+
+/* On narrow screens, stack the add-item form one control per row: name, then
+   the sign toggle + amount (amount fills the rest), then the account select,
+   with the Add and close buttons on the final row aligned to the right. */
+@media (max-width: 480px) {
+  .add-form > .cell-input,
+  .add-form .amount-field {
+    flex: 1 1 100%;
+  }
+
+  .add-form button[type="submit"] {
+    margin-left: auto;
+  }
 }
 
 .grand-total-row th,

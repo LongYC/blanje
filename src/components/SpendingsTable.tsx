@@ -243,11 +243,11 @@ function NoteField({ value, editable, onChange }: NoteFieldProps) {
 
   return (
     <textarea
+      id = "month-note-input"
       className="month-note month-note-input"
       aria-label="Note"
       value={value}
       autoFocus
-      rows={3}
       onChange={(e) => onChange(e.target.value)}
       onBlur={() => setEditing(false)}
       onKeyDown={(e) => {

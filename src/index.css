@@ -72,6 +72,12 @@ button:hover {
   border-color: var(--border);
 }
 
+@media (min-width: 480px) {
+  .danger-zone .clear-btn {
+    margin-top: 0;
+  }
+}
+
 .loaded-file {
   color: var(--muted);
   font-size: 0.9rem;
@@ -364,6 +370,7 @@ button:hover {
 
 .month-note-input {
   resize: vertical;
+  field-sizing: content;
 }
 
 .month-note-input:focus {

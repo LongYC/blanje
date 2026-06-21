@@ -63,6 +63,7 @@ export function App() {
   // toast's visibility.
   const [previousData, setPreviousData] = useState<SpendingsData | null>(null);
   const [previousFilename, setPreviousFilename] = useState<string | null>(null);
+  const [previousLastEdited, setPreviousLastEdited] = useState<string>("");
   // Bumped on each load so a back-to-back replacement remounts the toast and
   // restarts its countdown rather than inheriting the previous one's progress.
   const [toastToken, setToastToken] = useState(0);
@@ -102,6 +103,7 @@ export function App() {
     // app needs no toast.
     setPreviousData(data);
     setPreviousFilename(filename);
+    setPreviousLastEdited(lastEdited);
     setData(loaded);
     setFilename(name);
     saveData(loaded);
@@ -135,8 +137,11 @@ export function App() {
     setFilename(previousFilename);
     if (previousFilename) saveFilename(previousFilename);
     else clearFilename();
+    setLastEdited(previousLastEdited);
+    saveLastEdited(previousLastEdited);
     setPreviousData(null);
     setPreviousFilename(null);
+    setPreviousLastEdited("");
   }
 
   function handleClear() {
@@ -235,7 +240,7 @@ export function App() {
     if (!data) return;
     // Use the last-edited timestamp as the filename suffix when an edit was made;
     // otherwise keep the original filename so an untouched file round-trips.
-    const name = lastEdited ? `blanje_${lastEdited}` : filename;
+    const name = lastEdited ? `blanje_${lastEdited}.json` : filename;
     downloadJson(data, name ?? "blanje_spendings.json");
   }
 

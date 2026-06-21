@@ -8,6 +8,12 @@ interface Meta {
   lastLoadedFilename?: string;
   /** Account ids whose item rows are hidden from view (purely visual). */
   hiddenAccounts?: string[];
+  /**
+   * Timestamp of the last item name/amount edit, formatted as
+   * `YYYY-MM-DD_HHmm_ss`. Empty string when nothing has been edited since the
+   * current file was loaded.
+   */
+  lastEdited?: string;
 }
 
 /** Read the meta object from localStorage, or an empty object if none / unreadable. */
@@ -77,6 +83,16 @@ export function loadHiddenAccounts(): string[] {
 /** Persist the list of hidden account ids. */
 export function saveHiddenAccounts(accountIds: string[]): void {
   writeMeta({ ...readMeta(), hiddenAccounts: accountIds });
+}
+
+/** Load the last-edited timestamp, or an empty string if none. */
+export function loadLastEdited(): string {
+  return readMeta().lastEdited ?? "";
+}
+
+/** Persist the last-edited timestamp. */
+export function saveLastEdited(timestamp: string): void {
+  writeMeta({ ...readMeta(), lastEdited: timestamp });
 }
 
 /** Remove just the stored filename, leaving the spendings data intact. */

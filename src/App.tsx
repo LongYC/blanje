@@ -10,9 +10,11 @@ import {
   loadData,
   loadFilename,
   loadHiddenAccounts,
+  loadLastEdited,
   saveData,
   saveFilename,
   saveHiddenAccounts,
+  saveLastEdited,
 } from "./storage";
 import { monthLabel, type SpendingsData, type Spending } from "./types";
 
@@ -35,6 +37,14 @@ const EXAMPLE_JSON = `{
   ]
 }`;
 
+// Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
+function formatTimestamp(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate(),
+  )}_${pad(date.getHours())}${pad(date.getMinutes())}_${pad(date.getSeconds())}`;
+}
+
 export function App() {
   const [data, setData] = useState<SpendingsData | null>(() => loadData());
   const [filename, setFilename] = useState<string | null>(() => loadFilename());
@@ -45,6 +55,9 @@ export function App() {
   const [hiddenAccounts, setHiddenAccounts] = useState<string[]>(() =>
     loadHiddenAccounts(),
   );
+  // Timestamp of the last item name/amount edit (YYYY-MM-DD_HHmm_ss), or "" if
+  // nothing has been edited since the current file was loaded.
+  const [lastEdited, setLastEdited] = useState<string>(() => loadLastEdited());
   // When a load replaces existing data we stash it (and its filename) here so
   // the Undo toast can restore both; a non-null `previousData` also drives the
   // toast's visibility.
@@ -97,6 +110,9 @@ export function App() {
     // nothing hidden. This is intentionally not restored by the Undo toast.
     setHiddenAccounts([]);
     saveHiddenAccounts([]);
+    // A freshly loaded file hasn't been edited yet.
+    setLastEdited("");
+    saveLastEdited("");
     setToastToken((t) => t + 1);
   }
 
@@ -154,6 +170,11 @@ export function App() {
     };
     setData(next);
     saveData(next);
+    // Item name/amount edits are the only changes that bump the last-edited
+    // timestamp (used as the download filename suffix).
+    const stamp = formatTimestamp(new Date());
+    setLastEdited(stamp);
+    saveLastEdited(stamp);
   }
 
   // Toggle whether an item is ignored in totals, then persist. Unignoring drops
@@ -211,11 +232,11 @@ export function App() {
   }
 
   function handleDownload() {
-    if (data) {
-      const now = new Date();
-      downloadJson(data, `blanje_${
-        now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}_${String(now.getSeconds()).padStart(2, '0')}`);
-    }
+    if (!data) return;
+    // Use the last-edited timestamp as the filename suffix when an edit was made;
+    // otherwise keep the original filename so an untouched file round-trips.
+    const name = lastEdited ? `blanje_${lastEdited}` : filename;
+    downloadJson(data, name ?? "blanje_spendings.json");
   }
 
   return (

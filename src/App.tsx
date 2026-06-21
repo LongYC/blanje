@@ -175,8 +175,7 @@ export function App() {
     };
     setData(next);
     saveData(next);
-    // Item name/amount edits are the only changes that bump the last-edited
-    // timestamp (used as the download filename suffix).
+    // Bump the last-edited timestamp (used as the download filename suffix).
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
     saveLastEdited(stamp);
@@ -219,6 +218,9 @@ export function App() {
     };
     setData(next);
     saveData(next);
+    const stamp = formatTimestamp(new Date());
+    setLastEdited(stamp);
+    saveLastEdited(stamp);
   }
 
   // Append a new item to the selected month, then persist.

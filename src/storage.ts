@@ -6,6 +6,8 @@ const META_KEY = "blanje:meta";
 /** App metadata persisted alongside the spendings data. */
 interface Meta {
   lastLoadedFilename?: string;
+  /** Account ids whose item rows are hidden from view (purely visual). */
+  hiddenAccounts?: string[];
 }
 
 /** Read the meta object from localStorage, or an empty object if none / unreadable. */
@@ -64,6 +66,17 @@ export function saveFilename(name: string): void {
 /** Load the stored filename, or `null` if none / unreadable. */
 export function loadFilename(): string | null {
   return readMeta().lastLoadedFilename ?? null;
+}
+
+/** Load the list of hidden account ids, or an empty array if none. */
+export function loadHiddenAccounts(): string[] {
+  const value = readMeta().hiddenAccounts;
+  return Array.isArray(value) ? value : [];
+}
+
+/** Persist the list of hidden account ids. */
+export function saveHiddenAccounts(accountIds: string[]): void {
+  writeMeta({ ...readMeta(), hiddenAccounts: accountIds });
 }
 
 /** Remove just the stored filename, leaving the spendings data intact. */

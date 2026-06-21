@@ -721,6 +721,37 @@ button:hover {
   padding-left: 1.7rem;
 }
 
+/* Lay out the account name and its show/hide toggle together, mirroring
+   .account-cell-inner so the toggle sits neatly beside the name. */
+.account-total-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Subtle pill toggle reading "Shown" / "Hidden" for an account's rows. */
+.account-visibility-toggle {
+  flex: 0 0 auto;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.account-visibility-toggle:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  filter: none;
+}
+
+.account-visibility-toggle[aria-pressed="true"] {
+  color: var(--text);
+  border-style: dashed;
+}
+
 .account-total-row th,
 .account-total-row td {
   background: var(--surface);

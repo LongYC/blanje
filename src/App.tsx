@@ -4,7 +4,16 @@ import { FileLoader } from "./components/FileLoader";
 import { SpendingsTable } from "./components/SpendingsTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
-import { clearData, clearFilename, loadData, loadFilename, saveData, saveFilename } from "./storage";
+import {
+  clearData,
+  clearFilename,
+  loadData,
+  loadFilename,
+  loadHiddenAccounts,
+  saveData,
+  saveFilename,
+  saveHiddenAccounts,
+} from "./storage";
 import { monthLabel, type SpendingsData, type Spending } from "./types";
 
 const EXAMPLE_JSON = `{
@@ -31,6 +40,11 @@ export function App() {
   const [filename, setFilename] = useState<string | null>(() => loadFilename());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
+  // Account ids whose item rows are hidden from view. Purely visual — totals are
+  // unaffected. Persisted to meta and reset whenever a new file is loaded.
+  const [hiddenAccounts, setHiddenAccounts] = useState<string[]>(() =>
+    loadHiddenAccounts(),
+  );
   // When a load replaces existing data we stash it (and its filename) here so
   // the Undo toast can restore both; a non-null `previousData` also drives the
   // toast's visibility.
@@ -79,7 +93,23 @@ export function App() {
     setFilename(name);
     saveData(loaded);
     saveFilename(name);
+    // A fresh file's accounts are unrelated to the previous ones, so start with
+    // nothing hidden. This is intentionally not restored by the Undo toast.
+    setHiddenAccounts([]);
+    saveHiddenAccounts([]);
     setToastToken((t) => t + 1);
+  }
+
+  // Toggle whether an account's item rows are hidden, then persist. Hiding is
+  // purely visual and never affects any totals.
+  function handleToggleHideAccount(accountId: string) {
+    setHiddenAccounts((current) => {
+      const next = current.includes(accountId)
+        ? current.filter((id) => id !== accountId)
+        : [...current, accountId];
+      saveHiddenAccounts(next);
+      return next;
+    });
   }
 
   function handleUndoLoad() {
@@ -236,9 +266,11 @@ export function App() {
             items={selected.items}
             categories={data.categories}
             accounts={data.accounts}
+            hiddenAccounts={hiddenAccounts}
             onEditSpending={handleEditSpending}
             onAddSpending={handleAddSpending}
             onToggleIgnore={handleToggleIgnore}
+            onToggleHideAccount={handleToggleHideAccount}
           />
         </section>
       ) : (

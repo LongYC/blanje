@@ -14,6 +14,8 @@ interface SpendingsTableProps {
   items: Spending[];
   categories: Category[];
   accounts: Account[];
+  /** Account ids whose item rows are hidden from view (does not affect calculations). */
+  hiddenAccounts?: string[];
   /**
    * Called when a spending is edited. `index` is the position within the
    * month's original `items` array; `patch` carries the changed fields.
@@ -23,19 +25,28 @@ interface SpendingsTableProps {
   onAddSpending?: (spending: Spending) => void;
   /** Toggle whether the item at `index` is ignored in totals. */
   onToggleIgnore?: (index: number) => void;
+  /** Toggle whether `accountId`'s item rows are hidden from view. */
+  onToggleHideAccount?: (accountId: string) => void;
 }
 
 export function SpendingsTable({
   items,
   categories,
   accounts,
+  hiddenAccounts,
   onEditSpending,
   onAddSpending,
   onToggleIgnore,
+  onToggleHideAccount,
 }: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
     () => groupByCategory(items, categories, accounts),
     [items, categories, accounts],
+  );
+
+  const hidden = useMemo(
+    () => new Set(hiddenAccounts ?? []),
+    [hiddenAccounts],
   );
 
   return (
@@ -51,7 +62,17 @@ export function SpendingsTable({
           {accountTotals.map((account) => (
             <tr key={account.accountId} className="account-total-row">
               <th scope="row" colSpan={2}>
-                {account.accountName}
+                <div className="account-total-inner">
+                  <span className="account-name">{account.accountName}</span>
+                  {onToggleHideAccount && (
+                    <AccountMenu
+                      hidden={hidden.has(account.accountId)}
+                      onToggleHide={() =>
+                        onToggleHideAccount(account.accountId)
+                      }
+                    />
+                  )}
+                </div>
               </th>
               <td className="amount">{formatCents(account.total)}</td>
             </tr>
@@ -90,6 +111,7 @@ export function SpendingsTable({
               group.spendings.map((spending) => (
                 <tr
                   key={spending.index}
+                  hidden={hidden.has(spending.accountId)}
                   className={spending.ignore ? "ignored-row" : undefined}
                 >
                   <td>
@@ -276,6 +298,29 @@ function ItemMenu({ ignored, onToggleIgnore }: ItemMenuProps) {
         </div>
       )}
     </div>
+  );
+}
+
+interface AccountMenuProps {
+  hidden: boolean;
+  onToggleHide: () => void;
+}
+
+/**
+ * A toggle button on an account total row that controls whether the account's
+ * item rows are hidden from view. Reads "Shown" by default and "Hidden" once
+ * toggled. This is purely visual and never affects any totals.
+ */
+function AccountMenu({ hidden, onToggleHide }: AccountMenuProps) {
+  return (
+    <button
+      type="button"
+      className="account-visibility-toggle"
+      aria-pressed={hidden}
+      onClick={onToggleHide}
+    >
+      {hidden ? "Hidden" : "Shown"}
+    </button>
   );
 }
 

@@ -1,7 +1,36 @@
 import type { SpendingsData } from "./types";
 
 const STORAGE_KEY = "blanje:spendings";
-const FILENAME_KEY = "blanje:filename";
+const META_KEY = "blanje:meta";
+
+/** App metadata persisted alongside the spendings data. */
+interface Meta {
+  lastLoadedFilename?: string;
+}
+
+/** Read the meta object from localStorage, or an empty object if none / unreadable. */
+function readMeta(): Meta {
+  try {
+    const raw = localStorage.getItem(META_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Meta)
+      : {};
+  } catch (err) {
+    console.error("Failed to read meta from localStorage", err);
+    return {};
+  }
+}
+
+/** Write the meta object back to localStorage. */
+function writeMeta(meta: Meta): void {
+  try {
+    localStorage.setItem(META_KEY, JSON.stringify(meta));
+  } catch (err) {
+    console.error("Failed to persist meta to localStorage", err);
+  }
+}
 
 /** Persist parsed spendings data to localStorage. */
 export function saveData(data: SpendingsData): void {
@@ -29,30 +58,22 @@ export function loadData(): SpendingsData | null {
 
 /** Persist the name of the file the current data was loaded from. */
 export function saveFilename(name: string): void {
-  try {
-    localStorage.setItem(FILENAME_KEY, name);
-  } catch (err) {
-    console.error("Failed to persist filename to localStorage", err);
-  }
+  writeMeta({ ...readMeta(), lastLoadedFilename: name });
 }
 
 /** Load the stored filename, or `null` if none / unreadable. */
 export function loadFilename(): string | null {
-  try {
-    return localStorage.getItem(FILENAME_KEY);
-  } catch (err) {
-    console.error("Failed to read filename from localStorage", err);
-    return null;
-  }
+  return readMeta().lastLoadedFilename ?? null;
 }
 
 /** Remove just the stored filename, leaving the spendings data intact. */
 export function clearFilename(): void {
-  localStorage.removeItem(FILENAME_KEY);
+  const { lastLoadedFilename: _omit, ...rest } = readMeta();
+  writeMeta(rest);
 }
 
-/** Remove stored spendings and the associated filename. */
+/** Remove stored spendings and the associated metadata. */
 export function clearData(): void {
   localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(FILENAME_KEY);
+  localStorage.removeItem(META_KEY);
 }

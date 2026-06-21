@@ -227,15 +227,18 @@ export function App() {
               ›
             </button>
           </div>
+          <NoteField
+            value={selected.note ?? ""}
+            editable
+            onChange={handleEditNote}
+          />
           <SpendingsTable
             items={selected.items}
-            note={selected.note}
             categories={data.categories}
             accounts={data.accounts}
             onEditSpending={handleEditSpending}
             onAddSpending={handleAddSpending}
             onToggleIgnore={handleToggleIgnore}
-            onEditNote={handleEditNote}
           />
         </section>
       ) : (
@@ -282,5 +285,60 @@ export function App() {
         />
       )}
     </main>
+  );
+}
+
+interface NoteFieldProps {
+  value: string;
+  editable: boolean;
+  onChange: (value: string) => void;
+}
+
+/**
+ * A free-form, multi-line note for the month. Renders as plain text and swaps
+ * to a textarea on click/tap when editable, committing edits live via onChange
+ * and reverting to read mode on blur.
+ */
+function NoteField({ value, editable, onChange }: NoteFieldProps) {
+  const [editing, setEditing] = useState(false);
+
+  if (!editable) {
+    return value === "" ? null : <p className="month-note">{value}</p>;
+  }
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        className="month-note month-note-display"
+        aria-label="Edit note"
+        onClick={() => setEditing(true)}
+      >
+        {value === "" ? (
+          <span className="cell-placeholder">Add a note</span>
+        ) : (
+          value
+        )}
+      </button>
+    );
+  }
+
+  return (
+    <textarea
+      id="month-note-input"
+      className="month-note month-note-input"
+      aria-label="Note"
+      value={value}
+      autoFocus
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={() => setEditing(false)}
+      onKeyDown={(e) => {
+        // Escape leaves edit mode; Enter inserts a newline (multi-line note).
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setEditing(false);
+        }
+      }}
+    />
   );
 }

@@ -175,7 +175,6 @@ export function App() {
     };
     setData(next);
     saveData(next);
-    // Bump the last-edited timestamp (used as the download filename suffix).
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
     saveLastEdited(stamp);
@@ -236,6 +235,9 @@ export function App() {
     };
     setData(next);
     saveData(next);
+    const stamp = formatTimestamp(new Date());
+    setLastEdited(stamp);
+    saveLastEdited(stamp);
   }
 
   function handleDownload() {

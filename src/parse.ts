@@ -1,9 +1,9 @@
 import type {
   Account,
   Category,
-  MonthlySpendings,
+  MonthlySpending,
   Spending,
-  SpendingsData,
+  UserData,
 } from "./types";
 
 /** Thrown when uploaded JSON does not match the expected shape. */
@@ -66,7 +66,7 @@ function parseSpending(value: unknown, path: string): Spending {
   return spending;
 }
 
-function parseMonthly(value: unknown, path: string): MonthlySpendings {
+function parseMonthly(value: unknown, path: string): MonthlySpending {
   if (!isObject(value)) {
     throw new ValidationError(`${path} must be an object`);
   }
@@ -92,7 +92,7 @@ function parseMonthly(value: unknown, path: string): MonthlySpendings {
 }
 
 /** Parse and validate the raw JSON text of an uploaded spendings file. */
-export function parseSpendingsJson(text: string): SpendingsData {
+export function parseSpendingsJson(text: string): UserData {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
@@ -125,4 +125,26 @@ export function parseSpendingsJson(text: string): SpendingsData {
   );
 
   return { accounts, categories, spendings };
+}
+
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+export function monthLabel(month: number): string {
+  const year = Math.floor(month / 100);
+  const m = month % 100;
+  const name = MONTH_NAMES[m - 1] ?? `Month ${m}`;
+  return `${name} ${year}`;
 }

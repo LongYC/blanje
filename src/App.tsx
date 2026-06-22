@@ -4,19 +4,20 @@ import { FileLoader } from "./components/FileLoader";
 import { SpendingsTable } from "./components/SpendingsTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
+import { monthLabel } from "./parse";
 import {
-  clearData,
+  clearAllData,
   clearFilename,
-  loadData,
-  loadFilename,
-  loadHiddenAccounts,
-  loadLastEdited,
-  saveData,
-  saveFilename,
+  readUserData,
+  readLastLoadedFilename,
+  readHiddenAccounts,
+  readLastEdited,
+  writeUserData,
+  saveLastLoadedFilename,
   saveHiddenAccounts,
   saveLastEdited,
 } from "./storage";
-import { monthLabel, type SpendingsData, type Spending } from "./types";
+import { type UserData, type Spending } from "./types";
 
 const EXAMPLE_JSON = `{
   "accounts": [{ "id": "abc", "name": "ABC Bank" }],
@@ -46,22 +47,22 @@ function formatTimestamp(date: Date): string {
 }
 
 export function App() {
-  const [data, setData] = useState<SpendingsData | null>(() => loadData());
-  const [filename, setFilename] = useState<string | null>(() => loadFilename());
+  const [data, setData] = useState<UserData | null>(() => readUserData());
+  const [filename, setFilename] = useState<string | null>(() => readLastLoadedFilename());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
   // Account ids whose item rows are hidden from view. Purely visual — totals are
   // unaffected. Persisted to meta and reset whenever a new file is loaded.
   const [hiddenAccounts, setHiddenAccounts] = useState<string[]>(() =>
-    loadHiddenAccounts(),
+    readHiddenAccounts(),
   );
   // Timestamp of the last item name/amount edit (YYYY-MM-DD_HHmm_ss), or "" if
   // nothing has been edited since the current file was loaded.
-  const [lastEdited, setLastEdited] = useState<string>(() => loadLastEdited());
+  const [lastEdited, setLastEdited] = useState<string>(() => readLastEdited());
   // When a load replaces existing data we stash it (and its filename) here so
   // the Undo toast can restore both; a non-null `previousData` also drives the
   // toast's visibility.
-  const [previousData, setPreviousData] = useState<SpendingsData | null>(null);
+  const [previousData, setPreviousData] = useState<UserData | null>(null);
   const [previousFilename, setPreviousFilename] = useState<string | null>(null);
   const [previousLastEdited, setPreviousLastEdited] = useState<string>("");
   // Bumped on each load so a back-to-back replacement remounts the toast and
@@ -97,7 +98,7 @@ export function App() {
     setSelectedMonth(data.spendings[next].month);
   }
 
-  function handleLoaded(loaded: SpendingsData, name: string) {
+  function handleLoaded(loaded: UserData, name: string) {
     // Loading over existing data is destructive — keep the old data (and its
     // filename) around so the Undo toast can put it back. Loading into an empty
     // app needs no toast.
@@ -106,8 +107,8 @@ export function App() {
     setPreviousLastEdited(lastEdited);
     setData(loaded);
     setFilename(name);
-    saveData(loaded);
-    saveFilename(name);
+    writeUserData(loaded);
+    saveLastLoadedFilename(name);
     // A fresh file's accounts are unrelated to the previous ones, so start with
     // nothing hidden. This is intentionally not restored by the Undo toast.
     setHiddenAccounts([]);
@@ -133,9 +134,9 @@ export function App() {
   function handleUndoLoad() {
     if (!previousData) return;
     setData(previousData);
-    saveData(previousData);
+    writeUserData(previousData);
     setFilename(previousFilename);
-    if (previousFilename) saveFilename(previousFilename);
+    if (previousFilename) saveLastLoadedFilename(previousFilename);
     else clearFilename();
     setLastEdited(previousLastEdited);
     saveLastEdited(previousLastEdited);
@@ -149,7 +150,7 @@ export function App() {
   }
 
   function confirmClear() {
-    clearData();
+    clearAllData();
     setData(null);
     setFilename(null);
     setPreviousData(null);
@@ -160,7 +161,7 @@ export function App() {
   // Apply an edit to a single item within the selected month, then persist.
   function handleEditSpending(index: number, patch: Partial<Spending>) {
     if (!data || selectedMonth === null) return;
-    const next: SpendingsData = {
+    const next: UserData = {
       ...data,
       spendings: data.spendings.map((month) =>
         month.month !== selectedMonth
@@ -174,7 +175,7 @@ export function App() {
       ),
     };
     setData(next);
-    saveData(next);
+    writeUserData(next);
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
     saveLastEdited(stamp);
@@ -184,7 +185,7 @@ export function App() {
   // the `ignore` property entirely so a saved file never carries `ignore: false`.
   function handleToggleIgnore(index: number) {
     if (!data || selectedMonth === null) return;
-    const next: SpendingsData = {
+    const next: UserData = {
       ...data,
       spendings: data.spendings.map((month) =>
         month.month !== selectedMonth
@@ -203,20 +204,20 @@ export function App() {
       ),
     };
     setData(next);
-    saveData(next);
+    writeUserData(next);
   }
 
   // Update the free-form note on the selected month, then persist.
   function handleEditNote(note: string) {
     if (!data || selectedMonth === null) return;
-    const next: SpendingsData = {
+    const next: UserData = {
       ...data,
       spendings: data.spendings.map((month) =>
         month.month !== selectedMonth ? month : { ...month, note },
       ),
     };
     setData(next);
-    saveData(next);
+    writeUserData(next);
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
     saveLastEdited(stamp);
@@ -225,7 +226,7 @@ export function App() {
   // Append a new item to the selected month, then persist.
   function handleAddSpending(spending: Spending) {
     if (!data || selectedMonth === null) return;
-    const next: SpendingsData = {
+    const next: UserData = {
       ...data,
       spendings: data.spendings.map((month) =>
         month.month !== selectedMonth
@@ -234,7 +235,7 @@ export function App() {
       ),
     };
     setData(next);
-    saveData(next);
+    writeUserData(next);
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
     saveLastEdited(stamp);

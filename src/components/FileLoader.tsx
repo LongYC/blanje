@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { parseSpendingsJson, ValidationError } from "../parse";
-import type { SpendingsData } from "../types";
+import type { UserData } from "../types";
 
 interface FileLoaderProps {
-  onLoaded: (data: SpendingsData, filename: string) => void;
+  onLoaded: (data: UserData, filename: string) => void;
 }
 
 export function FileLoader({ onLoaded }: FileLoaderProps) {

@@ -21,39 +21,21 @@ export interface Spending {
   ignore?: boolean;
 }
 
-/** One month's worth of spending items, keyed by a `YYYYMM` integer. */
-export interface MonthlySpendings {
+/** Monthly spendings, each month keyed by a `YYYYMM` integer. */
+export interface MonthlySpending {
   month: number; // e.g. 202607 for July 2026
   items: Spending[];
   note?: string;
 }
 
-/** The whole document: global accounts/categories plus per-month spendings. */
-export interface SpendingsData {
+export interface UserData {
   accounts: Account[];
   categories: Category[];
-  spendings: MonthlySpendings[];
+  spendings: MonthlySpending[];
 }
 
-const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-/** A human-readable label for a `YYYYMM` month, e.g. `June 2026`. */
-export function monthLabel(month: number): string {
-  const year = Math.floor(month / 100);
-  const m = month % 100;
-  const name = MONTH_NAMES[m - 1] ?? `Month ${m}`;
-  return `${name} ${year}`;
+export interface AppData {
+  lastLoadedFilename?: string;
+  hiddenAccounts?: string[];
+  lastEdited?: string; // formatted as `YYYY-MM-DD_HHmm_ss`.
 }

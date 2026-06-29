@@ -18,6 +18,7 @@ import {
   saveLastEdited,
 } from "./storage";
 import { type UserData, type Spending } from "./types";
+import { Button } from "./components/Button";
 
 const EXAMPLE_JSON = `{
   "accounts": [{ "id": "abc", "name": "ABC Bank" }],
@@ -257,12 +258,8 @@ export function App() {
       </header>
 
       <section className="controls">
-        <FileLoader onLoaded={handleLoaded} />
-        {data && data.spendings.length > 0 && (
-          <button type="button" onClick={handleDownload}>
-            Save as JSON file
-          </button>
-        )}
+        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(data)} />
+        {data && data.spendings.length > 0 && (<Button label="Save as JSON file" onClick={handleDownload} variant="main" />)}
       </section>
 
       {selected && data ? (
@@ -322,9 +319,7 @@ export function App() {
               </span>
             )}
           </div>
-          <button type="button" className="clear-btn" onClick={handleClear}>
-            Clear all loaded data
-          </button>
+          <Button label="Clear all loaded data" onClick={handleClear} />
         </section>
       )}
 
@@ -334,6 +329,7 @@ export function App() {
         description="This permanently deletes all the data loaded. Make sure you have saved all your edits to a new JSON file so your data is not lost."
         confirmLabel="Delete data"
         onConfirm={confirmClear}
+        cancelLabel="Keep data"
         onCancel={() => setConfirmingClear(false)}
       />
 

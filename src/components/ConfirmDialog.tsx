@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from "react";
 import styles from "./ConfirmDialog.module.css";
+import { Button } from "./Button";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -7,6 +8,7 @@ interface ConfirmDialogProps {
   description: string;
   confirmLabel: string;
   onConfirm: () => void;
+  cancelLabel: string;
   onCancel: () => void;
 }
 
@@ -16,6 +18,7 @@ export function ConfirmDialog({
   description,
   confirmLabel,
   onConfirm,
+  cancelLabel,
   onCancel,
 }: ConfirmDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -58,12 +61,8 @@ export function ConfirmDialog({
         {description}
       </p>
       <div className={styles.actions}>
-        <button type="button" ref={cancelRef} className="clear-btn" onClick={onCancel}>
-          Go back
-        </button>
-        <button type="button" className={styles.danger} onClick={onConfirm}>
-          {confirmLabel}
-        </button>
+        <Button ref={cancelRef} label={cancelLabel} onClick={onCancel} />
+        <Button label={confirmLabel} onClick={onConfirm} variant="danger" />
       </div>
     </dialog>
   );

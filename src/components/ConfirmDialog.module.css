@@ -33,9 +33,3 @@
   justify-content: flex-end;
   gap: 0.75rem;
 }
-
-.danger {
-  background: #b91c1c;
-  border-color: transparent;
-  color: #fff;
-}

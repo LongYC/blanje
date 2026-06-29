@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import { parseSpendingsJson, ValidationError } from "../parse";
 import type { UserData } from "../types";
+import { Button } from "./Button";
 
 interface FileLoaderProps {
   onLoaded: (data: UserData, filename: string) => void;
+  hasExistingData?: boolean;
 }
 
-export function FileLoader({ onLoaded }: FileLoaderProps) {
+export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,9 +41,7 @@ export function FileLoader({ onLoaded }: FileLoaderProps) {
           e.target.value = "";
         }}
       />
-      <button type="button" onClick={() => inputRef.current?.click()}>
-        Load JSON file
-      </button>
+      <Button label="Load JSON file" onClick={() => inputRef.current?.click()} variant={hasExistingData ? "danger" : "main"} />
       {error && (
         <p className="error" role="alert">
           {error}

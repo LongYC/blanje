@@ -3,12 +3,13 @@ import {
   useMemo,
   useRef,
   useState,
-  type FormEvent,
+  type SubmitEvent,
   type ReactNode,
 } from "react";
 import { groupByCategory } from "../group";
 import { formatCents } from "../format";
 import type { Account, Category, Spending } from "../types";
+import { AccountMenu } from "./AccountMenu";
 
 interface SpendingsTableProps {
   items: Spending[];
@@ -301,29 +302,6 @@ function ItemMenu({ ignored, onToggleIgnore }: ItemMenuProps) {
   );
 }
 
-interface AccountMenuProps {
-  hidden: boolean;
-  onToggleHide: () => void;
-}
-
-/**
- * A toggle button on an account total row that controls whether the account's
- * item rows are hidden from view. Reads "Shown" by default and "Hidden" once
- * toggled. This is purely visual and never affects any totals.
- */
-function AccountMenu({ hidden, onToggleHide }: AccountMenuProps) {
-  return (
-    <button
-      type="button"
-      className="account-visibility-toggle"
-      aria-pressed={hidden}
-      onClick={onToggleHide}
-    >
-      {hidden ? "Hidden" : "Shown"}
-    </button>
-  );
-}
-
 interface AddSpendingRowProps {
   categoryId: string;
   accounts: Account[];
@@ -343,7 +321,7 @@ function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
     setAccountId("");
   }
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     if (
       name.trim() === "" ||

@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { parseSpendingsJson, ValidationError } from "../parse";
 import type { UserData } from "../types";
 import { Button } from "./Button";
+import styles from "./FileLoader.module.css";
 
 interface FileLoaderProps {
   onLoaded: (data: UserData, filename: string) => void;
@@ -28,12 +29,17 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
   }
 
   return (
-    <div className="file-loader">
+    <div className={styles.loader}>
+      {error && (
+        <p className={styles.error} role="alert">
+          {`Failed to load JSON file: ${error}`}
+        </p>
+      )}
       <input
         ref={inputRef}
         type="file"
         accept="application/json,.json"
-        className="visually-hidden"
+        className={styles.hidden}
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) void handleFile(file);
@@ -42,11 +48,6 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
         }}
       />
       <Button label="Load JSON file" onClick={() => inputRef.current?.click()} variant={hasExistingData ? "danger" : "main"} />
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
     </div>
   );
 }

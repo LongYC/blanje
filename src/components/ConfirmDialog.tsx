@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from "react";
+import styles from "./ConfirmDialog.module.css";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -41,7 +42,7 @@ export function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="confirm-dialog"
+      className={styles.dialog}
       aria-labelledby={titleId}
       aria-describedby={descId}
       // Esc fires the native `cancel` event; route it back to React state.
@@ -50,17 +51,17 @@ export function ConfirmDialog({
         onCancel();
       }}
     >
-      <h2 id={titleId} className="confirm-title">
+      <h2 id={titleId} className={styles.title}>
         {title}
       </h2>
-      <p id={descId} className="confirm-description">
+      <p id={descId} className={styles.description}>
         {description}
       </p>
-      <div className="confirm-actions">
+      <div className={styles.actions}>
         <button type="button" ref={cancelRef} className="clear-btn" onClick={onCancel}>
           Go back
         </button>
-        <button type="button" className="danger-btn" onClick={onConfirm}>
+        <button type="button" className={styles.danger} onClick={onConfirm}>
           {confirmLabel}
         </button>
       </div>

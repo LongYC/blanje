@@ -104,19 +104,6 @@ button:hover {
   font-weight: 600;
 }
 
-.danger-zone .clear-btn {
-  margin-top: 1rem;
-  background: transparent;
-  color: var(--muted);
-  border-color: var(--border);
-}
-
-@media (min-width: 480px) {
-  .danger-zone .clear-btn {
-    margin-top: 0;
-  }
-}
-
 /* Note field */
 .month-note {
   display: block;
@@ -616,41 +603,7 @@ button:hover {
   color: var(--text);
 }
 
-/* Confirmation dialog (native <dialog> + showModal). */
-.confirm-dialog {
-  max-width: 21rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
-  color: var(--text);
-}
-
-@media (max-width: 21rem) {
-  .confirm-dialog {
-    margin: auto 1rem;
-  }
-}
-
-.confirm-dialog::backdrop {
-  background: rgb(0 0 0 / 0.4);
-}
-
-.confirm-title {
-  margin: 0 0 0.5rem;
-  font-size: 1.15rem;
-}
-
-.confirm-description {
-  margin: 0 0 1.25rem;
-  color: var(--muted);
-}
-
-.confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
+/* Danger zone */
 
 .danger-zone .clear-btn {
   margin-top: 1rem;
@@ -659,10 +612,10 @@ button:hover {
   border-color: var(--border);
 }
 
-.danger-btn {
-  background: #b91c1c;
-  border-color: transparent;
-  color: #fff;
+@media (min-width: 480px) {
+  .danger-zone .clear-btn {
+    margin-top: 0;
+  }
 }
 
 /* Undo snackbar for replaced data. */

@@ -331,7 +331,7 @@ export function App() {
       <ConfirmDialog
         open={confirmingClear}
         title="Clear all loaded data?"
-        description="This permanently deletes all the data loaded. Make sure you have saved all your edits to a new JSON file before you proceed so your data is not lost."
+        description="This permanently deletes all the data loaded. Make sure you have saved all your edits to a new JSON file so your data is not lost."
         confirmLabel="Delete data"
         onConfirm={confirmClear}
         onCancel={() => setConfirmingClear(false)}

@@ -4,12 +4,18 @@ A client-side-only web app to track monthly spendings using a JSON file.
 Data is parsed in the browser, stored in `localStorage`, and shown as a table
 grouped by category with per-category and grand totals.
 
-Guidelines when addinng or changing features behind the app:
-- Does one thing only: focuses on tracking monthly expenses, not to be a comprehensive financial management tool.
-- Clear goal: to let users see per-category spendings, not to track details like transaction time or account types. The account data is just there so that users can cross-check the amounts with their account statements.
-- Utilise browser capabilities: no server, no database in the cloud, no authentication.
-- UX for Desctructive operations: there should be some frictions and quick undo for destructive operations to reduce the chance of accidental data loss.
-- Why JSON: human-readable yet easy to edit and store. Target audience is people who are familiar with JSON files.
+Guidelines when addinng or updating features for the app:
+
+- Does one thing only:
+  - to see per-category monthly spendings to be used for decision makings, not to be a comprehensive financial management tool. The account data is just there so that users can cross-check the amounts with their account statements.
+- Frictions on desctructive operations:
+  - there should be some frictions and quick undo for destructive operations to reduce the chance of accidental data loss.
+- Opinionated defaults over customisations:
+  - this is a tool to assist and be out of the way of the main goal.
+- Utilise browser capabilities:
+  - no server, no database in the cloud, no authentication.
+- Why JSON:
+  - human-readable yet easy to edit and store. This app is designed for people who are comfortable working with JSON files.
 
 ## Getting started
 

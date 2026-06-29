@@ -58,7 +58,7 @@ export function ConfirmDialog({
       </p>
       <div className="confirm-actions">
         <button type="button" ref={cancelRef} className="clear-btn" onClick={onCancel}>
-          Cancel
+          Go back
         </button>
         <button type="button" className="danger-btn" onClick={onConfirm}>
           {confirmLabel}

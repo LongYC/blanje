@@ -23,6 +23,9 @@ body {
 }
 
 button {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
   cursor: pointer;
 }
 

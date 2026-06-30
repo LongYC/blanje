@@ -254,12 +254,12 @@ export function App() {
     <main className="app">
       <header className="app-header">
         <h1>Blanje</h1>
-        <p className="tagline">For those who want to track monthly spendings with a JSON file.</p>
+        <p className="tagline">Track monthly spendings with one JSON file.</p>
       </header>
 
       <section className="controls">
         <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(data)} />
-        {data && data.spendings.length > 0 && (<Button label="Save as JSON file" onClick={handleDownload} variant="main" />)}
+        {data && data.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
       </section>
 
       {selected && data ? (

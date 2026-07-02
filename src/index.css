@@ -80,41 +80,6 @@ button:hover {
   }
 }
 
-/* Note field */
-.month-note {
-  display: block;
-  width: 100%;
-  margin: 1.5rem 0;
-  padding: 0.75rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  font: inherit;
-  color: var(--text);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.month-note-display {
-  text-align: left;
-  cursor: text;
-}
-
-.month-note-display:hover {
-  border-color: var(--accent);
-  filter: none;
-}
-
-.month-note-input {
-  resize: vertical;
-  field-sizing: content;
-}
-
-.month-note-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
 /* Month navigation */
 .month-nav {
   position: sticky;

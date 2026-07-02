@@ -19,25 +19,7 @@ import {
 } from "./storage";
 import { type UserData, type Spending } from "./types";
 import { Button } from "./components/Button";
-
-const EXAMPLE_JSON = `{
-  "accounts": [{ "id": "abc", "name": "ABC Bank" }],
-  "categories": [{ "id": "groceries", "name": "Groceries" }],
-  "spendings": [
-    {
-      "month": 202607,
-      "note": "Optional note for the month",
-      "items": [
-        {
-          "categoryId": "groceries",
-          "name": "Weekly groceries",
-          "amount": "210.30",
-          "accountId": "abc"
-        }
-      ]
-    }
-  ]
-}`;
+import { EmptyState } from "./components/EmptyState";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
 function formatTimestamp(date: Date): string {
@@ -301,14 +283,7 @@ export function App() {
             onToggleHideAccount={handleToggleHideAccount}
           />
         </section>
-      ) : (
-        <section className="empty-state">
-          <p>
-            No data loaded yet. Load a JSON file to this page to get started. You'll be able to view and edit your spending data, grouped by category. All data are client-side only and the JSON file must match the schema shown below:
-          </p>
-          <pre className="example-json">{EXAMPLE_JSON}</pre>
-        </section>
-      )}
+      ) : <EmptyState />}
 
       {data && data.spendings.length > 0 && (
         <section className="danger-zone">

@@ -18,6 +18,7 @@ import {
   saveLastEdited,
 } from "./storage";
 import { type UserData, type Spending } from "./types";
+import { AppHeader } from "./components/AppHeader";
 import { Button } from "./components/Button";
 import { DangerZone } from "./components/DangerZone";
 import { EmptyState } from "./components/EmptyState";
@@ -236,10 +237,7 @@ export function App() {
 
   return (
     <main className="app">
-      <header className="app-header">
-        <h1>Blanje</h1>
-        <p className="tagline">Track monthly spendings with one JSON file.</p>
-      </header>
+      <AppHeader />
 
       <section className="controls">
         <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(data)} />

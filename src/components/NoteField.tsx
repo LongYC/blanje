@@ -28,7 +28,7 @@ export function NoteField({ value, editable, onChange }: NoteFieldProps) {
         onClick={() => setEditing(true)}
       >
         {value === "" ? (
-          <span className="cell-placeholder">Add a note</span>
+          <span className={styles.placeholder}>Add a note</span>
         ) : (
           value
         )}

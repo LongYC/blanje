@@ -40,18 +40,6 @@ button:hover {
   padding: 2rem 1.25rem 4rem;
 }
 
-/* Header */
-.app-header h1 {
-  margin: 0;
-  font-size: 2rem;
-  letter-spacing: -0.02em;
-}
-
-.tagline {
-  margin: 0.25rem 0 0;
-  color: var(--muted);
-}
-
 /* Controls section */
 .controls {
   flex-wrap: wrap;
@@ -70,10 +58,15 @@ button:hover {
   margin-top: 1rem;
 }
 
+.controls button:first-of-type {
+  margin-top: 0;
+}
+
 @media (min-width: 480px) {
   .controls {
     display: flex;
   }
+
   .controls button {
     width: auto;
     margin-top: 0;

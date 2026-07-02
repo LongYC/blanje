@@ -33,3 +33,7 @@
   outline: none;
   border-color: var(--accent);
 }
+
+.placeholder {
+  color: var(--muted);
+}

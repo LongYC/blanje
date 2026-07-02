@@ -29,7 +29,7 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
   }
 
   return (
-    <div className={styles.loader}>
+    <>
       {error && (
         <p className={styles.error} role="alert">
           {`Failed to load JSON file: ${error}`}
@@ -48,6 +48,6 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
         }}
       />
       <Button label="Load from a JSON file" onClick={() => inputRef.current?.click()} variant={hasExistingData ? "danger" : "main"} />
-    </div>
+    </>
   );
 }

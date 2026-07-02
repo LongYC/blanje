@@ -19,6 +19,7 @@ import {
 } from "./storage";
 import { type UserData, type Spending } from "./types";
 import { Button } from "./components/Button";
+import { DangerZone } from "./components/DangerZone";
 import { EmptyState } from "./components/EmptyState";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
@@ -285,18 +286,7 @@ export function App() {
         </section>
       ) : <EmptyState />}
 
-      {data && data.spendings.length > 0 && (
-        <section className="danger-zone">
-          <div className="danger-zone-text">
-            {filename && (
-              <span className="loaded-file">
-                Last loaded from <strong>{filename}</strong>
-              </span>
-            )}
-          </div>
-          <Button label="Clear all loaded data" onClick={handleClear} />
-        </section>
-      )}
+      {data && data.spendings.length > 0 && <DangerZone filename={filename} onClear={handleClear} />}
 
       <ConfirmDialog
         open={confirmingClear}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { FileLoader } from "./components/FileLoader";
-import { SpendingsTable } from "./components/SpendingsTable";
+import { SpendingsTable } from "./components/table/SpendingsTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
 import { monthLabel } from "./parse";

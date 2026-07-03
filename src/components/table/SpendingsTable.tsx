@@ -1,15 +1,9 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type SubmitEvent,
-  type ReactNode,
-} from "react";
-import { groupByCategory } from "../group";
-import { formatCents } from "../format";
-import type { Account, Category, Spending } from "../types";
-import { AccountMenu } from "./AccountMenu";
+import { useMemo, useState, type SubmitEvent, type ReactNode, } from "react";
+import { groupByCategory } from "../../group";
+import { formatCents } from "../../format";
+import type { Account, Category, Spending } from "../../types";
+import { AccountMenu } from "../AccountMenu";
+import { ItemMenu } from "./ItemMenu";
 
 interface SpendingsTableProps {
   items: Spending[];
@@ -238,84 +232,6 @@ function EditableCell({
         }
       }}
     />
-  );
-}
-
-interface ItemMenuProps {
-  ignored: boolean;
-  /** True when this item is already the first of its category in the list. */
-  isFirstInCategory: boolean;
-  onToggleIgnore: () => void;
-  onMoveUp: () => void;
-}
-
-/**
- * A "⋯" trigger that opens a small popover menu for per-item actions.
- * Supports toggling ignore and moving the item up within its category.
- * Closes on outside click/tap or Escape.
- */
-function ItemMenu({ ignored, isFirstInCategory, onToggleIgnore, onMoveUp }: ItemMenuProps) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function handlePointerDown(e: PointerEvent) {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
-    }
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open]);
-
-  return (
-    <div className="item-menu" ref={containerRef}>
-      <button
-        type="button"
-        className="item-menu-trigger"
-        aria-label="Item actions"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        ⋯
-      </button>
-      {open && (
-        <div className="item-menu-popover" role="menu">
-          {!isFirstInCategory && (
-            <button
-              type="button"
-              role="menuitem"
-              className="item-menu-item"
-              disabled={isFirstInCategory}
-              onClick={() => {
-                onMoveUp();
-                setOpen(false);
-              }}
-            >
-              Move up
-            </button>
-          )}
-          <button
-            type="button"
-            role="menuitem"
-            className="item-menu-item"
-            onClick={() => {
-              onToggleIgnore();
-              setOpen(false);
-            }}
-          >
-            {ignored ? "Unignore" : "Ignore"}
-          </button>
-        </div>
-      )}
-    </div>
   );
 }
 

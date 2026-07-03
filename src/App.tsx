@@ -209,6 +209,44 @@ export function App() {
     saveLastEdited(stamp);
   }
 
+  // Move the item at `index` to just before the closest preceding item that
+  // shares the same categoryId. No-op if it is already first in its category.
+  function handleMoveItemUp(index: number) {
+    if (!data || selectedMonth === null) return;
+    const monthEntry = data.spendings.find((s) => s.month === selectedMonth);
+    if (!monthEntry) return;
+
+    const items = monthEntry.items;
+    const categoryId = items[index]?.categoryId;
+    if (categoryId === undefined) return;
+
+    // Find the closest preceding item with the same category.
+    let insertBefore = -1;
+    for (let i = index - 1; i >= 0; i--) {
+      if (items[i].categoryId === categoryId) {
+        insertBefore = i;
+        break;
+      }
+    }
+    if (insertBefore === -1) return; // already first in category
+
+    const next = [...items];
+    const [moved] = next.splice(index, 1);
+    next.splice(insertBefore, 0, moved);
+
+    const nextData: UserData = {
+      ...data,
+      spendings: data.spendings.map((month) =>
+        month.month !== selectedMonth ? month : { ...month, items: next },
+      ),
+    };
+    setData(nextData);
+    writeUserData(nextData);
+    const stamp = formatTimestamp(new Date());
+    setLastEdited(stamp);
+    saveLastEdited(stamp);
+  }
+
   // Append a new item to the selected month, then persist.
   function handleAddSpending(spending: Spending) {
     if (!data || selectedMonth === null) return;
@@ -280,6 +318,7 @@ export function App() {
             onEditSpending={handleEditSpending}
             onAddSpending={handleAddSpending}
             onToggleIgnore={handleToggleIgnore}
+            onMoveItemUp={handleMoveItemUp}
             onToggleHideAccount={handleToggleHideAccount}
           />
         </section>

@@ -15,19 +15,18 @@ interface SpendingsTableProps {
   items: Spending[];
   categories: Category[];
   accounts: Account[];
-  /** Account ids whose item rows are hidden from view (does not affect calculations). */
   hiddenAccounts?: string[];
   /**
    * Called when a spending is edited. `index` is the position within the
    * month's original `items` array; `patch` carries the changed fields.
    */
   onEditSpending?: (index: number, patch: Partial<Spending>) => void;
-  /** Called when a new spending is added to a category. */
   onAddSpending?: (spending: Spending) => void;
-  /** Toggle whether the item at `index` is ignored in totals. */
-  onToggleIgnore?: (index: number) => void;
-  /** Toggle whether `accountId`'s item rows are hidden from view. */
-  onToggleHideAccount?: (accountId: string) => void;
+  // Toggle whether the item at `index` is ignored in totals.
+  onToggleIgnore: (index: number) => void;
+  // Move the item at `index` to just before the closest preceding item that shares the same category.
+  onMoveItemUp: (index: number) => void;
+  onToggleHideAccount: (accountId: string) => void;
 }
 
 export function SpendingsTable({
@@ -38,6 +37,7 @@ export function SpendingsTable({
   onEditSpending,
   onAddSpending,
   onToggleIgnore,
+  onMoveItemUp,
   onToggleHideAccount,
 }: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
@@ -156,12 +156,12 @@ export function SpendingsTable({
                       <span className="account-name">
                         {spending.accountName}
                       </span>
-                      {onToggleIgnore && (
-                        <ItemMenu
-                          ignored={Boolean(spending.ignore)}
-                          onToggleIgnore={() => onToggleIgnore(spending.index)}
-                        />
-                      )}
+                      <ItemMenu
+                        ignored={Boolean(spending.ignore)}
+                        isFirstInCategory={group.spendings[0].index === spending.index}
+                        onToggleIgnore={() => onToggleIgnore(spending.index)}
+                        onMoveUp={() => onMoveItemUp(spending.index)}
+                      />
                     </div>
                   </td>
                 </tr>
@@ -243,15 +243,18 @@ function EditableCell({
 
 interface ItemMenuProps {
   ignored: boolean;
+  /** True when this item is already the first of its category in the list. */
+  isFirstInCategory: boolean;
   onToggleIgnore: () => void;
+  onMoveUp: () => void;
 }
 
 /**
- * A "⋯" trigger that opens a small popover menu for per-item actions. Currently
- * just toggles whether the item is ignored in totals. Closes on outside
- * click/tap or Escape.
+ * A "⋯" trigger that opens a small popover menu for per-item actions.
+ * Supports toggling ignore and moving the item up within its category.
+ * Closes on outside click/tap or Escape.
  */
-function ItemMenu({ ignored, onToggleIgnore }: ItemMenuProps) {
+function ItemMenu({ ignored, isFirstInCategory, onToggleIgnore, onMoveUp }: ItemMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -285,6 +288,20 @@ function ItemMenu({ ignored, onToggleIgnore }: ItemMenuProps) {
       </button>
       {open && (
         <div className="item-menu-popover" role="menu">
+          {!isFirstInCategory && (
+            <button
+              type="button"
+              role="menuitem"
+              className="item-menu-item"
+              disabled={isFirstInCategory}
+              onClick={() => {
+                onMoveUp();
+                setOpen(false);
+              }}
+            >
+              Move up
+            </button>
+          )}
           <button
             type="button"
             role="menuitem"

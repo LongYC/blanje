@@ -36,7 +36,7 @@ export function SpendingsTable({
   onMoveItemUp,
   AccountMenuComponent,
 }: SpendingsTableProps) {
-  const { categoryGroups, accountTotals, grandTotal } = useMemo(
+  const { categoryGroups, accountTotals, grandTotal, labelTotals } = useMemo(
     () => groupItemsByCategory(items, categories, accounts),
     [items, categories, accounts],
   );
@@ -70,6 +70,30 @@ export function SpendingsTable({
               <td className="amount">{formatCents(account.total)}</td>
             </tr>
           ))}
+        </tbody>
+      </table>
+      <table className="labels-table">
+        <thead>
+          <tr>
+            <th scope="col">Label</th>
+            <th scope="col" className="amount">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {labelTotals.length === 0 ? (
+            <tr>
+              <td colSpan={2}>No labels</td>
+            </tr>
+          ) : (
+            [...labelTotals]
+              .sort((a, b) => b.total - a.total)
+              .map((lt) => (
+                <tr key={lt.label}>
+                  <th scope="row">{lt.label}</th>
+                  <td className="amount">{formatCents(lt.total)}</td>
+                </tr>
+              ))
+          )}
         </tbody>
       </table>
       <table className="category-table">
@@ -111,9 +135,27 @@ export function SpendingsTable({
                         value={groupedItem.name}
                         display={
                           groupedItem.name === "" ? (
-                            <span className="cell-placeholder">Item name</span>
+                            <>
+                              <span className="cell-placeholder">Item name</span>
+                              {groupedItem.labels && groupedItem.labels.length > 0 && (
+                                <span className="item-labels">
+                                  {groupedItem.labels.map((l) => (
+                                    <span className="item-label" key={l}>{l}</span>
+                                  ))}
+                                </span>
+                              )}
+                            </>
                           ) : (
-                            groupedItem.name
+                            <>
+                              {groupedItem.name}
+                              {groupedItem.labels && groupedItem.labels.length > 0 && (
+                                <span className="item-labels">
+                                  {groupedItem.labels.map((l) => (
+                                    <span className="item-label" key={l}>{l}</span>
+                                  ))}
+                                </span>
+                              )}
+                            </>
                           )
                         }
                         ariaLabel="Item name"
@@ -122,7 +164,16 @@ export function SpendingsTable({
                         }
                       />
                     ) : (
-                      groupedItem.name
+                      <>
+                        {groupedItem.name}
+                        {groupedItem.labels && groupedItem.labels.length > 0 && (
+                          <span className="item-labels">
+                            {groupedItem.labels.map((l) => (
+                              <span className="item-label" key={l}>{l}</span>
+                            ))}
+                          </span>
+                        )}
+                      </>
                     )}
                   </td>
                   <td className="amount">

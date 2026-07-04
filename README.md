@@ -53,7 +53,8 @@ The app expects an object with global `accounts` and `categories`, plus
           "categoryId": "wellness",
           "name": "Sunscreen (from Shop X)",
           "amount": "123.45",
-          "accountId": "abc"
+          "accountId": "abc",
+          "labels": ["urgent"]
         }
       ]
     }

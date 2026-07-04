@@ -135,6 +135,12 @@ button:hover {
   margin-top: 1.5rem;
 }
 
+.labels-table {
+  margin-top: 1rem;
+}
+
+.labels-table th,
+.labels-table td,
 .spendings-table th,
 .spendings-table td,
 .category-table th,
@@ -179,6 +185,20 @@ button:hover {
 
 .cell-placeholder {
   color: var(--muted);
+}
+
+.item-labels {
+  margin-left: 0.5rem;
+}
+
+.item-label {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.08rem 0.45rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: rgba(0,0,0,0.03);
+  border-radius: 999px;
 }
 
 .empty-row td {

@@ -30,6 +30,14 @@ export interface GroupedResult {
   categoryGroups: CategoryGroup[];
   accountTotals: AccountTotal[];
   grandTotal: number;
+  labelTotals: LabelTotal[];
+}
+
+
+export interface LabelTotal {
+  label: string;
+  /** Total as an integer number of cents. */
+  total: number;
 }
 
 const UNKNOWN_CATEGORY = "Uncategorised";
@@ -104,6 +112,19 @@ export function groupItemsByCategory(
   const categoryGroups = [...categoryGroupMap.values()];
   const grandTotal = categoryGroups.reduce((sum, g) => sum + g.total, 0);
 
+  // Compute label totals (do not affect other calculations). Exclude ignored items.
+  const labelTotalsMap = new Map<string, number>();
+  items.forEach((item) => {
+    if (item.ignore) return;
+    const cents = toCents(item.amount);
+    if (!item.labels) return;
+    for (const label of item.labels) {
+      labelTotalsMap.set(label, (labelTotalsMap.get(label) ?? 0) + cents);
+    }
+  });
+
+  const labelTotals = [...labelTotalsMap.entries()].map(([label, total]) => ({ label, total }));
+
   // Compute each category's share once the grand total is known.
   if (grandTotal > 0) {
     for (const categoryGroup of categoryGroups) {
@@ -115,5 +136,7 @@ export function groupItemsByCategory(
     categoryGroups,
     accountTotals: [...accountTotalsMap.values()],
     grandTotal,
+    // provide label totals for UI display
+    labelTotals,
   };
 }

@@ -12,7 +12,8 @@ const EXAMPLE_JSON = `{
           "categoryId": "groceries",
           "name": "Weekly groceries",
           "amount": "210.30",
-          "accountId": "abc"
+          "accountId": "abc",
+          "labels": ["urgent"]
         }
       ]
     }

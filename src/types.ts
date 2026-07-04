@@ -19,6 +19,8 @@ export interface Item {
    * file never carries `ignore: false`.
    */
   ignore?: boolean;
+  /** Optional list of labels attached to the item. */
+  labels?: string[];
 }
 
 /** Monthly spendings, each month keyed by a `YYYYMM` integer. */

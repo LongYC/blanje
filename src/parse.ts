@@ -34,7 +34,7 @@ function parseItem(value: unknown, path: string): Item {
   if (!isObject(value)) {
     throw new ValidationError(`${path} must be an object`);
   }
-  const { categoryId, name, amount, accountId } = value;
+  const { categoryId, name, amount, accountId, labels } = value;
   if (typeof categoryId !== "string") {
     throw new ValidationError(`${path}.categoryId must be a string`);
   }
@@ -60,7 +60,14 @@ function parseItem(value: unknown, path: string): Item {
   if (ignore !== undefined && typeof ignore !== "boolean") {
     throw new ValidationError(`${path}.ignore must be a boolean`);
   }
+  if (labels !== undefined) {
+    if (!Array.isArray(labels) || !labels.every((l) => typeof l === "string")) {
+      throw new ValidationError(`${path}.labels must be an array of strings`);
+    }
+  }
+
   const item: Item = { categoryId, name, amount: amountStr, accountId };
+  if (labels !== undefined) item.labels = labels as string[];
   // Only carry `ignore` when truthy so a round-trip never writes `ignore: false`.
   if (ignore === true) item.ignore = true;
   return item;

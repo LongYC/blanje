@@ -1,0 +1,148 @@
+.show {
+  background: transparent;
+  color: var(--accent);
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form button {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+.form button[type="submit"] {
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.form button[type="submit"]:disabled {
+  cursor: not-allowed;
+  background: var(--border);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.form button[type="submit"]:disabled:hover {
+  filter: none;
+}
+
+.form .amount {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 480px) {
+  .form .amount {
+    flex: auto;
+  }
+}
+
+.input {
+  width: auto;
+  flex: 1 1 100%;
+  border-color: var(--border);
+  font: inherit;
+  color: inherit;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+}
+
+@media (min-width: 480px) {
+  .input {
+    flex: 1 1 8rem;
+  }
+}
+
+.sign {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0 0 0.2rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: 1rem;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+}
+
+.sign:hover {
+  filter: none;
+  background: var(--border);
+  color: var(--text);
+}
+
+.sign.negative {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.number {
+  flex: 0 1 7rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 0 1 9rem;
+}
+
+.amount .number {
+  flex: 1 1 auto;
+}
+
+.account {
+  flex: 1 1 100%;
+  background: var(--surface);
+}
+
+@media (min-width: 480px) {
+  .account {
+    flex: 1 1 8rem;
+  }
+}
+
+.account.placeholder {
+  color: var(--muted);
+}
+
+.account option {
+  color: var(--text);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.close:hover {
+  filter: none;
+  background: var(--border);
+  color: var(--text);
+}

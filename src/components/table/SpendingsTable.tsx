@@ -1,8 +1,9 @@
-import { useMemo, useState, type SubmitEvent, type ReactNode, } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { groupByCategory } from "../../group";
 import { formatCents } from "../../format";
 import type { Account, Category, Spending } from "../../types";
 import { AccountMenu } from "../AccountMenu";
+import { AddRow } from "./AddRow";
 import { ItemMenu } from "./ItemMenu";
 
 interface SpendingsTableProps {
@@ -162,7 +163,7 @@ export function SpendingsTable({
               ))
             )}
             {onAddSpending && (
-              <AddSpendingRow
+              <AddRow
                 categoryId={group.categoryId}
                 accounts={accounts}
                 onAdd={onAddSpending}
@@ -235,133 +236,4 @@ function EditableCell({
   );
 }
 
-interface AddSpendingRowProps {
-  categoryId: string;
-  accounts: Account[];
-  onAdd: (spending: Spending) => void;
-}
 
-/** A per-category row that expands into a form for adding a new spending. */
-function AddSpendingRow({ categoryId, accounts, onAdd }: AddSpendingRowProps) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [accountId, setAccountId] = useState("");
-
-  function reset() {
-    setName("");
-    setAmount("");
-    setAccountId("");
-  }
-
-  function handleSubmit(e: SubmitEvent) {
-    e.preventDefault();
-    if (
-      name.trim() === "" ||
-      amount.trim() === "" ||
-      Number.isNaN(Number(amount)) ||
-      accountId === ""
-    ) {
-      return;
-    }
-    onAdd({ categoryId, name: name.trim(), amount: amount.trim(), accountId });
-    // Keep the form open for quick consecutive entries.
-    setName("");
-    setAmount("");
-    setAccountId("");
-  }
-
-  if (!open) {
-    return (
-      <tr className="add-row">
-        <td colSpan={3}>
-          <button
-            type="button"
-            className="add-toggle"
-            onClick={() => setOpen(true)}
-          >
-            + Add item
-          </button>
-        </td>
-      </tr>
-    );
-  }
-
-  return (
-    <tr className="add-row">
-      <td colSpan={3}>
-        <form className="add-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            className="cell-input"
-            aria-label="New item name"
-            placeholder="Item name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoFocus
-          />
-          <div className="amount-field">
-            {/* The mobile decimal keypad has no minus key, so offer an explicit
-                sign toggle that flips the leading "-" on the current value. */}
-            <button
-              type="button"
-              className={`sign-toggle${
-                amount.startsWith("-") ? " is-negative" : ""
-              }`}
-              aria-label="Toggle negative amount"
-              aria-pressed={amount.startsWith("-")}
-              title="Toggle +/−"
-              onClick={() =>
-                setAmount((a) => (a.startsWith("-") ? a.slice(1) : `-${a}`))
-              }
-            >
-              ±
-            </button>
-            <input
-              type="text"
-              inputMode="decimal"
-              className="cell-input amount-input"
-              aria-label="New amount"
-              placeholder="0.00"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-          </div>
-          <select
-            className={`cell-input account-select${
-              accountId === "" ? " is-placeholder" : ""
-            }`}
-            aria-label="Account"
-            value={accountId}
-            required
-            onChange={(e) => setAccountId(e.target.value)}
-          >
-            <option value="" disabled>
-              Pick account
-            </option>
-            {accounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </select>
-          <button type="submit" disabled={accountId === ""}>
-            Add
-          </button>
-          <button
-            type="button"
-            className="close-btn"
-            aria-label="Close"
-            title="Close"
-            onClick={() => {
-              setOpen(false);
-              reset();
-            }}
-          >
-            ×
-          </button>
-        </form>
-      </td>
-    </tr>
-  );
-}

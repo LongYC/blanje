@@ -1,18 +1,18 @@
 import { toCents } from "./format";
-import type { Account, Category, Spending } from "./types";
+import type { Account, Category, Item } from "./types";
 
-export interface GroupedSpending extends Spending {
+export interface GroupedItem extends Item {
   accountName: string;
   /** Amount as an integer number of cents. */
   amountCents: number;
-  /** Index of this spending within the month's original `spendings` array. */
+  /** Index of this item within the month's original `items` array. */
   index: number;
 }
 
 export interface CategoryGroup {
   categoryId: string;
   categoryName: string;
-  spendings: GroupedSpending[];
+  groupedItems: GroupedItem[];
   /** Total as an integer number of cents. */
   total: number;
   /** Share of the grand total, as a percentage (0–100). */
@@ -27,7 +27,7 @@ export interface AccountTotal {
 }
 
 export interface GroupedResult {
-  groups: CategoryGroup[];
+  categoryGroups: CategoryGroup[];
   accountTotals: AccountTotal[];
   grandTotal: number;
 }
@@ -35,29 +35,23 @@ export interface GroupedResult {
 const UNKNOWN_CATEGORY = "Uncategorised";
 const UNKNOWN_ACCOUNT = "Unknown account";
 
-/**
- * Group a month's spending items by category, resolving category/account names
- * and computing per-category and grand totals. Categories declared in the data
- * are always included (even with no spendings); any spending referencing an
- * unknown category id falls into an "Uncategorised" group.
- */
-export function groupByCategory(
-  items: Spending[],
+export function groupItemsByCategory(
+  items: Item[],
   categories: Category[],
   accounts: Account[],
 ): GroupedResult {
   const categoryName = new Map(categories.map((c) => [c.id, c.name]));
   const accountName = new Map(accounts.map((a) => [a.id, a.name]));
 
-  const groups = new Map<string, CategoryGroup>();
+  const categoryGroupMap = new Map<string, CategoryGroup>();
   const accountTotalsMap = new Map<string, AccountTotal>();
 
   // Seed declared categories so order is stable and empty ones still show.
   for (const category of categories) {
-    groups.set(category.id, {
+    categoryGroupMap.set(category.id, {
       categoryId: category.id,
       categoryName: category.name,
-      spendings: [],
+      groupedItems: [],
       total: 0,
       percentage: 0,
     });
@@ -72,53 +66,53 @@ export function groupByCategory(
     });
   }
 
-  items.forEach((spending, index) => {
-    let group = groups.get(spending.categoryId);
+  items.forEach((item, index) => {
+    let group = categoryGroupMap.get(item.categoryId);
     if (!group) {
       group = {
-        categoryId: spending.categoryId,
-        categoryName: categoryName.get(spending.categoryId) ?? UNKNOWN_CATEGORY,
-        spendings: [],
+        categoryId: item.categoryId,
+        categoryName: categoryName.get(item.categoryId) ?? UNKNOWN_CATEGORY,
+        groupedItems: [],
         total: 0,
         percentage: 0,
       };
-      groups.set(spending.categoryId, group);
+      categoryGroupMap.set(item.categoryId, group);
     }
-    const amountCents = toCents(spending.amount);
-    group.spendings.push({
-      ...spending,
+    const amountCents = toCents(item.amount);
+    group.groupedItems.push({
+      ...item,
       index,
       amountCents,
-      accountName: accountName.get(spending.accountId) ?? UNKNOWN_ACCOUNT,
+      accountName: accountName.get(item.accountId) ?? UNKNOWN_ACCOUNT,
     });
     // Ignored items are still listed but never counted in any total.
-    if (spending.ignore) return;
+    if (item.ignore) return;
     group.total += amountCents;
 
-    let accountTotal = accountTotalsMap.get(spending.accountId);
+    let accountTotal = accountTotalsMap.get(item.accountId);
     if (!accountTotal) {
       accountTotal = {
-        accountId: spending.accountId,
-        accountName: accountName.get(spending.accountId) ?? UNKNOWN_ACCOUNT,
+        accountId: item.accountId,
+        accountName: accountName.get(item.accountId) ?? UNKNOWN_ACCOUNT,
         total: 0,
       };
-      accountTotalsMap.set(spending.accountId, accountTotal);
+      accountTotalsMap.set(item.accountId, accountTotal);
     }
     accountTotal.total += amountCents;
   });
 
-  const groupList = [...groups.values()];
-  const grandTotal = groupList.reduce((sum, g) => sum + g.total, 0);
+  const categoryGroups = [...categoryGroupMap.values()];
+  const grandTotal = categoryGroups.reduce((sum, g) => sum + g.total, 0);
 
   // Compute each category's share once the grand total is known.
   if (grandTotal > 0) {
-    for (const group of groupList) {
-      group.percentage = (group.total / grandTotal) * 100;
+    for (const categoryGroup of categoryGroups) {
+      categoryGroup.percentage = (categoryGroup.total / grandTotal) * 100;
     }
   }
 
   return {
-    groups: groupList,
+    categoryGroups,
     accountTotals: [...accountTotalsMap.values()],
     grandTotal,
   };

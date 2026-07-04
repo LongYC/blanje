@@ -18,7 +18,7 @@ import {
   saveHiddenAccounts,
   saveLastEdited,
 } from "./storage";
-import { type UserData, type Spending } from "./types";
+import { type UserData, type Item } from "./types";
 import { AppHeader } from "./components/AppHeader";
 import { Button } from "./components/Button";
 import { DangerZone } from "./components/DangerZone";
@@ -156,7 +156,7 @@ export function App() {
   }
 
   // Apply an edit to a single item within the selected month, then persist.
-  function handleEditSpending(index: number, patch: Partial<Spending>) {
+  function handleEditSpending(index: number, patch: Partial<Item>) {
     if (!data || selectedMonth === null) return;
     const next: UserData = {
       ...data,
@@ -259,7 +259,7 @@ export function App() {
   }
 
   // Append a new item to the selected month, then persist.
-  function handleAddSpending(spending: Spending) {
+  function handleAddSpending(spending: Item) {
     if (!data || selectedMonth === null) return;
     const next: UserData = {
       ...data,
@@ -326,8 +326,8 @@ export function App() {
             categories={data.categories}
             accounts={data.accounts}
             hiddenAccounts={hiddenAccounts}
-            onEditSpending={handleEditSpending}
-            onAddSpending={handleAddSpending}
+            onEditItem={handleEditSpending}
+            onAddItem={handleAddSpending}
             onToggleIgnore={handleToggleIgnore}
             onMoveItemUp={handleMoveItemUp}
             AccountMenuComponent={AccountMenuComponent}

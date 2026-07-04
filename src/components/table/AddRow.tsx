@@ -1,11 +1,11 @@
 import { useState, type SubmitEvent } from "react";
-import type { Account, Spending } from "../../types";
+import type { Account, Item } from "../../types";
 import styles from "./AddRow.module.css";
 
 interface AddRowProps {
   categoryId: string;
   accounts: Account[];
-  onAdd: (spending: Spending) => void;
+  onAdd: (spending: Item) => void;
 }
 
 export function AddRow({ categoryId, accounts, onAdd }: AddRowProps) {

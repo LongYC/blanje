@@ -8,7 +8,7 @@ export interface Account {
   name: string;
 }
 
-export interface Spending {
+export interface Item {
   categoryId: string;
   name: string;
   amount: string; // kept as a string in the source data, parsed when summing
@@ -24,7 +24,7 @@ export interface Spending {
 /** Monthly spendings, each month keyed by a `YYYYMM` integer. */
 export interface MonthlySpending {
   month: number; // e.g. 202607 for July 2026
-  items: Spending[];
+  items: Item[];
   note?: string;
 }
 

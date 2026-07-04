@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { parseSpendingsJson, ValidationError } from "../parse";
+import { parseRootJson, ValidationError } from "../parse";
 import type { UserData } from "../types";
 import { Button } from "./Button";
 import styles from "./FileLoader.module.css";
@@ -17,7 +17,7 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
     setError(null);
     try {
       const text = await file.text();
-      const data = parseSpendingsJson(text);
+      const data = parseRootJson(text);
       onLoaded(data, file.name);
     } catch (err) {
       if (err instanceof ValidationError) {

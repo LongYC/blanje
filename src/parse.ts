@@ -2,7 +2,7 @@ import type {
   Account,
   Category,
   MonthlySpending,
-  Spending,
+  Item,
   UserData,
 } from "./types";
 
@@ -30,7 +30,7 @@ function parseNamed<T extends Category | Account>(
   return { id, name } as T;
 }
 
-function parseSpending(value: unknown, path: string): Spending {
+function parseItem(value: unknown, path: string): Item {
   if (!isObject(value)) {
     throw new ValidationError(`${path} must be an object`);
   }
@@ -60,10 +60,10 @@ function parseSpending(value: unknown, path: string): Spending {
   if (ignore !== undefined && typeof ignore !== "boolean") {
     throw new ValidationError(`${path}.ignore must be a boolean`);
   }
-  const spending: Spending = { categoryId, name, amount: amountStr, accountId };
+  const item: Item = { categoryId, name, amount: amountStr, accountId };
   // Only carry `ignore` when truthy so a round-trip never writes `ignore: false`.
-  if (ignore === true) spending.ignore = true;
-  return spending;
+  if (ignore === true) item.ignore = true;
+  return item;
 }
 
 function parseMonthly(value: unknown, path: string): MonthlySpending {
@@ -82,7 +82,7 @@ function parseMonthly(value: unknown, path: string): MonthlySpending {
     throw new ValidationError(`${path}.items must be an array`);
   }
   const items = value.items.map((s, i) =>
-    parseSpending(s, `${path}.items[${i}]`),
+    parseItem(s, `${path}.items[${i}]`),
   );
   const { note } = value;
   if (note !== undefined && typeof note !== "string") {
@@ -92,7 +92,7 @@ function parseMonthly(value: unknown, path: string): MonthlySpending {
 }
 
 /** Parse and validate the raw JSON text of an uploaded spendings file. */
-export function parseSpendingsJson(text: string): UserData {
+export function parseRootJson(text: string): UserData {
   let raw: unknown;
   try {
     raw = JSON.parse(text);

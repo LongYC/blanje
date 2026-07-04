@@ -1,7 +1,7 @@
 import { useMemo, useState, type ComponentType, type ReactNode } from "react";
-import { groupByCategory } from "../../group";
+import { groupItemsByCategory } from "../../group";
 import { formatCents } from "../../format";
-import type { Account, Category, Spending } from "../../types";
+import type { Account, Category, Item } from "../../types";
 import { AddRow } from "./AddRow";
 import { ItemMenu } from "./ItemMenu";
 
@@ -11,16 +11,12 @@ interface AccountMenuComponentProps {
 }
 
 interface SpendingsTableProps {
-  items: Spending[];
+  items: Item[];
   categories: Category[];
   accounts: Account[];
   hiddenAccounts?: string[];
-  /**
-   * Called when a spending is edited. `index` is the position within the
-   * month's original `items` array; `patch` carries the changed fields.
-   */
-  onEditSpending?: (index: number, patch: Partial<Spending>) => void;
-  onAddSpending?: (spending: Spending) => void;
+  onEditItem?: (index: number, patch: Partial<Item>) => void;
+  onAddItem?: (item: Item) => void;
   // Toggle whether the item at `index` is ignored in totals.
   onToggleIgnore: (index: number) => void;
   // Move the item at `index` to just before the closest preceding item that shares the same category.
@@ -33,14 +29,14 @@ export function SpendingsTable({
   categories,
   accounts,
   hiddenAccounts,
-  onEditSpending,
-  onAddSpending,
+  onEditItem,
+  onAddItem,
   onToggleIgnore,
   onMoveItemUp,
   AccountMenuComponent,
 }: SpendingsTableProps) {
-  const { groups, accountTotals, grandTotal } = useMemo(
-    () => groupByCategory(items, categories, accounts),
+  const { categoryGroups, accountTotals, grandTotal } = useMemo(
+    () => groupItemsByCategory(items, categories, accounts),
     [items, categories, accounts],
   );
 
@@ -85,88 +81,88 @@ export function SpendingsTable({
             <th scope="col">Account</th>
           </tr>
         </thead>
-        {groups.map((group) => (
-          <tbody key={group.categoryId}>
+        {categoryGroups.map((categoryGroup) => (
+          <tbody key={categoryGroup.categoryId}>
             <tr className="category-row">
               <th scope="rowgroup">
-                {group.categoryName}
+                {categoryGroup.categoryName}
                 <span className="category-percent">
-                  {group.percentage.toFixed(1)}%
+                  {categoryGroup.percentage.toFixed(1)}%
                 </span>
               </th>
               <td className="amount category-total">
-                {formatCents(group.total)}
+                {formatCents(categoryGroup.total)}
               </td>
               <td aria-label="No value"></td>
             </tr>
-            {group.spendings.length === 0 ? (
+            {categoryGroup.groupedItems.length === 0 ? (
               <tr className="empty-row">
                 <td colSpan={3}>No spendings</td>
               </tr>
             ) : (
-              group.spendings.map((spending) => (
+              categoryGroup.groupedItems.map((groupedItem) => (
                 <tr
-                  key={spending.index}
-                  hidden={hidden.has(spending.accountId)}
-                  className={spending.ignore ? "ignored-row" : undefined}
+                  key={groupedItem.index}
+                  hidden={hidden.has(groupedItem.accountId)}
+                  className={groupedItem.ignore ? "ignored-row" : undefined}
                 >
                   <td>
-                    {onEditSpending ? (
+                    {onEditItem ? (
                       <EditableCell
-                        value={spending.name}
+                        value={groupedItem.name}
                         display={
-                          spending.name === "" ? (
+                          groupedItem.name === "" ? (
                             <span className="cell-placeholder">Item name</span>
                           ) : (
-                            spending.name
+                            groupedItem.name
                           )
                         }
                         ariaLabel="Item name"
                         onChange={(name) =>
-                          onEditSpending(spending.index, { name })
+                          onEditItem(groupedItem.index, { name })
                         }
                       />
                     ) : (
-                      spending.name
+                      groupedItem.name
                     )}
                   </td>
                   <td className="amount">
-                    {onEditSpending ? (
+                    {onEditItem ? (
                       <EditableCell
-                        value={spending.amount}
-                        display={formatCents(spending.amountCents)}
+                        value={groupedItem.amount}
+                        display={formatCents(groupedItem.amountCents)}
                         ariaLabel="Amount"
                         inputMode="decimal"
                         inputClassName="cell-input amount-input"
                         onChange={(amount) =>
-                          onEditSpending(spending.index, { amount })
+                          onEditItem(groupedItem.index, { amount })
                         }
                       />
                     ) : (
-                      formatCents(spending.amountCents)
+                      formatCents(groupedItem.amountCents)
                     )}
                   </td>
                   <td className="account-cell">
                     <div className="account-cell-inner">
                       <span className="account-name">
-                        {spending.accountName}
+                        {groupedItem.accountName}
                       </span>
                       <ItemMenu
-                        ignored={Boolean(spending.ignore)}
-                        isFirstInCategory={group.spendings[0].index === spending.index}
-                        onToggleIgnore={() => onToggleIgnore(spending.index)}
-                        onMoveUp={() => onMoveItemUp(spending.index)}
+                        ignored={Boolean(groupedItem.ignore)}
+                        isFirstInCategory={categoryGroup.groupedItems[0].index === groupedItem.index}
+                        onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
+                        onMoveUp={() => onMoveItemUp(groupedItem.index)}
                       />
                     </div>
                   </td>
                 </tr>
               ))
             )}
-            {onAddSpending && (
+            {onAddItem && (
               <AddRow
-                categoryId={group.categoryId}
+                categoryId={categoryGroup.categoryId}
                 accounts={accounts}
-                onAdd={onAddSpending}
+                onAdd={onAddItem}
               />
             )}
           </tbody>

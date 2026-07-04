@@ -1,9 +1,10 @@
-import { useMemo, useState, type ComponentType, type ReactNode } from "react";
+import { useMemo, type ComponentType } from "react";
 import { groupItemsByCategory } from "../../group";
 import { formatCents } from "../../format";
 import type { Account, Category, Item } from "../../types";
 import { AddRow } from "./AddRow";
 import { ItemMenu } from "./ItemMenu";
+import { EditableCell } from "./EditableCell";
 
 interface AccountMenuComponentProps {
   accountId: string;
@@ -75,9 +76,7 @@ export function SpendingsTable({
         <thead>
           <tr>
             <th scope="col">Item</th>
-            <th scope="col" className="amount">
-              Amount
-            </th>
+            <th scope="col" className="amount">Amount</th>
             <th scope="col">Account</th>
           </tr>
         </thead>
@@ -133,7 +132,7 @@ export function SpendingsTable({
                         display={formatCents(groupedItem.amountCents)}
                         ariaLabel="Amount"
                         inputMode="decimal"
-                        inputClassName="cell-input amount-input"
+                        isAmount={true}
                         onChange={(amount) =>
                           onEditItem(groupedItem.index, { amount })
                         }
@@ -169,66 +168,6 @@ export function SpendingsTable({
         ))}
       </table>
     </>
-  );
-}
-
-interface EditableCellProps {
-  /** Raw value bound to the input while editing. */
-  value: string;
-  /** What to render in read mode (may differ from `value`, e.g. formatted). */
-  display: ReactNode;
-  ariaLabel: string;
-  inputMode?: "text" | "decimal";
-  inputClassName?: string;
-  onChange: (value: string) => void;
-}
-
-/**
- * Shows `display` as plain text by default and swaps to an input on
- * click/tap, reverting on blur. Read mode lets long values wrap so the
- * full text is visible, which a single-line input can't do in a narrow cell.
- */
-function EditableCell({
-  value,
-  display,
-  ariaLabel,
-  inputMode = "text",
-  inputClassName = "cell-input",
-  onChange,
-}: EditableCellProps) {
-  const [editing, setEditing] = useState(false);
-
-  if (!editing) {
-    return (
-      <button
-        type="button"
-        className="cell-display"
-        aria-label={`Edit ${ariaLabel}`}
-        onClick={() => setEditing(true)}
-      >
-        {display}
-      </button>
-    );
-  }
-
-  return (
-    <input
-      type="text"
-      inputMode={inputMode}
-      className={inputClassName}
-      aria-label={ariaLabel}
-      value={value}
-      autoFocus
-      onChange={(e) => onChange(e.target.value)}
-      onBlur={() => setEditing(false)}
-      onKeyDown={(e) => {
-        // Both keys leave edit mode; edits are already live via onChange.
-        if (e.key === "Enter" || e.key === "Escape") {
-          e.preventDefault();
-          setEditing(false);
-        }
-      }}
-    />
   );
 }
 

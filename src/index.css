@@ -155,8 +155,7 @@ button:hover {
   color: var(--muted);
 }
 
-.amount,
-.amount .cell-display {
+.amount {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -176,49 +175,6 @@ button:hover {
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--muted);
-}
-
-.cell-input {
-  font: inherit;
-  color: inherit;
-  width: 100%;
-  padding: 0.3rem 0.4rem;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-}
-
-.cell-input:hover {
-  border-color: var(--border);
-}
-
-.cell-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  background: var(--surface);
-}
-
-.amount-input {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.cell-display {
-  font: inherit;
-  color: inherit;
-  text-align: inherit;
-  width: 100%;
-  padding: 0.3rem 0.4rem;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  cursor: text;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.cell-display:hover {
-  border-color: var(--border);
 }
 
 .cell-placeholder {
@@ -274,12 +230,6 @@ button:hover {
   gap: 0.5rem;
 }
 
-.add-form .cell-input {
-  width: auto;
-  flex: 1 1 8rem;
-  border-color: var(--border);
-}
-
 .add-form .account-select {
   flex: 0 1 12rem;
   background: var(--surface);
@@ -295,19 +245,11 @@ button:hover {
   color: var(--text);
 }
 
-.add-form .amount-input {
-  flex: 0 1 7rem;
-}
-
 .add-form .amount-field {
   display: flex;
   align-items: center;
   gap: 0.25rem;
   flex: 0 1 9rem;
-}
-
-.add-form .amount-field .amount-input {
-  flex: 1 1 auto;
 }
 
 .add-form .sign-toggle {

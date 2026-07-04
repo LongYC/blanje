@@ -1,10 +1,14 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ComponentType, type ReactNode } from "react";
 import { groupByCategory } from "../../group";
 import { formatCents } from "../../format";
 import type { Account, Category, Spending } from "../../types";
-import { AccountMenu } from "../AccountMenu";
 import { AddRow } from "./AddRow";
 import { ItemMenu } from "./ItemMenu";
+
+interface AccountMenuComponentProps {
+  accountId: string;
+  hidden: boolean;
+}
 
 interface SpendingsTableProps {
   items: Spending[];
@@ -21,7 +25,7 @@ interface SpendingsTableProps {
   onToggleIgnore: (index: number) => void;
   // Move the item at `index` to just before the closest preceding item that shares the same category.
   onMoveItemUp: (index: number) => void;
-  onToggleHideAccount: (accountId: string) => void;
+  AccountMenuComponent: ComponentType<AccountMenuComponentProps>;
 }
 
 export function SpendingsTable({
@@ -33,7 +37,7 @@ export function SpendingsTable({
   onAddSpending,
   onToggleIgnore,
   onMoveItemUp,
-  onToggleHideAccount,
+  AccountMenuComponent,
 }: SpendingsTableProps) {
   const { groups, accountTotals, grandTotal } = useMemo(
     () => groupByCategory(items, categories, accounts),
@@ -60,14 +64,10 @@ export function SpendingsTable({
               <th scope="row" colSpan={2}>
                 <div className="account-total-inner">
                   <span className="account-name">{account.accountName}</span>
-                  {onToggleHideAccount && (
-                    <AccountMenu
-                      hidden={hidden.has(account.accountId)}
-                      onToggleHide={() =>
-                        onToggleHideAccount(account.accountId)
-                      }
-                    />
-                  )}
+                  <AccountMenuComponent
+                    accountId={account.accountId}
+                    hidden={hidden.has(account.accountId)}
+                  />
                 </div>
               </th>
               <td className="amount">{formatCents(account.total)}</td>

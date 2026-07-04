@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { FileLoader } from "./components/FileLoader";
+import { AccountMenu } from "./components/AccountMenu";
 import { SpendingsTable } from "./components/table/SpendingsTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
@@ -105,8 +106,8 @@ export function App() {
     setToastToken((t) => t + 1);
   }
 
-  // Toggle whether an account's item rows are hidden, then persist. Hiding is
-  // purely visual and never affects any totals.
+  // Toggle whether an account's item rows are hidden.
+  // Hiding currently does not affects calculation of totals.
   function handleToggleHideAccount(accountId: string) {
     setHiddenAccounts((current) => {
       const next = current.includes(accountId)
@@ -116,6 +117,16 @@ export function App() {
       return next;
     });
   }
+
+  const AccountMenuComponent = useCallback(
+    ({ accountId, hidden }: { accountId: string; hidden: boolean }) => (
+      <AccountMenu
+        hidden={hidden}
+        onToggleHide={() => handleToggleHideAccount(accountId)}
+      />
+    ),
+    [handleToggleHideAccount],
+  );
 
   function handleUndoLoad() {
     if (!previousData) return;
@@ -319,7 +330,7 @@ export function App() {
             onAddSpending={handleAddSpending}
             onToggleIgnore={handleToggleIgnore}
             onMoveItemUp={handleMoveItemUp}
-            onToggleHideAccount={handleToggleHideAccount}
+            AccountMenuComponent={AccountMenuComponent}
           />
         </section>
       ) : <EmptyState />}

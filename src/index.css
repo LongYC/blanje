@@ -210,11 +210,13 @@ button:hover {
    excluded from the totals. Avoid `opacity` here: a value < 1 creates a
    stacking context on each cell, which would paint an ignored row on top of the
    item menu popover opening from the row above it, swallowing its clicks. */
-.ignored-row td {
+.ignored-row {
   color: var(--muted);
 }
 
-.ignored-row .cell-display {
+.ignored-row,
+.ignored-row td,
+.ignored-row button:not([aria-haspopup]):not([role]) {
   text-decoration: line-through;
   text-decoration-color: var(--muted);
 }

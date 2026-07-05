@@ -23,7 +23,7 @@ interface SpendingsTableProps {
   AccountMenuComponent: ComponentType<AccountMenuComponentProps>;
 }
 
-export function SpendingsTable({
+export function CategoriesTable({
   categoryGroups,
   accounts,
   hiddenAccountIds,

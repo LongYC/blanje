@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { FileLoader } from "./components/FileLoader";
 import { AccountMenu } from "./components/AccountMenu";
-import { SpendingsTable } from "./components/tables/SpendingsTable";
+import { CategoriesTable } from "./components/tables/CategoriesTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
 import { monthLabel } from "./parse";
@@ -342,7 +342,7 @@ export function App() {
           AccountMenuComponent={AccountMenuComponent}
         />
         <LabelsTable labelTotals={labelTotals} />
-        <SpendingsTable
+        <CategoriesTable
           categoryGroups={categoryGroups}
           accounts={data.accounts}
           hiddenAccountIds={hiddenAccountIds}

@@ -21,3 +21,39 @@
   letter-spacing: 0.04em;
   color: var(--muted);
 }
+
+.grand th,
+.grand td {
+  background: var(--total-bg);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  border-bottom: none;
+}
+
+.row th {
+  font-weight: 500;
+  color: var(--muted);
+  padding-left: 1.7rem;
+}
+
+.row th,
+.row td {
+  background: var(--surface);
+  border-bottom: none;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.row:first-of-type th,
+.row:first-of-type td {
+  padding-top: 0.7rem;
+}
+
+/* Lay out the account name and its show/hide toggle together, mirroring
+   .account-cell-inner so the toggle sits neatly beside the name. */
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

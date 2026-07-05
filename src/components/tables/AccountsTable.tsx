@@ -23,17 +23,17 @@ export function AccountsTable({
 }: AccountsTableProps) {
   return <table className={styles.table}>
     <tbody>
-      <tr className="grand-total-row">
+      <tr className={styles.grand}>
         <th scope="row" colSpan={2}>
-          Total
+          Grand total
         </th>
         <td className="amount">{formatCents(grandTotal)}</td>
       </tr>
       {accountTotals.map((account) => (
-        <tr key={account.accountId} className="account-total-row">
+        <tr key={account.accountId} className={styles.row}>
           <th scope="row" colSpan={2}>
-            <div className="account-total-inner">
-              <span className="account-name">{account.accountName}</span>
+            <div className={styles.inner}>
+              <span>{account.accountName}</span>
               <AccountMenuComponent
                 accountId={account.accountId}
                 hidden={hiddenAccountIds.includes(account.accountId)}

@@ -1,14 +1,14 @@
-import { formatCents } from "../format";
-import type { LabelTotal } from "../group";
-import styles from "./LabelsAmounts.module.css";
+import { formatCents } from "../../format";
+import type { LabelTotal } from "../../group";
+import styles from "./LabelsTable.module.css";
 
-interface LabelsAmountsProps {
+interface LabelsTableProps {
   labelTotals: LabelTotal[];
 }
 
-export function LabelsAmounts({
+export function LabelsTable({
   labelTotals
-}: LabelsAmountsProps) {
+}: LabelsTableProps) {
   return  <table className={styles.table}>
     <thead>
       <tr>

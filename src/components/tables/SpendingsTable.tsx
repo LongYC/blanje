@@ -5,7 +5,8 @@ import type { Account, Category, Item } from "../../types";
 import { AddRow } from "./AddRow";
 import { ItemMenu } from "./ItemMenu";
 import { EditableCell } from "./EditableCell";
-import { LabelsAmounts } from "../LabelsAmounts";
+import { LabelsTable } from "./LabelsTable";
+import { AccountsTable } from "./AccountsTable";
 
 interface AccountMenuComponentProps {
   accountId: string;
@@ -49,31 +50,13 @@ export function SpendingsTable({
 
   return (
     <>
-      <table className="spendings-table">
-        <tbody>
-          <tr className="grand-total-row">
-            <th scope="row" colSpan={2}>
-              Total
-            </th>
-            <td className="amount">{formatCents(grandTotal)}</td>
-          </tr>
-          {accountTotals.map((account) => (
-            <tr key={account.accountId} className="account-total-row">
-              <th scope="row" colSpan={2}>
-                <div className="account-total-inner">
-                  <span className="account-name">{account.accountName}</span>
-                  <AccountMenuComponent
-                    accountId={account.accountId}
-                    hidden={hidden.has(account.accountId)}
-                  />
-                </div>
-              </th>
-              <td className="amount">{formatCents(account.total)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <LabelsAmounts labelTotals={labelTotals} />
+      <AccountsTable
+        accountTotals={accountTotals}
+        grandTotal={grandTotal}
+        hiddenAccountIds={hidden}
+        AccountMenuComponent={AccountMenuComponent}
+      />
+      <LabelsTable labelTotals={labelTotals} />
       <table className="category-table">
         <thead>
           <tr>

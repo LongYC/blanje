@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { FileLoader } from "./components/FileLoader";
 import { AccountMenu } from "./components/AccountMenu";
-import { SpendingsTable } from "./components/table/SpendingsTable";
+import { SpendingsTable } from "./components/tables/SpendingsTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
 import { monthLabel } from "./parse";

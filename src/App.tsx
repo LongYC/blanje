@@ -11,7 +11,7 @@ import {
   clearFilename,
   readUserData,
   readLastLoadedFilename,
-  readHiddenAccounts,
+  readHiddenAccountIds,
   readLastEdited,
   writeUserData,
   saveLastLoadedFilename,
@@ -19,11 +19,14 @@ import {
   saveLastEdited,
 } from "./storage";
 import { type UserData, type Item } from "./types";
+import { AccountsTable } from "./components/tables/AccountsTable";
 import { AppHeader } from "./components/AppHeader";
 import { Button } from "./components/Button";
 import { DangerZone } from "./components/DangerZone";
 import { EmptyState } from "./components/EmptyState";
+import { LabelsTable } from "./components/tables/LabelsTable";
 import { NoteField } from "./components/NoteField";
+import { groupItemsByCategory } from "./group";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
 function formatTimestamp(date: Date): string {
@@ -38,10 +41,8 @@ export function App() {
   const [filename, setFilename] = useState<string | null>(() => readLastLoadedFilename());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
-  // Account ids whose item rows are hidden from view. Purely visual — totals are
-  // unaffected. Persisted to meta and reset whenever a new file is loaded.
-  const [hiddenAccounts, setHiddenAccounts] = useState<string[]>(() =>
-    readHiddenAccounts(),
+  const [hiddenAccountIds, setHiddenAccountIds] = useState<string[]>(() =>
+    readHiddenAccountIds(),
   );
   // Timestamp of the last item name/amount edit (YYYY-MM-DD_HHmm_ss), or "" if
   // nothing has been edited since the current file was loaded.
@@ -96,9 +97,8 @@ export function App() {
     setFilename(name);
     writeUserData(loaded);
     saveLastLoadedFilename(name);
-    // A fresh file's accounts are unrelated to the previous ones, so start with
-    // nothing hidden. This is intentionally not restored by the Undo toast.
-    setHiddenAccounts([]);
+    // This is intentionally not restored by the Undo toast.
+    setHiddenAccountIds([]);
     saveHiddenAccounts([]);
     // A freshly loaded file hasn't been edited yet.
     setLastEdited("");
@@ -109,7 +109,7 @@ export function App() {
   // Toggle whether an account's item rows are hidden.
   // Hiding currently does not affects calculation of totals.
   function handleToggleHideAccount(accountId: string) {
-    setHiddenAccounts((current) => {
+    setHiddenAccountIds((current) => {
       const next = current.includes(accountId)
         ? current.filter((id) => id !== accountId)
         : [...current, accountId];
@@ -284,6 +284,21 @@ export function App() {
     downloadJson(data, name ?? "blanje_spendings.json");
   }
 
+  if (!data || !selected) {
+    return <main className="app">
+      <AppHeader />
+
+      <section className="controls">
+        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(data)} />
+        {data && data.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
+      </section>
+
+      <EmptyState />
+    </main>;
+  }
+
+  const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, data.categories, data.accounts)
+
   return (
     <main className="app">
       <AppHeader />
@@ -293,47 +308,51 @@ export function App() {
         {data && data.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
       </section>
 
-      {selected && data ? (
-        <section className="results">
-          <div className="month-nav">
-            <button
-              type="button"
-              className="month-nav-btn"
-              onClick={() => stepMonth(-1)}
-              disabled={selectedIndex <= 0}
-              aria-label="Previous month"
-            >
-              ‹
-            </button>
-            <h2>{monthLabel(selected.month)}</h2>
-            <button
-              type="button"
-              className="month-nav-btn"
-              onClick={() => stepMonth(1)}
-              disabled={selectedIndex >= data.spendings.length - 1}
-              aria-label="Next month"
-            >
-              ›
-            </button>
-          </div>
-          <NoteField
-            value={selected.note ?? ""}
-            editable
-            onChange={handleEditNote}
-          />
-          <SpendingsTable
-            items={selected.items}
-            categories={data.categories}
-            accounts={data.accounts}
-            hiddenAccounts={hiddenAccounts}
-            onEditItem={handleEditSpending}
-            onAddItem={handleAddSpending}
-            onToggleIgnore={handleToggleIgnore}
-            onMoveItemUp={handleMoveItemUp}
-            AccountMenuComponent={AccountMenuComponent}
-          />
-        </section>
-      ) : <EmptyState />}
+      <section className="results">
+        <div className="month-nav">
+          <button
+            type="button"
+            className="month-nav-btn"
+            onClick={() => stepMonth(-1)}
+            disabled={selectedIndex <= 0}
+            aria-label="Previous month"
+          >
+            ‹
+          </button>
+          <h2>{monthLabel(selected.month)}</h2>
+          <button
+            type="button"
+            className="month-nav-btn"
+            onClick={() => stepMonth(1)}
+            disabled={selectedIndex >= data.spendings.length - 1}
+            aria-label="Next month"
+          >
+            ›
+          </button>
+        </div>
+        <NoteField
+          value={selected.note ?? ""}
+          editable
+          onChange={handleEditNote}
+        />
+        <AccountsTable
+          accountTotals={accountTotals}
+          grandTotal={grandTotal}
+          hiddenAccountIds={hiddenAccountIds}
+          AccountMenuComponent={AccountMenuComponent}
+        />
+        <LabelsTable labelTotals={labelTotals} />
+        <SpendingsTable
+          categoryGroups={categoryGroups}
+          accounts={data.accounts}
+          hiddenAccountIds={hiddenAccountIds}
+          onEditItem={handleEditSpending}
+          onAddItem={handleAddSpending}
+          onToggleIgnore={handleToggleIgnore}
+          onMoveItemUp={handleMoveItemUp}
+          AccountMenuComponent={AccountMenuComponent}
+        />
+      </section>
 
       {data && data.spendings.length > 0 && <DangerZone filename={filename} onClear={handleClear} />}
 

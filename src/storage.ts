@@ -55,7 +55,7 @@ export function readLastLoadedFilename(): string | null {
   return readAppData().lastLoadedFilename ?? null;
 }
 
-export function readHiddenAccounts(): string[] {
+export function readHiddenAccountIds(): string[] {
   const value = readAppData().hiddenAccounts;
   return Array.isArray(value) ? value : [];
 }

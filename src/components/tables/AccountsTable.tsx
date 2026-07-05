@@ -11,7 +11,7 @@ interface AccountMenuComponentProps {
 interface AccountsTableProps {
   accountTotals: AccountTotal[];
   grandTotal: number;
-  hiddenAccountIds: Set<string>;
+  hiddenAccountIds: string[];
   AccountMenuComponent: ComponentType<AccountMenuComponentProps>;
 }
 
@@ -36,7 +36,7 @@ export function AccountsTable({
               <span className="account-name">{account.accountName}</span>
               <AccountMenuComponent
                 accountId={account.accountId}
-                hidden={hiddenAccountIds.has(account.accountId)}
+                hidden={hiddenAccountIds.includes(account.accountId)}
               />
             </div>
           </th>

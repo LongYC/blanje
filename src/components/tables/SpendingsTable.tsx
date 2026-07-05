@@ -1,12 +1,10 @@
 import { useMemo, type ComponentType } from "react";
-import { groupItemsByCategory } from "../../group";
 import { formatCents } from "../../format";
-import type { Account, Category, Item } from "../../types";
+import type { CategoryGroup } from "../../group";
+import type { Account, Item } from "../../types";
 import { AddRow } from "./AddRow";
 import { ItemMenu } from "./ItemMenu";
 import { EditableCell } from "./EditableCell";
-import { LabelsTable } from "./LabelsTable";
-import { AccountsTable } from "./AccountsTable";
 
 interface AccountMenuComponentProps {
   accountId: string;
@@ -14,13 +12,11 @@ interface AccountMenuComponentProps {
 }
 
 interface SpendingsTableProps {
-  items: Item[];
-  categories: Category[];
+  categoryGroups: CategoryGroup[];
   accounts: Account[];
-  hiddenAccounts?: string[];
+  hiddenAccountIds: string[];
   onEditItem?: (index: number, patch: Partial<Item>) => void;
   onAddItem?: (item: Item) => void;
-  // Toggle whether the item at `index` is ignored in totals.
   onToggleIgnore: (index: number) => void;
   // Move the item at `index` to just before the closest preceding item that shares the same category.
   onMoveItemUp: (index: number) => void;
@@ -28,35 +24,21 @@ interface SpendingsTableProps {
 }
 
 export function SpendingsTable({
-  items,
-  categories,
+  categoryGroups,
   accounts,
-  hiddenAccounts,
+  hiddenAccountIds,
   onEditItem,
   onAddItem,
   onToggleIgnore,
-  onMoveItemUp,
-  AccountMenuComponent,
+  onMoveItemUp
 }: SpendingsTableProps) {
-  const { categoryGroups, accountTotals, grandTotal, labelTotals } = useMemo(
-    () => groupItemsByCategory(items, categories, accounts),
-    [items, categories, accounts],
-  );
-
   const hidden = useMemo(
-    () => new Set(hiddenAccounts ?? []),
-    [hiddenAccounts],
+    () => new Set(hiddenAccountIds ?? []),
+    [hiddenAccountIds],
   );
 
   return (
     <>
-      <AccountsTable
-        accountTotals={accountTotals}
-        grandTotal={grandTotal}
-        hiddenAccountIds={hidden}
-        AccountMenuComponent={AccountMenuComponent}
-      />
-      <LabelsTable labelTotals={labelTotals} />
       <table className="category-table">
         <thead>
           <tr>

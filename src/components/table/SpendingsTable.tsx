@@ -5,6 +5,7 @@ import type { Account, Category, Item } from "../../types";
 import { AddRow } from "./AddRow";
 import { ItemMenu } from "./ItemMenu";
 import { EditableCell } from "./EditableCell";
+import { LabelsAmounts } from "../LabelsAmounts";
 
 interface AccountMenuComponentProps {
   accountId: string;
@@ -72,30 +73,7 @@ export function SpendingsTable({
           ))}
         </tbody>
       </table>
-      <table className="labels-table">
-        <thead>
-          <tr>
-            <th scope="col">Label</th>
-            <th scope="col" className="amount">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {labelTotals.length === 0 ? (
-            <tr>
-              <td colSpan={2}>No labels</td>
-            </tr>
-          ) : (
-            [...labelTotals]
-              .sort((a, b) => b.total - a.total)
-              .map((lt) => (
-                <tr key={lt.label}>
-                  <th scope="row">{lt.label}</th>
-                  <td className="amount">{formatCents(lt.total)}</td>
-                </tr>
-              ))
-          )}
-        </tbody>
-      </table>
+      <LabelsAmounts labelTotals={labelTotals} />
       <table className="category-table">
         <thead>
           <tr>
@@ -221,5 +199,3 @@ export function SpendingsTable({
     </>
   );
 }
-
-

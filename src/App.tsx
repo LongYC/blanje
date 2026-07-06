@@ -36,10 +36,16 @@ function formatTimestamp(date: Date): string {
   )}_${pad(date.getHours())}${pad(date.getMinutes())}_${pad(date.getSeconds())}`;
 }
 
+function getNowAsSelectedMonth(): number {
+  const date = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return Number(`${date.getFullYear()}${pad(date.getMonth() + 1)}`);
+}
+
 export function App() {
-  const [data, setData] = useState<UserData | null>(() => readUserData());
+  const [userData, setUserData] = useState<UserData | null>(() => readUserData());
   const [filename, setFilename] = useState<string | null>(() => readLastLoadedFilename());
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<number>(getNowAsSelectedMonth());
   const [confirmingClear, setConfirmingClear] = useState(false);
   const [hiddenAccountIds, setHiddenAccountIds] = useState<string[]>(() =>
     readHiddenAccountIds(),
@@ -59,41 +65,37 @@ export function App() {
 
   // Default the selected month to the first available one whenever data changes.
   useEffect(() => {
-    if (data && data.spendings.length > 0) {
-      const firstMonth = data.spendings[0].month;
+    if (userData && userData?.spendings.length > 0) {
+      const firstMonth = userData.spendings[0].month;
       setSelectedMonth((current) =>
-        current !== null && data.spendings.some((s) => s.month === current)
-          ? current
-          : firstMonth,
+        userData.spendings.some((s) => s.month === current) ? current : firstMonth
       );
-    } else {
-      setSelectedMonth(null);
     }
-  }, [data]);
+  }, [userData]);
 
   const selectedIndex = useMemo(() => {
-    if (!data || selectedMonth === null) return -1;
-    return data.spendings.findIndex((s) => s.month === selectedMonth);
-  }, [data, selectedMonth]);
+    if (!userData || selectedMonth === null) return -1;
+    return userData.spendings.findIndex((s) => s.month === selectedMonth);
+  }, [userData, selectedMonth]);
 
-  const selected = selectedIndex >= 0 ? data!.spendings[selectedIndex] : null;
+  const selected = selectedIndex >= 0 ? userData!.spendings[selectedIndex] : null;
 
   // Step to an adjacent month in the spendings list.
   function stepMonth(delta: number) {
-    if (!data || selectedIndex < 0) return;
+    if (!userData || selectedIndex < 0) return;
     const next = selectedIndex + delta;
-    if (next < 0 || next >= data.spendings.length) return;
-    setSelectedMonth(data.spendings[next].month);
+    if (next < 0 || next >= userData.spendings.length) return;
+    setSelectedMonth(userData.spendings[next].month);
   }
 
   function handleLoaded(loaded: UserData, name: string) {
     // Loading over existing data is destructive — keep the old data (and its
     // filename) around so the Undo toast can put it back. Loading into an empty
     // app needs no toast.
-    setPreviousData(data);
+    setPreviousData(userData);
     setPreviousFilename(filename);
     setPreviousLastEdited(lastEdited);
-    setData(loaded);
+    setUserData(loaded);
     setFilename(name);
     writeUserData(loaded);
     saveLastLoadedFilename(name);
@@ -130,7 +132,7 @@ export function App() {
 
   function handleUndoLoad() {
     if (!previousData) return;
-    setData(previousData);
+    setUserData(previousData);
     writeUserData(previousData);
     setFilename(previousFilename);
     if (previousFilename) saveLastLoadedFilename(previousFilename);
@@ -148,7 +150,7 @@ export function App() {
 
   function confirmClear() {
     clearAllData();
-    setData(null);
+    setUserData(null);
     setFilename(null);
     setPreviousData(null);
     setPreviousFilename(null);
@@ -157,10 +159,10 @@ export function App() {
 
   // Apply an edit to a single item within the selected month, then persist.
   function handleEditSpending(index: number, patch: Partial<Item>) {
-    if (!data || selectedMonth === null) return;
+    if (!userData || selectedMonth === null) return;
     const next: UserData = {
-      ...data,
-      spendings: data.spendings.map((month) =>
+      ...userData,
+      spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth
           ? month
           : {
@@ -171,7 +173,7 @@ export function App() {
             },
       ),
     };
-    setData(next);
+    setUserData(next);
     writeUserData(next);
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
@@ -181,10 +183,10 @@ export function App() {
   // Toggle whether an item is ignored in totals, then persist. Unignoring drops
   // the `ignore` property entirely so a saved file never carries `ignore: false`.
   function handleToggleIgnore(index: number) {
-    if (!data || selectedMonth === null) return;
+    if (!userData || selectedMonth === null) return;
     const next: UserData = {
-      ...data,
-      spendings: data.spendings.map((month) =>
+      ...userData,
+      spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth
           ? month
           : {
@@ -200,20 +202,20 @@ export function App() {
             },
       ),
     };
-    setData(next);
+    setUserData(next);
     writeUserData(next);
   }
 
   // Update the free-form note on the selected month, then persist.
   function handleEditNote(note: string) {
-    if (!data || selectedMonth === null) return;
+    if (!userData || selectedMonth === null) return;
     const next: UserData = {
-      ...data,
-      spendings: data.spendings.map((month) =>
+      ...userData,
+      spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth ? month : { ...month, note },
       ),
     };
-    setData(next);
+    setUserData(next);
     writeUserData(next);
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
@@ -223,8 +225,8 @@ export function App() {
   // Move the item at `index` to just before the closest preceding item that
   // shares the same categoryId. No-op if it is already first in its category.
   function handleMoveItemUp(index: number) {
-    if (!data || selectedMonth === null) return;
-    const monthEntry = data.spendings.find((s) => s.month === selectedMonth);
+    if (!userData || selectedMonth === null) return;
+    const monthEntry = userData.spendings.find((s) => s.month === selectedMonth);
     if (!monthEntry) return;
 
     const items = monthEntry.items;
@@ -246,12 +248,12 @@ export function App() {
     next.splice(insertBefore, 0, moved);
 
     const nextData: UserData = {
-      ...data,
-      spendings: data.spendings.map((month) =>
+      ...userData,
+      spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth ? month : { ...month, items: next },
       ),
     };
-    setData(nextData);
+    setUserData(nextData);
     writeUserData(nextData);
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
@@ -260,16 +262,16 @@ export function App() {
 
   // Append a new item to the selected month, then persist.
   function handleAddSpending(spending: Item) {
-    if (!data || selectedMonth === null) return;
+    if (!userData || selectedMonth === null) return;
     const next: UserData = {
-      ...data,
-      spendings: data.spendings.map((month) =>
+      ...userData,
+      spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth
           ? month
           : { ...month, items: [...month.items, spending] },
       ),
     };
-    setData(next);
+    setUserData(next);
     writeUserData(next);
     const stamp = formatTimestamp(new Date());
     setLastEdited(stamp);
@@ -277,35 +279,35 @@ export function App() {
   }
 
   function handleDownload() {
-    if (!data) return;
+    if (!userData) return;
     // Use the last-edited timestamp as the filename suffix when an edit was made;
     // otherwise keep the original filename so an untouched file round-trips.
     const name = lastEdited ? `blanje_${lastEdited}.json` : filename;
-    downloadJson(data, name ?? "blanje_spendings.json");
+    downloadJson(userData, name ?? "blanje_spendings.json");
   }
 
-  if (!data || !selected) {
+  if (!userData || !selected) {
     return <main className="app">
       <AppHeader />
 
       <section className="controls">
-        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(data)} />
-        {data && data.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
+        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(userData)} />
+        {userData && userData.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
       </section>
 
       <EmptyState />
     </main>;
   }
 
-  const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, data.categories, data.accounts)
+  const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
 
   return (
     <main className="app">
       <AppHeader />
 
       <section className="controls">
-        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(data)} />
-        {data && data.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
+        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(userData)} />
+        {userData && userData.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
       </section>
 
       <section className="results">
@@ -324,7 +326,7 @@ export function App() {
             type="button"
             className="month-nav-btn"
             onClick={() => stepMonth(1)}
-            disabled={selectedIndex >= data.spendings.length - 1}
+            disabled={selectedIndex >= userData.spendings.length - 1}
             aria-label="Next month"
           >
             ›
@@ -344,7 +346,7 @@ export function App() {
         {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
         <CategoriesTable
           categoryGroups={categoryGroups}
-          accounts={data.accounts}
+          accounts={userData.accounts}
           hiddenAccountIds={hiddenAccountIds}
           onEditItem={handleEditSpending}
           onAddItem={handleAddSpending}
@@ -354,7 +356,7 @@ export function App() {
         />
       </section>
 
-      {data && data.spendings.length > 0 && <DangerZone filename={filename} onClear={handleClear} />}
+      {userData && userData.spendings.length > 0 && <DangerZone filename={filename} onClear={handleClear} />}
 
       <ConfirmDialog
         open={confirmingClear}

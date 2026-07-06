@@ -2,17 +2,21 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./ItemMenu.module.css";
 
 interface ItemMenuProps {
-  ignored: boolean;
+  isItemIgnored: boolean;
   isFirstInCategory: boolean;
-  onToggleIgnore: () => void;
+  isButtonDisabled?: boolean;
+  onEdit: () => void;
   onMoveUp: () => void;
+  onToggleIgnore: () => void;
 }
 
 export function ItemMenu({
-  ignored,
+  isItemIgnored,
   isFirstInCategory,
-  onToggleIgnore,
+  isButtonDisabled = false,
+  onEdit,
   onMoveUp,
+  onToggleIgnore
 }: ItemMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,6 +44,7 @@ export function ItemMenu({
     <div className={styles.container} ref={containerRef}>
       <button
         type="button"
+        disabled={isButtonDisabled}
         className={styles.trigger}
         aria-label="Item actions"
         aria-haspopup="menu"
@@ -50,20 +55,29 @@ export function ItemMenu({
       </button>
       {open && (
         <div className={styles.menu} role="menu">
-          {!isFirstInCategory && (
-            <button
+          <button
               type="button"
               role="menuitem"
               className={styles.item}
-              disabled={isFirstInCategory}
               onClick={() => {
-                onMoveUp();
                 setOpen(false);
+                onEdit();
               }}
-            >
-              Move up
-            </button>
-          )}
+          >
+            Edit
+          </button>
+          {!isFirstInCategory && <button
+            type="button"
+            role="menuitem"
+            className={styles.item}
+            disabled={isFirstInCategory}
+            onClick={() => {
+              onMoveUp();
+              setOpen(false);
+            }}
+          >
+            Move up
+          </button>}
           <button
             type="button"
             role="menuitem"
@@ -73,7 +87,7 @@ export function ItemMenu({
               setOpen(false);
             }}
           >
-            {ignored ? "Unignore" : "Ignore"}
+            {isItemIgnored ? "Unignore" : "Ignore"}
           </button>
         </div>
       )}

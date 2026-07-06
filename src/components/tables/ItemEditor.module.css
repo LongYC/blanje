@@ -7,6 +7,11 @@
   font-size: 0.85rem;
 }
 
+.show:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
 .form {
   display: flex;
   flex-wrap: wrap;
@@ -21,6 +26,7 @@
 }
 
 .form button[type="submit"] {
+  color: var(--accent);
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
@@ -59,7 +65,7 @@
 
 @media (min-width: 480px) {
   .input {
-    flex: 1 1 8rem;
+    flex: 1 1 20rem;
   }
 }
 
@@ -115,7 +121,7 @@
 
 @media (min-width: 480px) {
   .account {
-    flex: 1 1 8rem;
+    flex: 1 1 3rem;
   }
 }
 

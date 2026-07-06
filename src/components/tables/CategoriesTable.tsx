@@ -1,10 +1,9 @@
-import { useMemo, type ComponentType } from "react";
+import { useMemo, useState, type ComponentType } from "react";
 import { formatCents } from "../../format";
 import type { CategoryGroup } from "../../group";
 import type { Account, Item } from "../../types";
-import { AddRow } from "./AddRow";
+import { ItemEditor } from "./ItemEditor";
 import { ItemMenu } from "./ItemMenu";
-import { EditableCell } from "./EditableCell";
 
 interface AccountMenuComponentProps {
   accountId: string;
@@ -15,8 +14,8 @@ interface SpendingsTableProps {
   categoryGroups: CategoryGroup[];
   accounts: Account[];
   hiddenAccountIds: string[];
-  onEditItem?: (index: number, patch: Partial<Item>) => void;
-  onAddItem?: (item: Item) => void;
+  onAddItem: (item: Item) => void;
+  onEditItem: (index: number, patch: Partial<Item>) => void;
   onToggleIgnore: (index: number) => void;
   // Move the item at `index` to just before the closest preceding item that shares the same category.
   onMoveItemUp: (index: number) => void;
@@ -27,11 +26,13 @@ export function CategoriesTable({
   categoryGroups,
   accounts,
   hiddenAccountIds,
-  onEditItem,
   onAddItem,
+  onEditItem,
   onToggleIgnore,
   onMoveItemUp
 }: SpendingsTableProps) {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
   const hidden = useMemo(
     () => new Set(hiddenAccountIds ?? []),
     [hiddenAccountIds],
@@ -66,47 +67,28 @@ export function CategoriesTable({
                 <td colSpan={3}>No spendings</td>
               </tr>
             ) : (
-              categoryGroup.groupedItems.map((groupedItem) => (
-                <tr
+              categoryGroup.groupedItems.map((groupedItem) => {
+                if (editingIndex === groupedItem.index) {
+                  return <ItemEditor
+                    categoryId={groupedItem.categoryId}
+                    accountOptions={accounts}
+                    groupedItemInEdit={groupedItem}
+                    isOpenByDefault={true}
+                    onSubmit={(itemPatch: Item) => {
+                      onEditItem(groupedItem.index, itemPatch);
+                      setEditingIndex(null);
+                    }}
+                    onClose={() => setEditingIndex(null)}
+                  />
+                }
+
+                return <tr
                   key={groupedItem.index}
                   hidden={hidden.has(groupedItem.accountId)}
                   className={groupedItem.ignore ? "ignored-row" : undefined}
                 >
                   <td>
-                    {onEditItem ? (
-                      <EditableCell
-                        value={groupedItem.name}
-                        display={
-                          groupedItem.name === "" ? (
-                            <>
-                              <span className="cell-placeholder">Item name</span>
-                              {groupedItem.labels && groupedItem.labels.length > 0 && (
-                                <span className="item-labels">
-                                  {groupedItem.labels.map((l) => (
-                                    <span className="item-label" key={l}>{l}</span>
-                                  ))}
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <>
-                              {groupedItem.name}
-                              {groupedItem.labels && groupedItem.labels.length > 0 && (
-                                <span className="item-labels">
-                                  {groupedItem.labels.map((l) => (
-                                    <span className="item-label" key={l}>{l}</span>
-                                  ))}
-                                </span>
-                              )}
-                            </>
-                          )
-                        }
-                        ariaLabel="Item name"
-                        onChange={(name) =>
-                          onEditItem(groupedItem.index, { name })
-                        }
-                      />
-                    ) : (
+                    {
                       <>
                         {groupedItem.name}
                         {groupedItem.labels && groupedItem.labels.length > 0 && (
@@ -117,23 +99,10 @@ export function CategoriesTable({
                           </span>
                         )}
                       </>
-                    )}
+                    }
                   </td>
                   <td className="amount">
-                    {onEditItem ? (
-                      <EditableCell
-                        value={groupedItem.amount}
-                        display={formatCents(groupedItem.amountCents)}
-                        ariaLabel="Amount"
-                        inputMode="decimal"
-                        isAmount={true}
-                        onChange={(amount) =>
-                          onEditItem(groupedItem.index, { amount })
-                        }
-                      />
-                    ) : (
-                      formatCents(groupedItem.amountCents)
-                    )}
+                    {formatCents(groupedItem.amountCents)}
                   </td>
                   <td className="account-cell">
                     <div className="account-cell-inner">
@@ -141,23 +110,24 @@ export function CategoriesTable({
                         {groupedItem.accountName}
                       </span>
                       <ItemMenu
-                        ignored={Boolean(groupedItem.ignore)}
+                        isItemIgnored={Boolean(groupedItem.ignore)}
                         isFirstInCategory={categoryGroup.groupedItems[0].index === groupedItem.index}
-                        onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
+                        isButtonDisabled={editingIndex !== null}
+                        onEdit={() => setEditingIndex(groupedItem.index)}
                         onMoveUp={() => onMoveItemUp(groupedItem.index)}
+                        onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
                       />
                     </div>
                   </td>
                 </tr>
-              ))
+            })
             )}
-            {onAddItem && (
-              <AddRow
-                categoryId={categoryGroup.categoryId}
-                accounts={accounts}
-                onAdd={onAddItem}
-              />
-            )}
+            <ItemEditor
+              categoryId={categoryGroup.categoryId}
+              accountOptions={accounts}
+              isAddButtonDisabled={editingIndex !== null}
+              onSubmit={onAddItem}
+            />
           </tbody>
         ))}
       </table>

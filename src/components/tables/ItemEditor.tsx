@@ -1,18 +1,31 @@
 import { useState, type SubmitEvent } from "react";
 import type { Account, Item } from "../../types";
-import styles from "./AddRow.module.css";
+import styles from "./ItemEditor.module.css";
+import type { GroupedItem } from "../../group";
 
-interface AddRowProps {
+interface ItemEditorProps {
   categoryId: string;
-  accounts: Account[];
-  onAdd: (spending: Item) => void;
+  accountOptions: Account[];
+  isOpenByDefault?: boolean;
+  groupedItemInEdit?: GroupedItem;
+  isAddButtonDisabled?: boolean;
+  onSubmit: (item: Item) => void;
+  onClose?: () => void;
 }
 
-export function AddRow({ categoryId, accounts, onAdd }: AddRowProps) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [accountId, setAccountId] = useState("");
+export function ItemEditor({
+  categoryId,
+  accountOptions,
+  isOpenByDefault = false,
+  groupedItemInEdit,
+  isAddButtonDisabled = false,
+  onSubmit,
+  onClose
+}: ItemEditorProps) {
+  const [isOpen, setIsOpen] = useState(isOpenByDefault);
+  const [name, setName] = useState(groupedItemInEdit?.name ?? "");
+  const [amount, setAmount] = useState(groupedItemInEdit?.amount ?? "");
+  const [accountId, setAccountId] = useState(groupedItemInEdit?.accountId ?? "");
 
   function reset() {
     setName("");
@@ -30,22 +43,26 @@ export function AddRow({ categoryId, accounts, onAdd }: AddRowProps) {
     ) {
       return;
     }
-    onAdd({ categoryId, name: name.trim(), amount: amount.trim(), accountId });
-    setName("");
-    setAmount("");
-    setAccountId("");
+    onSubmit({
+      categoryId,
+      name: name.trim(),
+      amount: amount.trim(),
+      accountId
+    });
+    reset();
   }
 
-  if (!open) {
+  if (!isOpen || isAddButtonDisabled) {
     return (
       <tr>
         <td colSpan={3}>
           <button
             type="button"
             className={styles.show}
-            onClick={() => setOpen(true)}
+            disabled={isAddButtonDisabled}
+            onClick={() => setIsOpen(true)}
           >
-            + Add item
+            + Add a new item to this category
           </button>
         </td>
       </tr>
@@ -102,14 +119,17 @@ export function AddRow({ categoryId, accounts, onAdd }: AddRowProps) {
             <option value="" disabled>
               Pick account
             </option>
-            {accounts.map((account) => (
+            {accountOptions.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name}
               </option>
             ))}
           </select>
-          <button type="submit" disabled={accountId === ""}>
-            Add
+          <button
+            type="submit"
+            disabled={accountId === ""}
+          >
+            {groupedItemInEdit ? "Update" : "Add"}
           </button>
           <button
             type="button"
@@ -117,8 +137,9 @@ export function AddRow({ categoryId, accounts, onAdd }: AddRowProps) {
             aria-label="Close"
             title="Close"
             onClick={() => {
-              setOpen(false);
+              setIsOpen(false);
               reset();
+              onClose?.();
             }}
           >
             ×

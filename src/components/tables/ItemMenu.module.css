@@ -14,11 +14,13 @@
   line-height: 1;
   border: 1px solid transparent;
   border-radius: 6px;
-  background: transparent;
-  color: var(--muted);
 }
 
-.trigger:hover,
+.trigger:disabled {
+  cursor: not-allowed;
+}
+
+.trigger:not(:disabled):hover,
 .trigger[aria-expanded="true"] {
   border-color: var(--border);
   background: var(--surface);

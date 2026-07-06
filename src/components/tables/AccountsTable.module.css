@@ -5,6 +5,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   overflow: visible;
+  text-align: left;
 }
 
 .table thead {
@@ -14,9 +15,12 @@
 
 .table th,
 .table td {
-  text-align: left;
   padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border);
+}
+
+.amount {
+  text-align: right;
 }
 
 .row th {

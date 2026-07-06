@@ -1,5 +1,6 @@
 .table {
   margin-top: 1rem;
+  text-align: left;
 }
 
 @media (min-width: 640px) {
@@ -12,9 +13,12 @@
   font-weight: bold;
 }
 
+.amount {
+  text-align: right;
+}
+
 .table th,
 .table td {
-  text-align: left;
   padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border);
 }

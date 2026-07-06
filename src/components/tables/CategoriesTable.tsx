@@ -120,7 +120,7 @@ export function CategoriesTable({
                     </div>
                   </td>
                 </tr>
-            })
+              })
             )}
             <ItemEditor
               categoryId={categoryGroup.categoryId}

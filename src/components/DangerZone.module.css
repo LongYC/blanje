@@ -11,24 +11,30 @@
 }
 
 .text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-}
-
-.label {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.file {
+  margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
   overflow-wrap: anywhere;
 }
 
-.file strong {
+.filename {
+  margin: 0;
   color: var(--text);
   font-weight: 600;
+}
+
+@media (min-width: 480px) {
+  .filename {
+    display: inline;
+  }
+}
+
+.danger button {
+  margin-top: 1rem;
+}
+
+@media (min-width: 480px) {
+  .danger button {
+    margin-top: 0;
+  }
 }

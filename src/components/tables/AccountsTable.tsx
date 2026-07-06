@@ -23,7 +23,7 @@ export function AccountsTable({
     <thead>
       <tr>
         <th scope="row" colSpan={2}>Account</th>
-        <td className="amount">Amount</td>
+        <td className={styles.amount}>Amount</td>
       </tr>
     </thead>
     <tbody>
@@ -38,7 +38,7 @@ export function AccountsTable({
               />
             </div>
           </th>
-          <td className="amount">{formatCents(account.total)}</td>
+          <td className={styles.amount}>{formatCents(account.total)}</td>
         </tr>
       ))}
     </tbody>

@@ -347,7 +347,7 @@ export function App() {
         />
       </section>
 
-      {userData && userData.spendings.length > 0 && <DangerZone filename={filename} onClear={handleClear} />}
+      {userData && userData.spendings.length > 0 && <DangerZone filename={filename ?? "unknown"} onClear={handleClear} />}
 
       <ConfirmDialog
         open={confirmingClear}

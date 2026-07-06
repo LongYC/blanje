@@ -4,7 +4,8 @@
   z-index: 10;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  align-items: center;
+  align-items: stretch;
+  align-content: center;
   gap: 0.75rem;
   /* Negative inline margins let the background span the full container width so
      scrolled content doesn't peek out beside the nav; padding restores spacing. */
@@ -15,6 +16,9 @@
 }
 
 .nav h2 {
+  min-width: 12rem;
+  height: 2rem;
+  line-height: 2rem;
   justify-self: center;
   font-size: 1.25rem;
   margin: 0;
@@ -34,9 +38,6 @@
 
 .prev {
   justify-self: start;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 2rem;
   height: 2rem;
   padding: 0;

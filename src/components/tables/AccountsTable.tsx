@@ -10,25 +10,23 @@ interface AccountMenuComponentProps {
 
 interface AccountsTableProps {
   accountTotals: AccountTotal[];
-  grandTotal: number;
   hiddenAccountIds: string[];
   AccountMenuComponent: ComponentType<AccountMenuComponentProps>;
 }
 
 export function AccountsTable({
   accountTotals,
-  grandTotal,
   hiddenAccountIds,
   AccountMenuComponent
 }: AccountsTableProps) {
   return <table className={styles.table}>
-    <tbody>
-      <tr className={styles.grand}>
-        <th scope="row" colSpan={2}>
-          Grand total
-        </th>
-        <td className="amount">{formatCents(grandTotal)}</td>
+    <thead>
+      <tr>
+        <th scope="row" colSpan={2}>Account</th>
+        <td className="amount">Amount</td>
       </tr>
+    </thead>
+    <tbody>
       {accountTotals.map((account) => (
         <tr key={account.accountId} className={styles.row}>
           <th scope="row" colSpan={2}>

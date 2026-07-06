@@ -66,52 +66,6 @@ button:hover {
   }
 }
 
-/* Month navigation */
-.month-nav {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  /* Negative inline margins let the background span the full container width so
-     scrolled content doesn't peek out beside the nav; padding restores spacing. */
-  margin: 0 -1.25rem 0.75rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-}
-
-.month-nav h2 {
-  font-size: 1.25rem;
-  margin: 0;
-  min-width: 12rem;
-  text-align: center;
-}
-
-.month-nav-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  font-size: 1.4rem;
-  line-height: 1;
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.month-nav-btn:disabled {
-  color: var(--muted);
-  opacity: 0.4;
-  cursor: default;
-  filter: none;
-}
-
 /* Tables */
 .category-table {
   width: 100%;
@@ -119,12 +73,15 @@ button:hover {
   border-collapse: collapse;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
   overflow: visible;
 }
 
 .category-table {
   margin-top: 1.5rem;
+}
+
+.category-table thead {
+  background-color: var(--border);
 }
 
 .category-table th,

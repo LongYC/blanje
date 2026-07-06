@@ -4,8 +4,12 @@
   border-collapse: collapse;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
   overflow: visible;
+}
+
+.table thead {
+  font-weight: bold;
+  background-color: var(--border);
 }
 
 .table th,
@@ -13,22 +17,6 @@
   text-align: left;
   padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border);
-}
-
-.table thead th {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.grand th,
-.grand td {
-  background: var(--total-bg);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 700;
-  border-bottom: none;
 }
 
 .row th {

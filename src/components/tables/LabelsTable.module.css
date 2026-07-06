@@ -8,9 +8,18 @@
   }
 }
 
+.table thead {
+  font-weight: bold;
+}
+
 .table th,
 .table td {
   text-align: left;
   padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border);
+}
+
+.table tbody th {
+  font-weight: normal;
+  font-style: italic;
 }

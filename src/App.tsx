@@ -28,6 +28,8 @@ import { LabelsTable } from "./components/tables/LabelsTable";
 import { NoteField } from "./components/NoteField";
 import { groupItemsByCategory } from "./group";
 import styles from "./App.module.css";
+import { MonthlyHeader } from "./components/MonthlyHeader";
+import { formatCents } from "./format";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
 function formatTimestamp(date: Date): string {
@@ -312,27 +314,14 @@ export function App() {
       </section>
 
       <section className="results">
-        <div className="month-nav">
-          <button
-            type="button"
-            className="month-nav-btn"
-            onClick={() => stepMonth(-1)}
-            disabled={selectedIndex <= 0}
-            aria-label="Previous month"
-          >
-            ‹
-          </button>
-          <h2>{monthLabel(selected.month)}</h2>
-          <button
-            type="button"
-            className="month-nav-btn"
-            onClick={() => stepMonth(1)}
-            disabled={selectedIndex >= userData.spendings.length - 1}
-            aria-label="Next month"
-          >
-            ›
-          </button>
-        </div>
+        <MonthlyHeader
+          label={monthLabel(selected.month)}
+          monthlyTotal={formatCents(grandTotal)}
+          isPrevHidden={selectedIndex <= 0}
+          isNextHidden={selectedIndex >= userData.spendings.length - 1}
+          onPrev={() => stepMonth(-1)}
+          onNext={() => stepMonth(1)}
+        />
         <NoteField
           value={selected.note ?? ""}
           editable
@@ -341,7 +330,6 @@ export function App() {
         <div className={styles.breakdown}>
           <AccountsTable
             accountTotals={accountTotals}
-            grandTotal={grandTotal}
             hiddenAccountIds={hiddenAccountIds}
             AccountMenuComponent={AccountMenuComponent}
           />

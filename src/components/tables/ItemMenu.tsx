@@ -56,13 +56,14 @@ export function ItemMenu({
       {open && (
         <div className={styles.menu} role="menu">
           <button
-              type="button"
-              role="menuitem"
-              className={styles.item}
-              onClick={() => {
-                setOpen(false);
-                onEdit();
-              }}
+            type="button"
+            role="menuitem"
+            className={styles.item}
+            onClick={() => {
+              setOpen(false);
+              onEdit();
+            }}
+            title="Edit this item"
           >
             Edit
           </button>
@@ -75,6 +76,7 @@ export function ItemMenu({
               onMoveUp();
               setOpen(false);
             }}
+            title="Move this item to one row above"
           >
             Move up
           </button>}
@@ -86,6 +88,7 @@ export function ItemMenu({
               onToggleIgnore();
               setOpen(false);
             }}
+            title="Exclude the amount of this item from totals"
           >
             {isItemIgnored ? "Unignore" : "Ignore"}
           </button>

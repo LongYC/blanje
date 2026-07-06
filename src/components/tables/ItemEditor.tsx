@@ -6,9 +6,9 @@ import type { GroupedItem } from "../../group";
 interface ItemEditorProps {
   categoryId: string;
   accountOptions: Account[];
+  isAddButtonDisabled?: boolean;
   isOpenByDefault?: boolean;
   groupedItemInEdit?: GroupedItem;
-  isAddButtonDisabled?: boolean;
   onSubmit: (item: Item) => void;
   onClose?: () => void;
 }
@@ -23,6 +23,7 @@ export function ItemEditor({
   onClose
 }: ItemEditorProps) {
   const [isOpen, setIsOpen] = useState(isOpenByDefault);
+  const [isAutofocus, setIsAutofocus] = useState(true);
   const [name, setName] = useState(groupedItemInEdit?.name ?? "");
   const [amount, setAmount] = useState(groupedItemInEdit?.amount ?? "");
   const [accountId, setAccountId] = useState(groupedItemInEdit?.accountId ?? "");
@@ -60,7 +61,10 @@ export function ItemEditor({
             type="button"
             className={styles.show}
             disabled={isAddButtonDisabled}
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setIsAutofocus(true);
+              setIsOpen(true);
+            }}
           >
             + Add a new item to this category
           </button>
@@ -80,7 +84,8 @@ export function ItemEditor({
             placeholder="Item name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            autoFocus
+            onBlur={() => setIsAutofocus(false)}
+            autoFocus={isAutofocus}
           />
           <div className={styles.amount}>
             <button

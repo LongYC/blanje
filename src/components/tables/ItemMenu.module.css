@@ -50,8 +50,9 @@
   background: transparent;
   border: none;
   border-radius: 6px;
+  transition: color 0.2s ease;
 }
 
 .item:hover {
-  background: var(--category-bg);
+  color: var(--accent);
 }

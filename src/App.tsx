@@ -341,7 +341,7 @@ export function App() {
           hiddenAccountIds={hiddenAccountIds}
           AccountMenuComponent={AccountMenuComponent}
         />
-        <LabelsTable labelTotals={labelTotals} />
+        {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
         <CategoriesTable
           categoryGroups={categoryGroups}
           accounts={data.accounts}

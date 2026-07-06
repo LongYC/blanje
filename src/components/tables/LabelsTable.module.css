@@ -2,6 +2,12 @@
   margin-top: 1rem;
 }
 
+@media (min-width: 640px) {
+  .table {
+    margin-top: 0;
+  }
+}
+
 .table th,
 .table td {
   text-align: left;

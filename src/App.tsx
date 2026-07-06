@@ -27,6 +27,7 @@ import { EmptyState } from "./components/EmptyState";
 import { LabelsTable } from "./components/tables/LabelsTable";
 import { NoteField } from "./components/NoteField";
 import { groupItemsByCategory } from "./group";
+import styles from "./App.module.css";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
 function formatTimestamp(date: Date): string {
@@ -287,7 +288,7 @@ export function App() {
   }
 
   if (!userData || !selected) {
-    return <main className="app">
+    return <main className={styles.app}>
       <AppHeader />
 
       <section className="controls">
@@ -302,7 +303,7 @@ export function App() {
   const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
 
   return (
-    <main className="app">
+    <main className={styles.app}>
       <AppHeader />
 
       <section className="controls">
@@ -337,13 +338,15 @@ export function App() {
           editable
           onChange={handleEditNote}
         />
-        <AccountsTable
-          accountTotals={accountTotals}
-          grandTotal={grandTotal}
-          hiddenAccountIds={hiddenAccountIds}
-          AccountMenuComponent={AccountMenuComponent}
-        />
-        {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
+        <div className={styles.breakdown}>
+          <AccountsTable
+            accountTotals={accountTotals}
+            grandTotal={grandTotal}
+            hiddenAccountIds={hiddenAccountIds}
+            AccountMenuComponent={AccountMenuComponent}
+          />
+          {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
+        </div>
         <CategoriesTable
           categoryGroups={categoryGroups}
           accounts={userData.accounts}

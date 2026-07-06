@@ -33,13 +33,6 @@ button:hover {
   filter: brightness(1.05);
 }
 
-/* App container */
-.app {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
-}
-
 /* Controls section */
 .controls {
   flex-wrap: wrap;

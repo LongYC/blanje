@@ -1,0 +1,12 @@
+.app {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+@media (min-width: 640px) {
+  .breakdown {
+    display: flex;
+    gap: 1rem;
+  }
+}

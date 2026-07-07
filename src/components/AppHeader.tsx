@@ -21,7 +21,7 @@ export function AppHeader({
     </header>
     <section className={styles.controls}>
       <FileLoader onLoaded={onLoadedNewFile} hasExistingData={hasExistingData} />
-      <Button label="Save to a JSON file" onClick={onDownload} variant="main" disabled={!hasExistingData} />
+      <Button label="Save to a JSON" onClick={onDownload} variant="main" disabled={!hasExistingData} />
     </section>
   </div>;
 }

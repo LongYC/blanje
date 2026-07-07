@@ -44,17 +44,21 @@ The app expects an object with global `accounts` and `categories`, plus
 ```json
 {
   "accounts": [{ "id": "abc", "name": "ABC Bank" }],
-  "categories": [{ "id": "wellness", "name": "Wellness and healthcare" }],
+  "categories": [
+    { "id": "need", "name": "What I need, target 50%" },
+    { "id": "want", "name": "What I want but don't need, target 30%" },
+    { "id": "save", "name": "Save and invest, target 20%" }
+  ],
   "spendings": [
     {
       "month": 202607,
       "items": [
         {
-          "categoryId": "wellness",
-          "name": "Sunscreen (from Shop X)",
+          "categoryId": "need",
+          "name": "Food (from Shop X)",
           "amount": "123.45",
           "accountId": "abc",
-          "labels": ["urgent"]
+          "labels": ["shop-x"]
         }
       ]
     }

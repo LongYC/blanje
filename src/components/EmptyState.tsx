@@ -2,18 +2,21 @@ import styles from "./EmptyState.module.css";
 
 const EXAMPLE_JSON = `{
   "accounts": [{ "id": "abc", "name": "ABC Bank" }],
-  "categories": [{ "id": "groceries", "name": "Groceries" }],
+  "categories": [
+    { "id": "need", "name": "What I need, target 50%" },
+    { "id": "want", "name": "What I want but don't need, target 30%" },
+    { "id": "save", "name": "Save and invest, target 20%" }
+  ],
   "spendings": [
     {
       "month": 202607,
-      "note": "Optional note for the month",
       "items": [
         {
-          "categoryId": "groceries",
-          "name": "Weekly groceries",
-          "amount": "210.30",
+          "categoryId": "need",
+          "name": "Food (from Shop X)",
+          "amount": "123.45",
           "accountId": "abc",
-          "labels": ["urgent"]
+          "labels": ["shop-x"]
         }
       ]
     }

@@ -1,16 +1,19 @@
 .table {
   margin-top: 1rem;
   text-align: left;
+  width: 100%;
 }
 
 @media (min-width: 640px) {
   .table {
     margin-top: 0;
+    width: auto;
   }
 }
 
 .table thead {
   font-weight: bold;
+  color: var(--muted);
 }
 
 .amount {

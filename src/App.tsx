@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { FileLoader } from "./components/FileLoader";
-import { AccountMenu } from "./components/AccountMenu";
 import { CategoriesTable } from "./components/tables/CategoriesTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
@@ -111,9 +110,7 @@ export function App() {
     setToastToken((t) => t + 1);
   }
 
-  // Toggle whether an account's item rows are hidden.
-  // Hiding currently does not affects calculation of totals.
-  function handleToggleHideAccount(accountId: string) {
+  function handleAccountVisibility(accountId: string) {
     setHiddenAccountIds((current) => {
       const next = current.includes(accountId)
         ? current.filter((id) => id !== accountId)
@@ -122,16 +119,6 @@ export function App() {
       return next;
     });
   }
-
-  const AccountMenuComponent = useCallback(
-    ({ accountId, hidden }: { accountId: string; hidden: boolean }) => (
-      <AccountMenu
-        hidden={hidden}
-        onToggleHide={() => handleToggleHideAccount(accountId)}
-      />
-    ),
-    [handleToggleHideAccount],
-  );
 
   function handleUndoLoad() {
     if (!previousData) return;
@@ -327,14 +314,6 @@ export function App() {
           editable
           onChange={handleEditNote}
         />
-        <div className={styles.breakdown}>
-          <AccountsTable
-            accountTotals={accountTotals}
-            hiddenAccountIds={hiddenAccountIds}
-            AccountMenuComponent={AccountMenuComponent}
-          />
-          {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
-        </div>
         <CategoriesTable
           categoryGroups={categoryGroups}
           accounts={userData.accounts}
@@ -343,8 +322,15 @@ export function App() {
           onAddItem={handleAddSpending}
           onToggleIgnore={handleToggleIgnore}
           onMoveItemUp={handleMoveItemUp}
-          AccountMenuComponent={AccountMenuComponent}
         />
+        <div className={styles.breakdown}>
+          <AccountsTable
+            accountTotals={accountTotals}
+            hiddenAccountIds={hiddenAccountIds}
+            onAccountVisibilityToggle={handleAccountVisibility}
+          />
+          {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
+        </div>
       </section>
 
       {userData && userData.spendings.length > 0 && <DangerZone filename={filename ?? "unknown"} onClear={handleClear} />}

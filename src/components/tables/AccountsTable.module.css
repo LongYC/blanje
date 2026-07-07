@@ -11,6 +11,7 @@
 .table thead {
   font-weight: bold;
   background-color: var(--border);
+  color: var(--muted);
 }
 
 .table th,
@@ -25,7 +26,6 @@
 
 .row th {
   font-weight: 500;
-  color: var(--muted);
   padding-left: 1.7rem;
 }
 
@@ -48,4 +48,26 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.toggle {
+  flex: 0 0 auto;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.toggle:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  filter: none;
+}
+
+.toggle[aria-pressed="true"] {
+  color: var(--text);
+  border-style: dashed;
 }

@@ -19,7 +19,6 @@ interface SpendingsTableProps {
   onToggleIgnore: (index: number) => void;
   // Move the item at `index` to just before the closest preceding item that shares the same category.
   onMoveItemUp: (index: number) => void;
-  AccountMenuComponent: ComponentType<AccountMenuComponentProps>;
 }
 
 export function CategoriesTable({
@@ -53,11 +52,11 @@ export function CategoriesTable({
             <tr className="category-row">
               <th scope="rowgroup">
                 {categoryGroup.categoryName}
-                <span className="category-percent">
-                  {categoryGroup.percentage.toFixed(1)}%
-                </span>
               </th>
               <td className="amount category-total">
+                <span className="category-percent" title="Percentage of this category out of this month's expenses">
+                  {categoryGroup.percentage.toFixed(1)}%
+                </span>
                 {formatCents(categoryGroup.total)}
               </td>
               <td aria-label="No value"></td>
@@ -82,10 +81,13 @@ export function CategoriesTable({
                   />
                 }
 
+                const rowClass = [];
+                if (groupedItem.ignore) rowClass.push("ignored-row");
+                if (hidden.has(groupedItem.accountId)) rowClass.push("invisible");
+
                 return <tr
                   key={groupedItem.index}
-                  hidden={hidden.has(groupedItem.accountId)}
-                  className={groupedItem.ignore ? "ignored-row" : undefined}
+                  className={rowClass.join(" ")}
                 >
                   <td>
                     {

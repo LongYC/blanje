@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-top: 3rem;
+  margin-top: 2rem;
   padding: 1rem;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -19,11 +19,13 @@
 
 .filename {
   margin: 0;
+  display: block;
   color: var(--text);
-  font-weight: 600;
+  font-weight: 500;
+  font-style: italic;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .filename {
     display: inline;
   }

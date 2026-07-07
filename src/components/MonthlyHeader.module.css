@@ -34,6 +34,7 @@
   background-color: black;
   color: white;
   font-weight: bold;
+  cursor: help;
 }
 
 .prev {
@@ -44,7 +45,7 @@
   font-size: 1.4rem;
   line-height: 1;
   background: var(--surface);
-  color: var(--text);
+  color: var(--muted);
   border: 1px solid var(--border);
   border-radius: 8px;
 }

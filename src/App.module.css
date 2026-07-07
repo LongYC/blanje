@@ -4,6 +4,10 @@
   padding: 2rem 1.25rem 4rem;
 }
 
+.breakdown {
+  margin-top: 2rem;
+}
+
 @media (min-width: 640px) {
   .breakdown {
     display: flex;

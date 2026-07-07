@@ -1,4 +1,4 @@
-import type { UserData } from "../types";
+import type { UserData } from "../data";
 import styles from "./AppHeader.module.css";
 import { Button } from "./Button";
 import { FileLoader } from "./FileLoader";

@@ -4,7 +4,7 @@ import type {
   MonthlySpending,
   Item,
   UserData,
-} from "./types";
+} from "./data";
 
 /** Thrown when uploaded JSON does not match the expected shape. */
 export class ValidationError extends Error {}

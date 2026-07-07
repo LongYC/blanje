@@ -13,7 +13,7 @@ export function LabelsTable({
     <thead>
       <tr>
         <th scope="col">Label</th>
-        <th scope="col" className="amount">Amount</th>
+        <th scope="col" className={styles.amount}>Amount</th>
       </tr>
     </thead>
     <tbody>
@@ -27,7 +27,7 @@ export function LabelsTable({
           .map((lt) => (
             <tr key={lt.label}>
               <th scope="row">{lt.label}</th>
-              <td className="amount">{formatCents(lt.total)}</td>
+              <td className={styles.amount}>{formatCents(lt.total)}</td>
             </tr>
           ))
       )}

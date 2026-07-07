@@ -1,5 +1,5 @@
 import { toCents } from "./format";
-import type { Account, Category, Item } from "./types";
+import type { Account, Category, Item } from "./data";
 
 export interface GroupedItem extends Item {
   accountName: string;
@@ -93,7 +93,7 @@ export function groupItemsByCategory(
       amountCents,
       accountName: accountName.get(item.accountId) ?? UNKNOWN_ACCOUNT,
     });
-    // Ignored items are still listed but never counted in any total.
+    // Ignored items are still listed but not counted in any total.
     if (item.ignore) return;
     group.total += amountCents;
 
@@ -111,6 +111,11 @@ export function groupItemsByCategory(
 
   const categoryGroups = [...categoryGroupMap.values()];
   const grandTotal = categoryGroups.reduce((sum, g) => sum + g.total, 0);
+  if (grandTotal > 0) {
+    for (const categoryGroup of categoryGroups) {
+      categoryGroup.percentage = (categoryGroup.total / grandTotal) * 100;
+    }
+  }
 
   // Compute label totals (do not affect other calculations). Exclude ignored items.
   const labelTotalsMap = new Map<string, number>();
@@ -125,18 +130,10 @@ export function groupItemsByCategory(
 
   const labelTotals = [...labelTotalsMap.entries()].map(([label, total]) => ({ label, total }));
 
-  // Compute each category's share once the grand total is known.
-  if (grandTotal > 0) {
-    for (const categoryGroup of categoryGroups) {
-      categoryGroup.percentage = (categoryGroup.total / grandTotal) * 100;
-    }
-  }
-
   return {
     categoryGroups,
     accountTotals: [...accountTotalsMap.values()],
     grandTotal,
-    // provide label totals for UI display
-    labelTotals,
+    labelTotals
   };
 }

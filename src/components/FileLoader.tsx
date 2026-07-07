@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { parseRootJson, ValidationError } from "../parse";
-import type { UserData } from "../types";
+import type { UserData } from "../data";
 import { Button } from "./Button";
 import styles from "./FileLoader.module.css";
 

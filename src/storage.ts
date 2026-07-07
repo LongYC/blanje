@@ -1,4 +1,4 @@
-import type { AppData, UserData } from "./types";
+import type { AppData, UserData } from "./data";
 
 const STORAGE_KEY_USER_DATA = "blanje:user_data";
 const STORAGE_KEY_APP_DATA = "blanje:app_data";

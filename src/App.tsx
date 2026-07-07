@@ -16,7 +16,7 @@ import {
   saveHiddenAccounts,
   saveLastEdited,
 } from "./storage";
-import { type UserData, type Item } from "./types";
+import { type UserData, type Item } from "./data";
 import { AccountsTable } from "./components/tables/AccountsTable";
 import { AppHeader } from "./components/AppHeader";
 import { DangerZone } from "./components/DangerZone";
@@ -207,8 +207,8 @@ export function App() {
     saveLastEdited(stamp);
   }
 
-  // Move the item at `index` to just before the closest preceding item that
-  // shares the same categoryId. No-op if it is already first in its category.
+  // Move the item at `index` to just before the closest preceding item that shares the same category.
+  // No-op if it is already first in its category.
   function handleMoveItemUp(index: number) {
     if (!userData || selectedMonth === null) return;
     const monthEntry = userData.spendings.find((s) => s.month === selectedMonth);

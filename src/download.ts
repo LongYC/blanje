@@ -1,4 +1,4 @@
-import type { UserData } from "./types";
+import type { UserData } from "./data";
 
 /** Trigger a browser download of the given data as a pretty-printed JSON file. */
 export function downloadJson(data: UserData, filename: string): void {

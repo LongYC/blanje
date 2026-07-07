@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from "react";
-import type { Account, Item } from "../../types";
+import type { Account, Item } from "../../data";
 import styles from "./ItemEditor.module.css";
 import type { GroupedItem } from "../../group";
 

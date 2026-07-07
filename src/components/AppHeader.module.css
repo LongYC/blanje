@@ -1,16 +1,49 @@
 .header {
+  margin: 1rem 0;
+}
+
+.header header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: var(--muted);
 }
 
-.header h1 {
+.header header h1 {
   margin: 0;
   font-size: 2rem;
   letter-spacing: -0.02em;
 }
 
-.tagline {
+.header header p {
   margin: 0 0 0 1rem;
+}
+
+
+@media (min-width: 640px) {
+  .header {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.controls {
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.controls button {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.controls button:first-of-type {
+  margin-top: 0;
 }

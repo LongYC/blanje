@@ -12,6 +12,12 @@
   filter: brightness(1.05);
 }
 
+button:disabled {
+  background-color: var(--border);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
 .main {
   background: var(--accent);
   color: #fff;

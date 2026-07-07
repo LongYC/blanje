@@ -34,39 +34,6 @@ button:hover {
   filter: brightness(1.05);
 }
 
-/* Controls section */
-.controls {
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 1rem;
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-.controls button {
-  display: block;
-  width: 100%;
-  margin-top: 1rem;
-}
-
-.controls button:first-of-type {
-  margin-top: 0;
-}
-
-@media (min-width: 480px) {
-  .controls {
-    display: flex;
-  }
-
-  .controls button {
-    width: auto;
-    margin-top: 0;
-  }
-}
-
 /* Tables */
 .category-table {
   width: 100%;

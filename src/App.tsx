@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
-import { FileLoader } from "./components/FileLoader";
 import { CategoriesTable } from "./components/tables/CategoriesTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
@@ -20,7 +19,6 @@ import {
 import { type UserData, type Item } from "./types";
 import { AccountsTable } from "./components/tables/AccountsTable";
 import { AppHeader } from "./components/AppHeader";
-import { Button } from "./components/Button";
 import { DangerZone } from "./components/DangerZone";
 import { EmptyState } from "./components/EmptyState";
 import { LabelsTable } from "./components/tables/LabelsTable";
@@ -89,7 +87,7 @@ export function App() {
     setSelectedMonth(userData.spendings[next].month);
   }
 
-  function handleLoaded(loaded: UserData, name: string) {
+  function handleLoaded(newUserData: UserData, newFilename: string) {
     // For undo.
     setPreviousData(userData);
     setPreviousFilename(filename);
@@ -97,11 +95,11 @@ export function App() {
     setHiddenAccountIds([]);
     saveHiddenAccounts([]);
 
-    loaded.spendings.sort((a, b) => a.month - b.month);
-    setUserData(loaded);
-    setFilename(name);
-    writeUserData(loaded);
-    saveLastLoadedFilename(name);
+    newUserData.spendings.sort((a, b) => a.month - b.month);
+    setUserData(newUserData);
+    setFilename(newFilename);
+    writeUserData(newUserData);
+    saveLastLoadedFilename(newFilename);
     setLastEdited("");
     saveLastEdited("");
     setToastToken((t) => t + 1);
@@ -275,13 +273,11 @@ export function App() {
 
   if (!userData || !selected) {
     return <main className={styles.app}>
-      <AppHeader />
-
-      <section className="controls">
-        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(userData)} />
-        {userData && userData.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
-      </section>
-
+      <AppHeader
+        onLoadedNewFile={handleLoaded}
+        hasExistingData={Boolean(userData)}
+        onDownload={handleDownload}
+      />
       <EmptyState />
     </main>;
   }
@@ -290,12 +286,11 @@ export function App() {
 
   return (
     <main className={styles.app}>
-      <AppHeader />
-
-      <section className="controls">
-        <FileLoader onLoaded={handleLoaded} hasExistingData={Boolean(userData)} />
-        {userData && userData.spendings.length > 0 && (<Button label="Save to a JSON file" onClick={handleDownload} variant="main" />)}
-      </section>
+      <AppHeader
+        onLoadedNewFile={handleLoaded}
+        hasExistingData={Boolean(userData)}
+        onDownload={handleDownload}
+      />
 
       <section className="results">
         <MonthlyHeader

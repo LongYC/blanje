@@ -16,6 +16,7 @@
 
 * {
   box-sizing: border-box;
+  border-collapse: collapse;
 }
 
 body {
@@ -70,7 +71,6 @@ button:hover {
 .category-table {
   width: 100%;
   table-layout: fixed;
-  border-collapse: collapse;
   background: var(--surface);
   border: 1px solid var(--border);
   word-wrap: break-word;
@@ -86,7 +86,7 @@ button:hover {
   color: var(--muted);
 }
 
-.category-table .invisible {
+.category-table .invisible td * {
   visibility: hidden;
 }
 
@@ -94,6 +94,7 @@ button:hover {
 .category-table td {
   text-align: left;
   padding: 0.6rem 0.85rem;
+  border: none;
   border-top: 1px solid var(--category-bg);
   font-size: 0.95rem;
 }
@@ -117,7 +118,6 @@ button:hover {
 .category-row th,
 .category-row td {
   background: var(--category-bg);
-  border-top: 1px solid var(--border);
   padding: 0.85rem;
   font-size: 1rem;
 }

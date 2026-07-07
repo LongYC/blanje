@@ -82,7 +82,6 @@ export function App() {
 
   const selected = selectedIndex >= 0 ? userData!.spendings[selectedIndex] : null;
 
-  // Step to an adjacent month in the spendings list.
   function stepMonth(delta: number) {
     if (!userData || selectedIndex < 0) return;
     const next = selectedIndex + delta;
@@ -91,20 +90,18 @@ export function App() {
   }
 
   function handleLoaded(loaded: UserData, name: string) {
-    // Loading over existing data is destructive — keep the old data (and its
-    // filename) around so the Undo toast can put it back. Loading into an empty
-    // app needs no toast.
+    // For undo.
     setPreviousData(userData);
     setPreviousFilename(filename);
     setPreviousLastEdited(lastEdited);
+    setHiddenAccountIds([]);
+    saveHiddenAccounts([]);
+
+    loaded.spendings.sort((a, b) => a.month - b.month);
     setUserData(loaded);
     setFilename(name);
     writeUserData(loaded);
     saveLastLoadedFilename(name);
-    // This is intentionally not restored by the Undo toast.
-    setHiddenAccountIds([]);
-    saveHiddenAccounts([]);
-    // A freshly loaded file hasn't been edited yet.
     setLastEdited("");
     saveLastEdited("");
     setToastToken((t) => t + 1);

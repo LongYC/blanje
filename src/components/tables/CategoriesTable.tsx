@@ -1,14 +1,9 @@
-import { useMemo, useState, type ComponentType } from "react";
+import { useMemo, useState } from "react";
 import { formatCents } from "../../format";
 import type { CategoryGroup } from "../../group";
 import type { Account, Item } from "../../types";
 import { ItemEditor } from "./ItemEditor";
 import { ItemMenu } from "./ItemMenu";
-
-interface AccountMenuComponentProps {
-  accountId: string;
-  hidden: boolean;
-}
 
 interface SpendingsTableProps {
   categoryGroups: CategoryGroup[];
@@ -91,7 +86,7 @@ export function CategoriesTable({
                 >
                   <td>
                     {
-                      <>
+                      <div>
                         {groupedItem.name}
                         {groupedItem.labels && groupedItem.labels.length > 0 && (
                           <span className="item-labels">
@@ -100,11 +95,11 @@ export function CategoriesTable({
                             ))}
                           </span>
                         )}
-                      </>
+                      </div>
                     }
                   </td>
                   <td className="amount">
-                    {formatCents(groupedItem.amountCents)}
+                    <div>{formatCents(groupedItem.amountCents)}</div>
                   </td>
                   <td className="account-cell">
                     <div className="account-cell-inner">

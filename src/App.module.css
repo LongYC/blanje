@@ -11,6 +11,6 @@
 @media (min-width: 640px) {
   .breakdown {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
   }
 }

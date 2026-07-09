@@ -142,6 +142,14 @@ export function App() {
     setConfirmingClear(false);
   }
 
+  function updateAndSaveUserData(latestData: UserData) {
+    setUserData(latestData);
+    writeUserData(latestData);
+    const stamp = formatTimestamp(new Date());
+    setLastEdited(stamp);
+    saveLastEdited(stamp);
+  }
+
   // Apply an edit to a single item within the selected month, then persist.
   function handleEditSpending(index: number, patch: Partial<Item>) {
     if (!userData || selectedMonth === null) return;
@@ -158,11 +166,7 @@ export function App() {
             },
       ),
     };
-    setUserData(next);
-    writeUserData(next);
-    const stamp = formatTimestamp(new Date());
-    setLastEdited(stamp);
-    saveLastEdited(stamp);
+    updateAndSaveUserData(next);
   }
 
   // Toggle whether an item is ignored in totals, then persist. Unignoring drops
@@ -187,8 +191,7 @@ export function App() {
             },
       ),
     };
-    setUserData(next);
-    writeUserData(next);
+    updateAndSaveUserData(next);
   }
 
   // Update the free-form note on the selected month, then persist.
@@ -200,11 +203,7 @@ export function App() {
         month.month !== selectedMonth ? month : { ...month, note },
       ),
     };
-    setUserData(next);
-    writeUserData(next);
-    const stamp = formatTimestamp(new Date());
-    setLastEdited(stamp);
-    saveLastEdited(stamp);
+    updateAndSaveUserData(next);
   }
 
   // Move the item at `index` to just before the closest preceding item that shares the same category.
@@ -228,21 +227,17 @@ export function App() {
     }
     if (insertBefore === -1) return; // already first in category
 
-    const next = [...items];
-    const [moved] = next.splice(index, 1);
-    next.splice(insertBefore, 0, moved);
+    const ItemsClone = [...items];
+    const [moved] = ItemsClone.splice(index, 1);
+    ItemsClone.splice(insertBefore, 0, moved);
 
-    const nextData: UserData = {
+    const updatedUserData: UserData = {
       ...userData,
-      spendings: userData.spendings.map((month) =>
-        month.month !== selectedMonth ? month : { ...month, items: next },
+      spendings: userData.spendings.map((monthlySpending) =>
+        monthlySpending.month !== selectedMonth ? monthlySpending : { ...monthlySpending, items: ItemsClone },
       ),
     };
-    setUserData(nextData);
-    writeUserData(nextData);
-    const stamp = formatTimestamp(new Date());
-    setLastEdited(stamp);
-    saveLastEdited(stamp);
+    updateAndSaveUserData(updatedUserData);
   }
 
   // Append a new item to the selected month, then persist.
@@ -256,11 +251,7 @@ export function App() {
           : { ...month, items: [...month.items, spending] },
       ),
     };
-    setUserData(next);
-    writeUserData(next);
-    const stamp = formatTimestamp(new Date());
-    setLastEdited(stamp);
-    saveLastEdited(stamp);
+    updateAndSaveUserData(next);
   }
 
   function handleDownload() {

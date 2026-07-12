@@ -34,7 +34,7 @@ export function MonthlyHeader({
   onPrev,
   onNext
 }: MonthlyHeaderProps) {
-  const monthLabel = MONTH_LABELS[month + 1] ?? month;
+  const monthLabel = MONTH_LABELS[month - 1] ?? month;
 
   return <div className={styles.nav}>
     <h2><span className={styles.month}>{monthLabel}</span> {year}</h2>

@@ -18,6 +18,7 @@ export function MonthlyHeader({
   onNext
 }: MonthlyHeaderProps) {
   return <div className={styles.nav}>
+    <h2>{label}</h2>
     {
       <button
         type="button"
@@ -26,10 +27,9 @@ export function MonthlyHeader({
         disabled={isPrevHidden}
         aria-label="Previous month"
       >
-        ‹
+        Prev.
       </button>
     }
-    <h2>{label}</h2>
     {
       <button
         type="button"
@@ -38,7 +38,7 @@ export function MonthlyHeader({
         disabled={isNextHidden}
         aria-label="Next month"
       >
-        ›
+        Next
       </button>
     }
     <p title="Grand total for this month">{monthlyTotal}</p>

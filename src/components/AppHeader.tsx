@@ -15,13 +15,11 @@ export function AppHeader({
   onDownload
 }: AppHeaderProps) {
   return <div className={styles.header}>
-    <header>
-      <h1>Blanje</h1>
-      <p>Monthly expenses in a JSON.</p>
-    </header>
-    <section className={styles.controls}>
+    <h1>Blanje</h1>
+    <p>Monthly expenses in a JSON.</p>
+    <div className={styles.controls}>
       <FileLoader onLoaded={onLoadedNewFile} hasExistingData={hasExistingData} />
       <Button label="Save to a JSON" onClick={onDownload} variant="main" disabled={!hasExistingData} />
-    </section>
+    </div>
   </div>;
 }

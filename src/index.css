@@ -5,6 +5,9 @@
   --text: #1c1f26;
   --muted: #6b7280;
   --accent: #2563eb;
+
+  --app-header-bg: var(--muted);
+  --app-header-text: var(--bg);
   --category-bg: #eef2ff;
   --total-bg: #1c1f26;
 

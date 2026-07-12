@@ -262,27 +262,32 @@ export function App() {
   }
 
   if (!userData || !selected) {
-    return <main className={styles.app}>
-      <AppHeader
-        onLoadedNewFile={handleLoaded}
-        hasExistingData={Boolean(userData)}
-        onDownload={handleDownload}
-      />
-      <EmptyState />
+    return <main className={styles.main}>
+      <section className={styles.sectionAppHeader}>
+        <AppHeader
+          onLoadedNewFile={handleLoaded}
+          hasExistingData={Boolean(userData)}
+          onDownload={handleDownload}
+        />
+      </section>
+      <section className={styles.section}>
+        <EmptyState />
+      </section>
     </main>;
   }
 
   const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
 
   return (
-    <main className={styles.app}>
-      <AppHeader
-        onLoadedNewFile={handleLoaded}
-        hasExistingData={Boolean(userData)}
-        onDownload={handleDownload}
-      />
-
-      <section className="results">
+    <main className={styles.main}>
+      <section className={styles.sectionAppHeader}>
+        <AppHeader
+          onLoadedNewFile={handleLoaded}
+          hasExistingData={Boolean(userData)}
+          onDownload={handleDownload}
+        />
+      </section>
+      <section className={styles.sectionUserData}>
         <MonthlyHeader
           year={Math.trunc(selected.month / 100)}
           month={selected.month % 100}
@@ -315,9 +320,9 @@ export function App() {
           {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
         </div>
       </section>
-
-      {userData && userData.spendings.length > 0 && <DangerZone filename={filename ?? "unknown"} onClear={handleClear} />}
-
+      <section className={styles.sectionDangerZone}>
+        {userData && userData.spendings.length > 0 && <DangerZone filename={filename ?? "unknown"} onClear={handleClear} />}
+      </section>
       <ConfirmDialog
         open={confirmingClear}
         title="Clear all loaded data?"
@@ -327,7 +332,6 @@ export function App() {
         cancelLabel="Keep data"
         onCancel={() => setConfirmingClear(false)}
       />
-
       {previousData && (
         <Toast
           key={toastToken}

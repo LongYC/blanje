@@ -1,7 +1,8 @@
 import styles from "./MonthlyHeader.module.css";
 
 interface MonthlyHeaderProps {
-  label: string;
+  month: number;
+  year: number;
   monthlyTotal: string;
   isPrevHidden: boolean;
   isNextHidden: boolean;
@@ -9,16 +10,34 @@ interface MonthlyHeaderProps {
   onNext: () => void;
 }
 
+const MONTH_LABELS = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+];
+
 export function MonthlyHeader({
-  label,
+  year,
+  month,
   monthlyTotal,
   isPrevHidden,
   isNextHidden,
   onPrev,
   onNext
 }: MonthlyHeaderProps) {
+  const monthLabel = MONTH_LABELS[month + 1] ?? month;
+
   return <div className={styles.nav}>
-    <h2>{label}</h2>
+    <h2><span className={styles.month}>{monthLabel}</span> {year}</h2>
     {
       <button
         type="button"

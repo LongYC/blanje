@@ -133,25 +133,3 @@ export function parseRootJson(text: string): UserData {
 
   return { accounts, categories, spendings };
 }
-
-const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-export function monthLabel(month: number): string {
-  const year = Math.floor(month / 100);
-  const m = month % 100;
-  const name = MONTH_NAMES[m - 1] ?? `Month ${m}`;
-  return `${name} ${year}`;
-}

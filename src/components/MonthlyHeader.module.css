@@ -12,11 +12,17 @@
 }
 
 .nav h2 {
-  min-width: 12rem;
-  line-height: 2rem;
-  font-size: 1.25rem;
   margin: 0;
   padding: 0 0 0 .5rem;
+  min-width: 12rem;
+  max-height: 2rem;
+  line-height: 2rem;
+  font-size: 1.25rem;
+  font-weight: bolder;
+}
+
+.nav .month {
+  font-size: 3rem;
 }
 
 .nav p {

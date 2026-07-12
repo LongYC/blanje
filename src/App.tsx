@@ -3,7 +3,6 @@ import { ConfirmDialog } from "./components/ConfirmDialog";
 import { CategoriesTable } from "./components/tables/CategoriesTable";
 import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
-import { monthLabel } from "./parse";
 import {
   clearAllData,
   clearFilename,
@@ -285,7 +284,8 @@ export function App() {
 
       <section className="results">
         <MonthlyHeader
-          label={monthLabel(selected.month)}
+          year={Math.trunc(selected.month / 100)}
+          month={selected.month % 100}
           monthlyTotal={formatCents(grandTotal)}
           isPrevHidden={selectedIndex <= 0}
           isNextHidden={selectedIndex >= userData.spendings.length - 1}

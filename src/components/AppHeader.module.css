@@ -2,47 +2,78 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   letter-spacing: -0.02em;
 }
 
 .header p {
-  margin: 0 0 0 1rem;
+  font-size: 0.85rem;
+  margin: 0 auto 0 1rem;
 }
 
 @media (min-width: 640px) {
-  .header {
-    display: flex;
-    justify-content: space-between;
+  .header h1 {
+    font-size: 2rem;
   }
 
   .header p {
-    margin-right: auto;
+    font-size: 1rem;
   }
+}
+
+.menu {
+  anchor-name: --menu;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: var(--surface);
+  border-radius: 4px;
+  padding: 5px
+}
+
+.menu > span {
+  width: 25px;
+  height: 3px;
+  background: var(--app-header-bg);
+  border-radius: 3px;
+}
+
+.menu:hover {
+  background: var(--category-bg);
 }
 
 .controls {
-  width: 100%;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 1rem;
-  margin: 1rem 0 0 0;
   padding: 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 4px;
+  box-shadow: -2px 5px 10px rgba(0,0,0,0.1);
+  position: absolute;
+  position-anchor: --menu;
+  position-area: block-end span-inline-start;
+  margin-top: 0.5rem;
 }
 
-@media (min-width: 640px) {
-  .controls {
-    width: auto;
-    margin-top: 0;
+.controls:popover-open {
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+@starting-style {
+  .controls:popover-open {
+    opacity: 0;
+    transition: opacity 0.15s ease;
   }
+}
+
+.controls::backdrop {
+  background: rgb(0 0 0 / 0.4);
+  transition: background 0.15s ease;
 }
 
 .controls button {

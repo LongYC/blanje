@@ -26,10 +26,9 @@ const EXAMPLE_JSON = `{
 export function EmptyState() {
   return <section className={styles.empty}>
     <p>
-      No data loaded yet.
-      Create and load a JSON file to this page to get started.
-      You'll be able to view and edit items plus see totals grouped by category.
-      All data are client-side only and the JSON file must match the schema shown below:
+      To get started, create a JSON following the schema shown below
+      and then load it to this page using the top right menu.
+      You'll be able to view and edit items plus see totals grouped by categories and labels.
     </p>
     <pre className={styles.example}>{EXAMPLE_JSON}</pre>
   </section>;

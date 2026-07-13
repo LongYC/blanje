@@ -7,7 +7,7 @@
   align-items: stretch;
   align-content: center;
   gap: 0.75rem;
-  padding: 1rem 0 0;
+  padding: 1.25rem 0 0;
   background: var(--bg);
 }
 
@@ -36,6 +36,7 @@
   border-radius: 6px 6px 0 0;
   background-color: black;
   color: white;
+  font-size: 1.25rem;
   font-variant-numeric: tabular-nums;
   font-weight: bold;
   cursor: help;

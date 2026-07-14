@@ -54,7 +54,7 @@
   font-size: 0.75rem;
   font-style: italic;
   color: var(--muted);
-  background: rgba(0, 0, 0, 0.03);
+  background: rgb(0 0 0 / 0.03);
   border-radius: 999px;
 }
 

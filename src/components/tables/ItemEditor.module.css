@@ -7,11 +7,6 @@
   font-size: 0.85rem;
 }
 
-.show:disabled {
-  color: var(--muted);
-  cursor: not-allowed;
-}
-
 .form {
   display: flex;
   flex-wrap: wrap;
@@ -28,17 +23,6 @@
 .form button[type="submit"] {
   color: var(--accent);
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-.form button[type="submit"]:disabled {
-  cursor: not-allowed;
-  background: var(--border);
-  border-color: var(--border);
-  color: var(--muted);
-}
-
-.form button[type="submit"]:disabled:hover {
-  filter: none;
 }
 
 .form .amount {

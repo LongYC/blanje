@@ -12,20 +12,14 @@
   filter: brightness(1.05);
 }
 
-button:disabled {
-  background-color: var(--border);
-  border-color: var(--border);
-  color: var(--muted);
-}
-
 .main {
-  background: var(--accent);
+  background: var(--green);
   color: #fff;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--green);
 }
 
 .danger {
-  background: #b91c1c;
+  background: var(--red);
   color: #fff;
   border-color: transparent;
 }

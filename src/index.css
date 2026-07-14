@@ -5,6 +5,8 @@
   --text: #1c1f26;
   --muted: #6b7280;
   --accent: #2563eb;
+  --red: #b91c1c;
+  --green: #15803d;
 
   --app-header-bg: var(--muted);
   --app-header-text: var(--bg);
@@ -32,8 +34,16 @@ button {
   color: var(--muted);
   border: 1px solid var(--border);
   cursor: pointer;
+  font-weight: 500;
 }
 
 button:hover {
   filter: brightness(1.05);
+}
+
+button:disabled {
+  background-color: var(--muted);
+  border-color: var(--muted);
+  color: var(--border);
+  cursor: not-allowed;
 }

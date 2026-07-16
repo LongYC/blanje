@@ -45,8 +45,7 @@
 .prev {
   width: 100%;
   padding: .5rem;
-  background: var(--surface);
-  color: var(--muted);
+  font-weight: bold;
   border: 1px solid var(--border);
   border-radius: 16px 4px 4px 4px;
   text-align: left;

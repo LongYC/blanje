@@ -1,8 +1,7 @@
-.show {
-  background: transparent;
+.add {
   color: var(--accent);
   border: 1px dashed var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 0.35rem 0.7rem;
   font-size: 0.85rem;
 }
@@ -17,10 +16,10 @@
 .form button {
   padding: 0.4rem 0.9rem;
   font-size: 0.85rem;
-  border-radius: 6px;
+  border-radius: 16px;
 }
 
-.form button[type="submit"] {
+.form button[type="submit"]:not(:disabled) {
   color: var(--accent);
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }

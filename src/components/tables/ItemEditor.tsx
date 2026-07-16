@@ -59,7 +59,7 @@ export function ItemEditor({
         <td colSpan={3}>
           <button
             type="button"
-            className={styles.show}
+            className={styles.add}
             disabled={isAddButtonDisabled}
             onClick={() => {
               setIsAutofocus(true);

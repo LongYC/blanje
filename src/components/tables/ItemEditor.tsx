@@ -27,29 +27,35 @@ export function ItemEditor({
   const [name, setName] = useState(groupedItemInEdit?.name ?? "");
   const [amount, setAmount] = useState(groupedItemInEdit?.amount ?? "");
   const [accountId, setAccountId] = useState(groupedItemInEdit?.accountId ?? "");
+  const [labelsString, setLabelsString] = useState(groupedItemInEdit?.labels?.join(", ") ?? "");
 
   function reset() {
     setName("");
     setAmount("");
     setAccountId("");
+    setLabelsString("");
   }
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
-    if (
-      name.trim() === "" ||
-      amount.trim() === "" ||
-      Number.isNaN(Number(amount)) ||
-      accountId === ""
-    ) {
+
+    if (name.trim() === "" || Number.isNaN(Number(amount)) || accountId === "") {
       return;
     }
+
+    const parsedLabelsArray = labelsString
+      .split(",")
+      .map((label) => label.trim())
+      .filter((label) => label !== "");
+
     onSubmit({
       categoryId,
       name: name.trim(),
       amount: amount.trim(),
-      accountId
+      accountId,
+      labels: [...new Set(parsedLabelsArray)]
     });
+
     reset();
   }
 
@@ -130,6 +136,14 @@ export function ItemEditor({
               </option>
             ))}
           </select>
+          <input
+            type="text"
+            className={styles.input}
+            aria-label="Labels"
+            placeholder="Labels (comma-separated, optional)"
+            value={labelsString}
+            onChange={(e) => setLabelsString(e.target.value)}
+          />
           <button
             type="submit"
             disabled={accountId === ""}

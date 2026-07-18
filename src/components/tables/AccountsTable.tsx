@@ -17,7 +17,7 @@ export function AccountsTable({
     <thead>
       <tr>
         <th scope="row" colSpan={2}>Account</th>
-        <td className={styles.amount}>Amount</td>
+        <td className={styles.amount}>Total spent</td>
       </tr>
     </thead>
     <tbody>

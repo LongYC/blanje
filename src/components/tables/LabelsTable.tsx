@@ -13,7 +13,7 @@ export function LabelsTable({
     <thead>
       <tr>
         <th scope="col">Label</th>
-        <th scope="col" className={styles.amount}>Amount</th>
+        <th scope="col" className={styles.amount}>Total</th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +23,7 @@ export function LabelsTable({
         </tr>
       ) : (
         [...labelTotals]
-          .sort((a, b) => b.total - a.total)
+          .sort((a, b) => a.label.localeCompare(b.label))
           .map((lt) => (
             <tr key={lt.label}>
               <th scope="row">{lt.label}</th>

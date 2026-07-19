@@ -12,6 +12,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
+    "test": "vitest run",
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist -t -m \"Deploy: $(git rev-parse --short HEAD)\""
   },
@@ -26,7 +27,8 @@
     "@vitejs/plugin-react": "^4.4.1",
     "gh-pages": "^6.3.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^4.1.10"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

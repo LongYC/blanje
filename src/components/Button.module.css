@@ -3,7 +3,7 @@
   color: var(--muted);
   border: 1px solid var(--border);
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 16px;
   font: inherit;
   cursor: pointer;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);

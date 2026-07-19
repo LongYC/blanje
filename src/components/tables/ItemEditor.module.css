@@ -1,7 +1,7 @@
 .add {
   color: var(--accent);
   border: 1px dashed var(--border);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0.35rem 0.7rem;
   font-size: 0.85rem;
 }
@@ -42,7 +42,7 @@
   color: inherit;
   padding: 0.3rem 0.4rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 4px;
   background: transparent;
 }
 
@@ -64,7 +64,7 @@
   line-height: 1;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 4px;
   color: var(--muted);
 }
 

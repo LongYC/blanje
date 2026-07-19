@@ -4,7 +4,7 @@
   color: var(--muted);
   background: var(--surface);
   border: 1px dashed var(--border);
-  border-radius: 12px;
+  border-radius: 4px;
 }
 
 .empty p:first-child {
@@ -17,7 +17,7 @@
   padding: 0.75rem 1rem;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 4px;
   overflow-x: auto;
   font-size: 0.8rem;
   line-height: 1.5;

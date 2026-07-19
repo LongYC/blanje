@@ -38,9 +38,9 @@
 
 .menu > span {
   width: 25px;
-  height: 3px;
+  height: 4px;
   background: var(--app-header-bg);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .menu:hover {

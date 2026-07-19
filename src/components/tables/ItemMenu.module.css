@@ -13,7 +13,7 @@
   font-size: 1.1rem;
   line-height: 1;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .trigger:disabled {
@@ -36,7 +36,7 @@
   padding: 0.25rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 16px 4px 16px 16px;
   box-shadow: 0 6px 24px rgb(0 0 0 / 0.12);
 }
 
@@ -49,7 +49,7 @@
   color: var(--text);
   background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   transition: color 0.2s ease;
 }
 

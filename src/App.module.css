@@ -1,4 +1,5 @@
 .main {
+  min-width: 320px;
   display: grid;
   grid-template-columns: [full-start] minmax(20px, 1fr) [content-start] min(880px, 100% - 40px) [content-end] minmax(20px, 1fr) [full-end];
   background-color: var(--bg);

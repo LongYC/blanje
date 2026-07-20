@@ -7,11 +7,6 @@ interface NoteFieldProps {
   onChange: (value: string) => void;
 }
 
-/**
- * A free-form, multi-line note for the month.
- * Renders as plain text and swaps to a textarea on click/tap when editable.
- * Save edits via onChange and reverting to read mode on blur.
- */
 export function NoteField({ value, editable, onChange }: NoteFieldProps) {
   const [editing, setEditing] = useState(false);
 

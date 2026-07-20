@@ -16,23 +16,14 @@
   text-align: left;
   cursor: text;
   transition: border 0.2s ease;
-}
-
-.display:focus-visible,
-.display:hover {
-  border: var(--accent);
-  filter: none;
+  border: 1px solid transparent;
 }
 
 .input {
   composes: note;
   resize: vertical;
   field-sizing: content;
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--accent);
+  border: 1px solid var(--border);
 }
 
 .placeholder {

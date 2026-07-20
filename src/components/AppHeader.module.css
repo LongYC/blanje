@@ -41,8 +41,10 @@
   height: 4px;
   background: var(--app-header-bg);
   border-radius: 4px;
+  transition: background 0.2s ease;
 }
 
+.menu:focus-visible,
 .menu:hover {
   background: var(--category-bg);
 }

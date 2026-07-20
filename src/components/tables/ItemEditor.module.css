@@ -24,11 +24,17 @@
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
+.form button[type="submit"]:focus-visible,
+.form button[type="submit"]:hover{
+  background: var(--accent);
+  color: var(--surface);
+}
+
 .form .amount {
   flex: 1 1 100%;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .form .amount {
     flex: auto;
   }
@@ -46,7 +52,7 @@
   background: transparent;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .input {
     flex: 1 1 17rem;
   }
@@ -68,6 +74,7 @@
   color: var(--muted);
 }
 
+.sign:focus-visible,
 .sign:hover {
   filter: none;
   background: var(--border);
@@ -103,7 +110,7 @@
   background: var(--surface);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .account {
     flex: 1 8rem;
   }
@@ -129,8 +136,10 @@
   background: transparent;
   border-color: var(--border);
   color: var(--muted);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
+.close:focus-visible,
 .close:hover {
   filter: none;
   background: var(--border);

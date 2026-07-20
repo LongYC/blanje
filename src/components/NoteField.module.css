@@ -15,10 +15,12 @@
   composes: note;
   text-align: left;
   cursor: text;
+  transition: border 0.2s ease;
 }
 
+.display:focus-visible,
 .display:hover {
-  border-color: var(--accent);
+  border: var(--accent);
   filter: none;
 }
 

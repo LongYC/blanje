@@ -61,6 +61,7 @@
   border-radius: 999px;
 }
 
+.toggle:focus-visible,
 .toggle:hover {
   border-color: var(--accent);
   color: var(--text);

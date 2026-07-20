@@ -9,6 +9,7 @@
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.button:focus-visible,
 .button:hover {
   transform: translateY(-1px);
 }
@@ -19,12 +20,12 @@
 
 .main {
   background: var(--green);
-  color: #fff;
+  color: var(--surface);
   border: 1px solid var(--green);
 }
 
 .danger {
   background: var(--red);
-  color: #fff;
+  color: var(--surface);
   border-color: transparent;
 }

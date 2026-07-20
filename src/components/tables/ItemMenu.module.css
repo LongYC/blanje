@@ -53,6 +53,7 @@
   transition: color 0.2s ease;
 }
 
+.item:focus-visible,
 .item:hover {
   color: var(--accent);
 }

@@ -26,7 +26,7 @@ export function AppHeader({
   return <div className={styles.header}>
     <h1>Blanje</h1>
     <p>Monthly expenses in a JSON.</p>
-    <button popoverTarget="app-menu-popover" aria-label="Toggle menu" className={styles.menu}>
+    <button popoverTarget="app-menu-popover" aria-label="Toggle menu" title="Toggle menu" className={styles.menu}>
       <span></span>
       <span></span>
       <span></span>

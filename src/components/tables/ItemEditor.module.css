@@ -3,7 +3,6 @@
   border: 1px dashed var(--border);
   border-radius: 4px;
   padding: 0.35rem 0.7rem;
-  font-size: 0.85rem;
 }
 
 .form {
@@ -14,8 +13,7 @@
 }
 
 .form button {
-  padding: 0.4rem 0.9rem;
-  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
   border-radius: 16px;
 }
 
@@ -44,8 +42,6 @@
   width: auto;
   flex: 1 1 100%;
   border-color: var(--border);
-  font: inherit;
-  color: inherit;
   padding: 0.3rem 0.4rem;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -131,8 +127,6 @@
   padding: 0;
   width: 1.9rem;
   height: 1.9rem;
-  font-size: 1.1rem;
-  line-height: 1;
   background: transparent;
   border-color: var(--border);
   color: var(--muted);

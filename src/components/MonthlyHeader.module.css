@@ -13,7 +13,7 @@
 
 .nav h2 {
   flex-grow: 2  ;
-  margin: -1rem 0 0;
+  margin: -0.75rem 0 0;
   padding: 0;
   min-width: 8rem;
   max-height: 2rem;
@@ -24,7 +24,7 @@
 }
 
 .nav .month {
-  font-size: 3rem;
+  font-size: 2.75rem;
   letter-spacing: -0.1rem;
 }
 
@@ -44,19 +44,17 @@
 
 .prev {
   width: 100%;
-  padding: .5rem;
+  padding: .6rem .75rem .4rem;
   font-weight: bold;
   border: 1px solid var(--border);
   border-radius: 16px 4px 4px 4px;
   text-align: left;
-  padding-left: .75rem;
 }
 
 .next {
   composes: prev;
   border-radius: 4px 16px 4px 4px;
   text-align: right;
-  padding-right: .75rem;
 }
 
 button:disabled {

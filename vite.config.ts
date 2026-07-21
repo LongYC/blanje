@@ -9,5 +9,8 @@ const base = process.env.BASE_PATH ?? "/blanje/";
 
 export default defineConfig({
   base,
+  server: {
+    host: true
+  },
   plugins: [react()],
 });

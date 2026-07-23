@@ -85,7 +85,6 @@ export function ItemEditor({
         <form className={styles.form} onSubmit={handleSubmit}>
           <input
             type="text"
-            className={styles.input}
             aria-label="New item name"
             placeholder="Item name"
             value={name}
@@ -111,15 +110,19 @@ export function ItemEditor({
             <input
               type="text"
               inputMode="decimal"
-              className={`${styles.input} ${styles.number}`}
+              className={styles.number}
               aria-label="New amount"
               placeholder="0.00"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={e => {
+                const raw = e.target.value;
+                const amountNumber = raw.includes('-') ? `-${raw.replace(/-/g, "")}` : raw;
+                setAmount(amountNumber);
+              }}
             />
           </div>
           <select
-            className={`${styles.input} ${styles.account} ${
+            className={`${styles.account} ${
               accountId === "" ? styles.placeholder : ""
             }`}
             aria-label="Account"
@@ -138,7 +141,6 @@ export function ItemEditor({
           </select>
           <input
             type="text"
-            className={styles.input}
             aria-label="Labels"
             placeholder="Labels (comma-separated, optional)"
             value={labelsString}
@@ -146,7 +148,8 @@ export function ItemEditor({
           />
           <button
             type="submit"
-            disabled={accountId === ""}
+            disabled={accountId === "" || isNaN(Number(amount))}
+            className={styles.submit}
           >
             {groupedItemInEdit ? "Update" : "Add"}
           </button>

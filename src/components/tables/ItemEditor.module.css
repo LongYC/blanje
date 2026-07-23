@@ -12,22 +12,6 @@
   gap: 0.5rem;
 }
 
-.form button {
-  padding: 0.5rem 1rem;
-  border-radius: 16px;
-}
-
-.form button[type="submit"]:not(:disabled) {
-  color: var(--accent);
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-.form button[type="submit"]:focus-visible,
-.form button[type="submit"]:hover{
-  background: var(--accent);
-  color: var(--surface);
-}
-
 .form .amount {
   flex: 1 1 100%;
 }
@@ -38,7 +22,8 @@
   }
 }
 
-.input {
+.form input,
+.form select {
   width: auto;
   flex: 1 1 100%;
   border-color: var(--border);
@@ -49,9 +34,22 @@
 }
 
 @media (min-width: 640px) {
-  .input {
+  .form input,
+  .form select {
     flex: 1 1 17rem;
   }
+}
+
+.number {
+  flex: 0 1 7rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  flex: 0 1 9rem;
 }
 
 .sign {
@@ -59,15 +57,13 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  padding: 0 0 0.2rem;
-  width: 1.9rem;
-  height: 1.9rem;
+  padding: 0 0 0.1rem;
+  width: 1.85rem;
+  height: 1.85rem;
   font-size: 1rem;
   line-height: 1;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 4px;
   color: var(--muted);
+  border-radius: 4px 0 0 4px;
 }
 
 .sign:focus-visible,
@@ -83,21 +79,11 @@
   color: #fff;
 }
 
-.number {
-  flex: 0 1 7rem;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.amount {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex: 0 1 9rem;
-}
-
 .amount .number {
   flex: 1 1 auto;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
 }
 
 .account {
@@ -114,22 +100,42 @@
 
 .account.placeholder {
   color: var(--muted);
+  opacity: 0.8;
 }
 
 .account option {
   color: var(--text);
 }
 
+.submit {
+  font: inherit;
+  font-weight: 500;
+  padding: .25rem 1rem .35rem;
+  border-radius: 16px;
+}
+
+.submit:not(:disabled) {
+  color: var(--accent);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.submit:focus-visible,
+.submit:hover{
+  background: var(--accent);
+  color: var(--surface);
+}
+
 .close {
+  font: inherit;
+  font-weight: 500;
+  color: var(--muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  width: 1.9rem;
-  height: 1.9rem;
-  background: transparent;
+  padding: .25rem .5rem .35rem;
+  width: 2rem;
+  border-radius: 16px;
   border-color: var(--border);
-  color: var(--muted);
   transition: background 0.2s ease, color 0.2s ease;
 }
 

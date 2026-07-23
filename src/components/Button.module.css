@@ -1,21 +1,11 @@
 .button {
-  background: transparent;
+  font: inherit;
+  cursor: pointer;
   color: var(--muted);
   border: 1px solid var(--border);
   padding: 0.5rem 1rem;
   border-radius: 16px;
-  font: inherit;
-  cursor: pointer;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.button:focus-visible,
-.button:hover {
-  transform: translateY(-1px);
-}
-
-.button:active {
-  transform: translateY(0);
 }
 
 .main {

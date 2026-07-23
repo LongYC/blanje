@@ -1,14 +1,13 @@
 .note {
+  font: inherit;
+  color: var(--text);
+  white-space: pre-wrap;
   display: block;
   width: 100%;
   padding: 0.75rem 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0 0 0 16px; /* Bottom right resizer */
-  font: inherit;
-  color: var(--text);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
 }
 
 .display {

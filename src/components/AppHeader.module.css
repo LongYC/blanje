@@ -4,23 +4,23 @@
   justify-content: space-between;
 }
 
-.header h1 {
+.header > h1 {
   margin: 0;
   font-size: 1.5rem;
   letter-spacing: -0.02em;
 }
 
-.header p {
+.header > p {
   font-size: 0.85rem;
   margin: 0 auto 0 1rem;
 }
 
 @media (min-width: 640px) {
-  .header h1 {
+  .header > h1 {
     font-size: 2rem;
   }
 
-  .header p {
+  .header > p {
     font-size: 1rem;
   }
 }

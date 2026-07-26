@@ -9,8 +9,8 @@ interface ItemEditorProps {
   isAddButtonDisabled?: boolean;
   isOpenByDefault?: boolean;
   groupedItemInEdit?: GroupedItem;
-  onSubmit: (item: Item) => void;
-  onClose?: () => void;
+  onAddOrUpdate: (item: Item) => void;
+  onKeep?: () => void;
 }
 
 export function ItemEditor({
@@ -19,15 +19,27 @@ export function ItemEditor({
   isOpenByDefault = false,
   groupedItemInEdit,
   isAddButtonDisabled = false,
-  onSubmit,
-  onClose
+  onAddOrUpdate: onSubmit,
+  onKeep: onClose
 }: ItemEditorProps) {
+  const originalName = groupedItemInEdit?.name ?? "";
+  const originalAmount = groupedItemInEdit?.amount ?? "";
+  const originalAccountId = groupedItemInEdit?.accountId ?? "";
+  const originalLabelsString = groupedItemInEdit?.labels?.join(", ") ?? "";
+
   const [isOpen, setIsOpen] = useState(isOpenByDefault);
   const [isAutofocus, setIsAutofocus] = useState(true);
-  const [name, setName] = useState(groupedItemInEdit?.name ?? "");
-  const [amount, setAmount] = useState(groupedItemInEdit?.amount ?? "");
-  const [accountId, setAccountId] = useState(groupedItemInEdit?.accountId ?? "");
-  const [labelsString, setLabelsString] = useState(groupedItemInEdit?.labels?.join(", ") ?? "");
+  const [name, setName] = useState(originalName);
+  const [amount, setAmount] = useState(originalAmount);
+  const [accountId, setAccountId] = useState(originalAccountId);
+  const [labelsString, setLabelsString] = useState(originalLabelsString);
+
+  const hasChanges = Boolean(
+    name !== originalName ||
+    amount !== originalAmount ||
+    accountId !== originalAccountId ||
+    labelsString !== originalLabelsString
+  );
 
   function reset() {
     setName("");
@@ -40,6 +52,13 @@ export function ItemEditor({
     e.preventDefault();
 
     if (name.trim() === "" || Number.isNaN(Number(amount)) || accountId === "") {
+      return;
+    }
+
+    if (!hasChanges) {
+      setIsOpen(false);
+      reset();
+      onClose?.();
       return;
     }
 
@@ -151,20 +170,7 @@ export function ItemEditor({
             disabled={accountId === "" || isNaN(Number(amount))}
             className={styles.submit}
           >
-            {groupedItemInEdit ? "Update" : "Add"}
-          </button>
-          <button
-            type="button"
-            className={styles.close}
-            aria-label="Close"
-            title="Close"
-            onClick={() => {
-              setIsOpen(false);
-              reset();
-              onClose?.();
-            }}
-          >
-            ×
+            {groupedItemInEdit ? (hasChanges ? "Update" : "Keep") : "Add"}
           </button>
         </form>
       </td>

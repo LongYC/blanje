@@ -66,11 +66,11 @@ export function CategoriesTable({
                 accountOptions={accounts}
                 groupedItemInEdit={groupedItem}
                 isOpenByDefault={true}
-                onSubmit={(itemPatch: Item) => {
+                onAddOrUpdate={(itemPatch: Item) => {
                   onEditItem(groupedItem.index, itemPatch);
                   setEditingIndex(null);
                 }}
-                onClose={() => setEditingIndex(null)}
+                onKeep={() => setEditingIndex(null)}
               />
             }
 
@@ -121,7 +121,7 @@ export function CategoriesTable({
           categoryId={categoryGroup.categoryId}
           accountOptions={accounts}
           isAddButtonDisabled={editingIndex !== null}
-          onSubmit={onAddItem}
+          onAddOrUpdate={onAddItem}
         />
       </tbody>
     ))}

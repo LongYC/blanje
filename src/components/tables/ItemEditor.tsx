@@ -41,7 +41,14 @@ export function ItemEditor({
     labelsString !== originalLabelsString
   );
 
-  function reset() {
+  function undoChanges() {
+    setName(originalName);
+    setAmount(originalAmount);
+    setAccountId(originalAccountId);
+    setLabelsString(originalLabelsString);
+  }
+
+  function clearData() {
     setIsOpen(false);
     setName("");
     setAmount("");
@@ -58,7 +65,7 @@ export function ItemEditor({
     }
 
     if (!hasChanges) {
-      reset();
+      clearData();
       return;
     }
 
@@ -75,7 +82,7 @@ export function ItemEditor({
       labels: [...new Set(parsedLabelsArray)]
     });
 
-    reset();
+    clearData();
   }
 
   if (!isOpen || isAddButtonDisabled) {
@@ -173,13 +180,25 @@ export function ItemEditor({
             {groupedItemInEdit ? (hasChanges ? "Update" : "Keep") : "Add"}
           </button>
           {
-            !groupedItemInEdit && <button
-              type="button"
-              className={styles.cancel}
-              aria-label="Cancel"
-              title="Cancel"
-              onClick={() => reset()}
-            >×</button>
+            groupedItemInEdit
+              ? <button
+                type="button"
+                className={styles.undo}
+                disabled={!hasChanges}
+                aria-label="Undo"
+                title="Undo"
+                onClick={() => undoChanges()}
+              ><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+  <path d="M3 3v5h5"></path>
+</svg></button>
+              : <button
+                type="button"
+                className={styles.cancel}
+                aria-label="Cancel"
+                title="Cancel"
+                onClick={() => clearData()}
+              >×</button>
           }
         </form>
       </td>

@@ -125,6 +125,27 @@
   color: var(--surface);
 }
 
+.undo {
+  font: inherit;
+  font-weight: 500;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .1rem .5rem;
+  width: 2rem;
+  border-radius: 16px;
+  border-color: var(--border);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cancel:focus-visible,
+.cancel:hover {
+  filter: none;
+  background: var(--border);
+  color: var(--text);
+}
+
 .cancel {
   font: inherit;
   font-weight: 500;

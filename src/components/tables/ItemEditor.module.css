@@ -125,7 +125,7 @@
   color: var(--surface);
 }
 
-.close {
+.cancel {
   font: inherit;
   font-weight: 500;
   color: var(--muted);
@@ -139,8 +139,8 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.close:focus-visible,
-.close:hover {
+.cancel:focus-visible,
+.cancel:hover {
   filter: none;
   background: var(--border);
   color: var(--text);

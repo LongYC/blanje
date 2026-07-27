@@ -10,7 +10,7 @@ interface ItemEditorProps {
   isOpenByDefault?: boolean;
   groupedItemInEdit?: GroupedItem;
   onAddOrUpdate: (item: Item) => void;
-  onKeep?: () => void;
+  onCancelOrKeep?: () => void;
 }
 
 export function ItemEditor({
@@ -19,8 +19,8 @@ export function ItemEditor({
   isOpenByDefault = false,
   groupedItemInEdit,
   isAddButtonDisabled = false,
-  onAddOrUpdate: onSubmit,
-  onKeep: onClose
+  onAddOrUpdate,
+  onCancelOrKeep
 }: ItemEditorProps) {
   const originalName = groupedItemInEdit?.name ?? "";
   const originalAmount = groupedItemInEdit?.amount ?? "";
@@ -42,10 +42,12 @@ export function ItemEditor({
   );
 
   function reset() {
+    setIsOpen(false);
     setName("");
     setAmount("");
     setAccountId("");
     setLabelsString("");
+    onCancelOrKeep?.();
   }
 
   function handleSubmit(e: SubmitEvent) {
@@ -56,9 +58,7 @@ export function ItemEditor({
     }
 
     if (!hasChanges) {
-      setIsOpen(false);
       reset();
-      onClose?.();
       return;
     }
 
@@ -67,7 +67,7 @@ export function ItemEditor({
       .map((label) => label.trim())
       .filter((label) => label !== "");
 
-    onSubmit({
+    onAddOrUpdate({
       categoryId,
       name: name.trim(),
       amount: amount.trim(),
@@ -172,6 +172,15 @@ export function ItemEditor({
           >
             {groupedItemInEdit ? (hasChanges ? "Update" : "Keep") : "Add"}
           </button>
+          {
+            !groupedItemInEdit && <button
+              type="button"
+              className={styles.cancel}
+              aria-label="Cancel"
+              title="Cancel"
+              onClick={() => reset()}
+            >×</button>
+          }
         </form>
       </td>
     </tr>

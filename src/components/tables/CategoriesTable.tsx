@@ -70,7 +70,7 @@ export function CategoriesTable({
                   onEditItem(groupedItem.index, itemPatch);
                   setEditingIndex(null);
                 }}
-                onKeep={() => setEditingIndex(null)}
+                onCancelOrKeep={() => setEditingIndex(null)}
               />
             }
 

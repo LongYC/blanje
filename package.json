@@ -22,11 +22,14 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.4.1",
     "gh-pages": "^6.3.0",
+    "jsdom": "^30.0.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^4.1.10"

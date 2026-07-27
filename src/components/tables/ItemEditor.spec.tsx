@@ -21,13 +21,17 @@ function renderEditor(props: Partial<ComponentProps<typeof ItemEditor>> = {}) {
   const onCancelOrKeep = vi.fn();
 
   const view = render(
-    <ItemEditor
-      categoryId="food"
-      accountOptions={accountOptions}
-      onAddOrUpdate={onAddOrUpdate}
-      onCancelOrKeep={onCancelOrKeep}
-      {...props}
-    />,
+    <table>
+      <tbody>
+        <ItemEditor
+          categoryId="food"
+          accountOptions={accountOptions}
+          onAddOrUpdate={onAddOrUpdate}
+          onCancelOrKeep={onCancelOrKeep}
+          {...props}
+        />
+      </tbody>
+    </table>,
   );
 
   return { ...view, onAddOrUpdate, onCancelOrKeep };

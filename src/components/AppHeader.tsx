@@ -31,7 +31,7 @@ export function AppHeader({
       <span></span>
       <span></span>
     </button>
-    <div id="app-menu-popover" popover="auto" ref={popoverRef} className={styles.controls}>
+    <div id="app-menu-popover" popover="auto" ref={popoverRef} className={styles.popover}>
       <Button label="Save to a JSON" onClick={onDownload} variant="main" disabled={!hasExistingData} />
       <FileLoader onLoaded={onLoadedNewFileClosePopover} hasExistingData={hasExistingData} />
     </div>

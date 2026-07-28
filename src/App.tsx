@@ -87,7 +87,7 @@ export function App() {
   }
 
   function handleLoaded(newUserData: UserData, newFilename: string) {
-    // For undo.
+    // For undoing load JSON.
     setPreviousData(userData);
     setPreviousFilename(filename);
     setPreviousLastEdited(lastEdited);
@@ -152,7 +152,7 @@ export function App() {
   // Apply an edit to a single item within the selected month, then persist.
   function handleEditSpending(index: number, patch: Partial<Item>) {
     if (!userData || selectedMonth === null) return;
-    const next: UserData = {
+    const newUserData: UserData = {
       ...userData,
       spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth
@@ -165,14 +165,14 @@ export function App() {
             },
       ),
     };
-    updateAndSaveUserData(next);
+    updateAndSaveUserData(newUserData);
   }
 
   // Toggle whether an item is ignored in totals, then persist. Unignoring drops
   // the `ignore` property entirely so a saved file never carries `ignore: false`.
   function handleToggleIgnore(index: number) {
     if (!userData || selectedMonth === null) return;
-    const next: UserData = {
+    const newUserData: UserData = {
       ...userData,
       spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth
@@ -190,19 +190,19 @@ export function App() {
             },
       ),
     };
-    updateAndSaveUserData(next);
+    updateAndSaveUserData(newUserData);
   }
 
   // Update the free-form note on the selected month, then persist.
   function handleEditNote(note: string) {
     if (!userData || selectedMonth === null) return;
-    const next: UserData = {
+    const newUserData: UserData = {
       ...userData,
       spendings: userData.spendings.map((month) =>
         month.month !== selectedMonth ? month : { ...month, note },
       ),
     };
-    updateAndSaveUserData(next);
+    updateAndSaveUserData(newUserData);
   }
 
   // Move the item at `index` to just before the closest preceding item that shares the same category.
@@ -216,7 +216,6 @@ export function App() {
     const categoryId = items[index]?.categoryId;
     if (categoryId === undefined) return;
 
-    // Find the closest preceding item with the same category.
     let insertBefore = -1;
     for (let i = index - 1; i >= 0; i--) {
       if (items[i].categoryId === categoryId) {
@@ -224,41 +223,38 @@ export function App() {
         break;
       }
     }
-    if (insertBefore === -1) return; // already first in category
+    if (insertBefore === -1) return;
 
     const ItemsClone = [...items];
     const [moved] = ItemsClone.splice(index, 1);
     ItemsClone.splice(insertBefore, 0, moved);
 
-    const updatedUserData: UserData = {
+    const newUserData: UserData = {
       ...userData,
       spendings: userData.spendings.map((monthlySpending) =>
         monthlySpending.month !== selectedMonth ? monthlySpending : { ...monthlySpending, items: ItemsClone },
       ),
     };
-    updateAndSaveUserData(updatedUserData);
+    updateAndSaveUserData(newUserData);
   }
 
-  // Append a new item to the selected month, then persist.
-  function handleAddSpending(spending: Item) {
+  function handleAddItem(newItem: Item) {
     if (!userData || selectedMonth === null) return;
-    const next: UserData = {
+    const newUserData: UserData = {
       ...userData,
       spendings: userData.spendings.map((month) =>
-        month.month !== selectedMonth
-          ? month
-          : { ...month, items: [...month.items, spending] },
+        month.month === selectedMonth
+          ? { ...month, items: [...month.items, newItem] }
+          : month,
       ),
     };
-    updateAndSaveUserData(next);
+    updateAndSaveUserData(newUserData);
   }
 
   function handleDownload() {
     if (!userData) return;
-    // Use the last-edited timestamp as the filename suffix when an edit was made;
-    // otherwise keep the original filename so an untouched file round-trips.
-    const name = lastEdited ? `blanje_${lastEdited}.json` : filename;
-    downloadJson(userData, name ?? "blanje_spendings.json");
+    const name = lastEdited ? `blanje_${lastEdited}.json` : filename ?? "blanje.json";
+    downloadJson(userData, name);
   }
 
   if (!userData || !selected) {
@@ -307,7 +303,7 @@ export function App() {
           accounts={userData.accounts}
           hiddenAccountIds={hiddenAccountIds}
           onEditItem={handleEditSpending}
-          onAddItem={handleAddSpending}
+          onAddItem={handleAddItem}
           onToggleIgnore={handleToggleIgnore}
           onMoveItemUp={handleMoveItemUp}
         />

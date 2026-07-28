@@ -49,7 +49,9 @@
   background: var(--category-bg);
 }
 
-.controls {
+.popover {
+  max-width: calc(100% - 1rem);
+  width: 100%;
   padding: 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -61,24 +63,30 @@
   margin-top: 0.5rem;
 }
 
-.controls:popover-open {
+@media (min-width: 640px) {
+  .popover {
+    max-width: calc(640px - 2rem);
+  }
+}
+
+.popover:popover-open {
   opacity: 1;
   transition: opacity 0.15s ease;
 }
 
 @starting-style {
-  .controls:popover-open {
+  .popover:popover-open {
     opacity: 0;
     transition: opacity 0.15s ease;
   }
 }
 
-.controls button {
+.popover button {
   display: block;
   width: 100%;
   margin-top: 1rem;
 }
 
-.controls button:first-of-type {
+.popover button:first-of-type {
   margin-top: 0;
 }

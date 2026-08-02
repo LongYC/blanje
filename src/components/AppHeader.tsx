@@ -6,15 +6,16 @@ import { FileLoader } from "./FileLoader";
 
 interface AppHeaderProps {
   onLoadedNewFile: (newUserData: UserData, newFilename: string) => void;
-  hasExistingData: boolean;
+  lastLoadedFilename: string | null;
   onDownload: () => void;
 }
 
 export function AppHeader({
   onLoadedNewFile,
-  hasExistingData,
+  lastLoadedFilename,
   onDownload
 }: AppHeaderProps) {
+  const hasExistingData = Boolean(lastLoadedFilename);
   const popoverRef = useRef<HTMLDivElement>(null);
   const onLoadedNewFileClosePopover = (data: UserData, filename: string) => {
     onLoadedNewFile(data, filename);
@@ -34,6 +35,9 @@ export function AppHeader({
     <div id="app-menu-popover" popover="auto" ref={popoverRef} className={styles.popover}>
       <Button label="Save to a JSON" onClick={onDownload} variant="main" disabled={!hasExistingData} />
       <FileLoader onLoaded={onLoadedNewFileClosePopover} hasExistingData={hasExistingData} />
+      <p className={styles.file}>
+        Last loaded from: <span className={styles.filename}>{lastLoadedFilename}</span>
+      </p>
     </div>
   </div>;
 }

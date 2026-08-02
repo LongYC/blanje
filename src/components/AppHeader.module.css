@@ -90,3 +90,14 @@
 .popover button:first-of-type {
   margin-top: 0;
 }
+
+.file {
+  color: var(--muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.filename {
+  font-weight: 500;
+  font-style: italic;
+}

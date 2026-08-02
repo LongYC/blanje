@@ -43,7 +43,7 @@ function getNowAsSelectedMonth(): number {
 
 export function App() {
   const [userData, setUserData] = useState<UserData | null>(() => readUserData());
-  const [filename, setFilename] = useState<string | null>(() => readLastLoadedFilename());
+  const [lastLoadedFilename, setLastLoadedFilename] = useState<string | null>(() => readLastLoadedFilename());
   const [selectedMonth, setSelectedMonth] = useState<number>(getNowAsSelectedMonth());
   const [confirmingClear, setConfirmingClear] = useState(false);
   const [hiddenAccountIds, setHiddenAccountIds] = useState<string[]>(() =>
@@ -89,14 +89,14 @@ export function App() {
   function handleLoaded(newUserData: UserData, newFilename: string) {
     // For undoing load JSON.
     setPreviousData(userData);
-    setPreviousFilename(filename);
+    setPreviousFilename(lastLoadedFilename);
     setPreviousLastEdited(lastEdited);
     setHiddenAccountIds([]);
     saveHiddenAccounts([]);
 
     newUserData.spendings.sort((a, b) => a.month - b.month);
     setUserData(newUserData);
-    setFilename(newFilename);
+    setLastLoadedFilename(newFilename);
     writeUserData(newUserData);
     saveLastLoadedFilename(newFilename);
     setLastEdited("");
@@ -118,7 +118,7 @@ export function App() {
     if (!previousData) return;
     setUserData(previousData);
     writeUserData(previousData);
-    setFilename(previousFilename);
+    setLastLoadedFilename(previousFilename);
     if (previousFilename) saveLastLoadedFilename(previousFilename);
     else clearFilename();
     setLastEdited(previousLastEdited);
@@ -135,7 +135,7 @@ export function App() {
   function confirmClear() {
     clearAllData();
     setUserData(null);
-    setFilename(null);
+    setLastLoadedFilename(null);
     setPreviousData(null);
     setPreviousFilename(null);
     setConfirmingClear(false);
@@ -253,7 +253,7 @@ export function App() {
 
   function handleDownload() {
     if (!userData) return;
-    const name = lastEdited ? `blanje_${lastEdited}.json` : filename ?? "blanje.json";
+    const name = lastEdited ? `blanje_${lastEdited}.json` : lastLoadedFilename ?? "blanje.json";
     downloadJson(userData, name);
   }
 
@@ -262,7 +262,7 @@ export function App() {
       <section className={styles.sectionAppHeader}>
         <AppHeader
           onLoadedNewFile={handleLoaded}
-          hasExistingData={Boolean(userData)}
+          lastLoadedFilename={null}
           onDownload={handleDownload}
         />
       </section>
@@ -279,7 +279,7 @@ export function App() {
       <section className={styles.sectionAppHeader}>
         <AppHeader
           onLoadedNewFile={handleLoaded}
-          hasExistingData={Boolean(userData)}
+          lastLoadedFilename={lastLoadedFilename}
           onDownload={handleDownload}
         />
       </section>
@@ -317,7 +317,7 @@ export function App() {
         </div>
       </section>
       <section className={styles.sectionDangerZone}>
-        {userData && userData.spendings.length > 0 && <DangerZone filename={filename ?? "unknown"} onClear={handleClear} />}
+        {userData && userData.spendings.length > 0 && <DangerZone onClear={handleClear} />}
       </section>
       <ConfirmDialog
         open={confirmingClear}

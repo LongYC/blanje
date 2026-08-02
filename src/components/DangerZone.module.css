@@ -9,33 +9,3 @@
   border: 1px solid var(--border);
   border-radius: 4px;
 }
-
-.text {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-  overflow-wrap: anywhere;
-}
-
-.filename {
-  display: block;
-  color: var(--text);
-  font-weight: 500;
-  font-style: italic;
-}
-
-@media (min-width: 640px) {
-  .filename {
-    display: inline;
-  }
-}
-
-.danger button {
-  margin-top: 1rem;
-}
-
-@media (min-width: 640px) {
-  .danger button {
-    margin-top: 0;
-  }
-}

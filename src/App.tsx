@@ -302,6 +302,7 @@ export function App() {
           categoryGroups={categoryGroups}
           accounts={userData.accounts}
           hiddenAccountIds={hiddenAccountIds}
+          grandTotal={grandTotal}
           onEditItem={handleEditSpending}
           onAddItem={handleAddItem}
           onToggleIgnore={handleToggleIgnore}

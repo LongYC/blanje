@@ -6,10 +6,19 @@ import { ItemEditor } from "./ItemEditor";
 import { ItemMenu } from "./ItemMenu";
 import styles from "./CategoriesTable.module.css";
 
+function spentPercentage(spentAmount: number, totalSpent: number): string {
+  if (totalSpent <= 0) {
+    return '0.0%';
+  }
+  
+  return `${((spentAmount / totalSpent) * 100).toFixed(1)}%`;
+};
+
 interface SpendingsTableProps {
   categoryGroups: CategoryGroup[];
   accounts: Account[];
   hiddenAccountIds: string[];
+  grandTotal: number;
   onAddItem: (item: Item) => void;
   onEditItem: (index: number, patch: Partial<Item>) => void;
   onToggleIgnore: (index: number) => void;
@@ -20,6 +29,7 @@ export function CategoriesTable({
   categoryGroups,
   accounts,
   hiddenAccountIds,
+  grandTotal,
   onAddItem,
   onEditItem,
   onToggleIgnore,
@@ -47,7 +57,7 @@ export function CategoriesTable({
             {categoryGroup.categoryName}
           </th>
           <td className={styles.total}>
-            <span className={styles.percent} title="Percentage of this category out of this month's expenses">
+            <span className={styles.percent} title="Percentage of this category out of this month's grand total">
               {categoryGroup.percentage.toFixed(1)}%
             </span>
             {formatCents(categoryGroup.total)}
@@ -97,7 +107,12 @@ export function CategoriesTable({
                 }
               </td>
               <td className={styles.amount}>
-                <div>{formatCents(groupedItem.amountCents)}</div>
+                <div>
+                  <span className={styles.percent} title="Percentage of this item out of this months's grand total">
+                    {spentPercentage(groupedItem.amountCents, grandTotal)}
+                  </span>
+                  {formatCents(groupedItem.amountCents)}
+                </div>
               </td>
               <td>
                 <div className={styles.cell}>

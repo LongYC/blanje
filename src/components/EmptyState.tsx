@@ -10,6 +10,7 @@ const EXAMPLE_JSON = `{
   "spendings": [
     {
       "month": 202607,
+      "budgets": { "need": "5000", "want": "3000", "save": "2000" },
       "items": [
         {
           "categoryId": "need",

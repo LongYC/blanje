@@ -73,6 +73,25 @@ function parseItem(value: unknown, path: string): Item {
   return item;
 }
 
+function parseBudgets(value: unknown, path: string): Record<string, string> {
+  if (!isObject(value)) {
+    throw new ValidationError(`${path} must be an object`);
+  }
+
+  const budgets: Record<string, string> = {};
+  for (const [categoryId, amount] of Object.entries(value)) {
+    if (typeof amount !== "string") {
+      throw new ValidationError(`${path}.${categoryId} must be a string to preserve precision`);
+    }
+    const amountStr = String(amount);
+    if (Number.isNaN(Number(amountStr))) {
+      throw new ValidationError(`${path}.${categoryId} "${amountStr}" is not a valid number`);
+    }
+    budgets[categoryId] = amountStr;
+  }
+  return budgets;
+}
+
 function parseMonthly(value: unknown, path: string): MonthlySpending {
   if (!isObject(value)) {
     throw new ValidationError(`${path} must be an object`);
@@ -91,11 +110,12 @@ function parseMonthly(value: unknown, path: string): MonthlySpending {
   const items = value.items.map((s, i) =>
     parseItem(s, `${path}.items[${i}]`),
   );
+  const budgets = parseBudgets(value.budgets ?? {}, `${path}.budgets`);
   const { note } = value;
   if (note !== undefined && typeof note !== "string") {
     throw new ValidationError(`${path}.note must be a string`);
   }
-  return note === undefined ? { month, items } : { month, items, note };
+  return { month, note, budgets, items };
 }
 
 /** Parse and validate the raw JSON text of an uploaded spendings file. */

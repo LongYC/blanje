@@ -52,6 +52,7 @@ The app expects an object with global `accounts` and `categories`, plus
   "spendings": [
     {
       "month": 202607,
+      "budgets": { "need": "5000", "want": "3000", "save": "2000" },
       "items": [
         {
           "categoryId": "need",
@@ -72,3 +73,7 @@ Each item may carry an optional `"ignore": true`, which excludes it from all
 totals while keeping it visible (shown greyed out). Toggle it from the item's
 `⋯` menu. The property is omitted when `false`, so a saved file never writes
 `"ignore": false`.
+
+Each month may include `budgets`, an object mapping category IDs to target
+amounts. The category table shows each budget and the percentage of that
+budget already spent.

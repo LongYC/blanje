@@ -26,8 +26,9 @@ export interface Item {
 /** Monthly spendings, each month keyed by a `YYYYMM` integer. */
 export interface MonthlySpending {
   month: number; // e.g. 202607 for July 2026
-  items: Item[];
   note?: string;
+  budgets?: Record<string, string>;
+  items: Item[];
 }
 
 export interface UserData {

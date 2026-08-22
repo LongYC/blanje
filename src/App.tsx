@@ -300,6 +300,7 @@ export function App() {
         />
         <CategoriesTable
           categoryGroups={categoryGroups}
+          budgets={selected.budgets ?? {}}
           accounts={userData.accounts}
           hiddenAccountIds={hiddenAccountIds}
           grandTotal={grandTotal}

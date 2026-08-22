@@ -16,7 +16,7 @@ describe("formatCents", () => {
 });
 
 describe("toCents", () => {
-  it("converts decimal strings to cents", () => {
+  it("converts decimal strings to number in cents", () => {
     expect(toCents("123.45")).toBe(12345);
   });
 
@@ -24,7 +24,17 @@ describe("toCents", () => {
     expect(toCents("0.06")).toBe(6);
   });
 
+  it("converts integers to number in cents", () => {
+    expect(toCents("12345")).toBe(1234500);
+  });
+
   it("converts empty string to 0", () => {
     expect(toCents("")).toBe(0);
+  });
+
+  it("rejects more than two decimal places", () => {
+    expect(() => toCents("123.456")).toThrow(
+      'Amount "123.456" has more than two decimal places',
+    );
   });
 });

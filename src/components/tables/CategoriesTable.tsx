@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { formatCents } from "../../format";
+import { formatCents, toCents } from "../../format";
 import type { CategoryGroup } from "../../group";
 import type { Account, Item } from "../../data";
 import { ItemEditor } from "./ItemEditor";
@@ -19,6 +19,7 @@ interface SpendingsTableProps {
   accounts: Account[];
   hiddenAccountIds: string[];
   grandTotal: number;
+  budgets: Record<string, string>;
   onAddItem: (item: Item) => void;
   onEditItem: (index: number, patch: Partial<Item>) => void;
   onToggleIgnore: (index: number) => void;
@@ -30,6 +31,7 @@ export function CategoriesTable({
   accounts,
   hiddenAccountIds,
   grandTotal,
+  budgets,
   onAddItem,
   onEditItem,
   onToggleIgnore,
@@ -50,26 +52,29 @@ export function CategoriesTable({
         <th scope="col">Account</th>
       </tr>
     </thead>
-    {categoryGroups.map((categoryGroup) => (
-      <tbody key={categoryGroup.categoryId}>
+    {categoryGroups.map(({categoryId, categoryName, total, percentage, groupedItems}) => (
+      <tbody key={categoryId}>
         <tr className={styles.row}>
           <th scope="rowgroup">
-            {categoryGroup.categoryName}
+            {categoryName}
+            {
+              Boolean(budgets[categoryId]) ? ` (${budgets[categoryId]}, ${formatCents(toCents(budgets[categoryId]) - total)})` : ""
+            }
           </th>
           <td className={styles.total}>
             <span className={styles.percent} title="Percentage of this category out of this month's grand total">
-              {categoryGroup.percentage.toFixed(1)}%
+              {percentage.toFixed(1)}%
             </span>
-            {formatCents(categoryGroup.total)}
+            {formatCents(total)}
           </td>
           <td aria-label="No value"></td>
         </tr>
-        {categoryGroup.groupedItems.length === 0 ? (
+        {groupedItems.length === 0 ? (
           <tr className={styles.empty}>
             <td colSpan={3}>No spendings</td>
           </tr>
         ) : (
-          categoryGroup.groupedItems.map((groupedItem) => {
+          groupedItems.map((groupedItem) => {
             if (editingIndex === groupedItem.index) {
               return <ItemEditor
                 categoryId={groupedItem.categoryId}
@@ -121,7 +126,7 @@ export function CategoriesTable({
                   </span>
                   <ItemMenu
                     isItemIgnored={Boolean(groupedItem.ignore)}
-                    isFirstInCategory={categoryGroup.groupedItems[0].index === groupedItem.index}
+                    isFirstInCategory={groupedItems[0].index === groupedItem.index}
                     isButtonDisabled={editingIndex !== null}
                     onEdit={() => setEditingIndex(groupedItem.index)}
                     onMoveUp={() => onMoveItemUp(groupedItem.index)}
@@ -133,7 +138,7 @@ export function CategoriesTable({
           })
         )}
         <ItemEditor
-          categoryId={categoryGroup.categoryId}
+          categoryId={categoryId}
           accountOptions={accounts}
           isAddButtonDisabled={editingIndex !== null}
           onAddOrUpdate={onAddItem}

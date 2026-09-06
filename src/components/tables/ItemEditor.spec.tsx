@@ -68,6 +68,35 @@ describe("ItemEditor", () => {
     expect(screen.queryByLabelText("New item name")).toBeNull();
   });
 
+  it("includes the editor buttons in the keyboard tab order", async () => {
+    const user = userEvent.setup();
+    renderEditor({ isOpenByDefault: true });
+
+    expect(document.activeElement).toBe(screen.getByLabelText("New item name"));
+
+    await user.tab();
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: /toggle negative amount/i }),
+    );
+
+    await user.tab();
+    expect(document.activeElement).toBe(screen.getByLabelText("New amount"));
+
+    await user.tab();
+    expect(document.activeElement).toBe(screen.getByLabelText("Account"));
+
+    await user.tab();
+    expect(document.activeElement).toBe(screen.getByLabelText("Labels"));
+
+    await user.tab();
+    const submitButton = screen.getByRole("button", { name: /^add$/i });
+    expect(submitButton.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(submitButton);
+
+    await user.tab();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: /cancel/i }));
+  });
+
   it("does not submit when the form is invalid", async () => {
     const user = userEvent.setup();
     const { onAddOrUpdate } = renderEditor();
@@ -138,7 +167,15 @@ describe("ItemEditor", () => {
     });
 
     const undoButton = screen.getByRole("button", { name: /undo/i });
-    expect(undoButton.hasAttribute("disabled")).toBe(true);
+    expect(undoButton.getAttribute("aria-disabled")).toBe("true");
+
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(undoButton);
 
     const nameInput = screen.getByLabelText("New item name") as HTMLInputElement;
     await user.clear(nameInput);

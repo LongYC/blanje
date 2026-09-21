@@ -47,7 +47,10 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
           e.target.value = "";
         }}
       />
-      <Button label="Load from a JSON" onClick={() => inputRef.current?.click()} variant={hasExistingData ? "danger" : "main"} />
+      <details className={styles.disclosure}>
+        <summary>Danger zone</summary>
+        <Button label="Override with a JSON" onClick={() => inputRef.current?.click()} variant={hasExistingData ? "danger" : "main"} />
+      </details>
     </>
   );
 }

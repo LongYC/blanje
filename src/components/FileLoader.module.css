@@ -1,3 +1,8 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
 .error {
   flex: 1 100%;
   margin: 1rem 0;
@@ -14,24 +19,4 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
-}
-
-.disclosure {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.disclosure summary {
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--muted);
-  list-style-position: inside;
-}
-
-.disclosure summary:hover,
-.disclosure summary:focus-visible {
-  background: var(--category-bg);
 }

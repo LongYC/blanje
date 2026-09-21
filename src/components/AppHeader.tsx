@@ -33,11 +33,30 @@ export function AppHeader({
       <span></span>
     </button>
     <div id="app-menu-popover" popover="auto" ref={popoverRef} className={styles.popover}>
-      <Button label="Save to a JSON" onClick={onDownload} variant="main" disabled={!hasExistingData} />
-      <FileLoader onLoaded={onLoadedNewFileClosePopover} hasExistingData={hasExistingData} />
-      <p className={styles.file}>
-        Last loaded from: <span className={styles.filename}>{lastLoadedFilename}</span>
-      </p>
+      {
+        hasExistingData
+          ? <>
+              <Button label="Save to a JSON" variant="main"  onClick={onDownload} />
+              <details className={styles.advanced}>
+                <summary>Advanced options</summary>
+                <div className={styles.expandable}>
+                  <FileLoader
+                      label="Override with a JSON"
+                      buttonVariant="danger"
+                      onLoaded={onLoadedNewFileClosePopover}
+                    />
+                  <span className={styles.file}>
+                    Last loaded from: <span className={styles.filename}>{lastLoadedFilename}</span>
+                  </span>
+                </div>
+              </details>
+            </>
+          : <FileLoader
+              label="Load a JSON"
+              buttonVariant="main"
+              onLoaded={onLoadedNewFileClosePopover}
+            />
+      }
     </div>
   </div>;
 }

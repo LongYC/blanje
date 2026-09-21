@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef } from 'react';
 import styles from "./Button.module.css";
 
-type ButtonVariant = 'muted' | 'main' | 'danger';
+export type ButtonVariant = 'muted' | 'main' | 'danger';
 
 interface ButtonProps extends ComponentPropsWithRef<'button'> {
   label: string;

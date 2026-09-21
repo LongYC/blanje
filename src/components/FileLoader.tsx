@@ -1,15 +1,16 @@
 import { useRef, useState } from "react";
 import { parseRootJson, ValidationError } from "../parse";
 import type { UserData } from "../data";
-import { Button } from "./Button";
+import { Button, type ButtonVariant } from "./Button";
 import styles from "./FileLoader.module.css";
 
 interface FileLoaderProps {
   onLoaded: (data: UserData, filename: string) => void;
-  hasExistingData?: boolean;
+  label: string;
+  buttonVariant: ButtonVariant;
 }
 
-export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProps) {
+export function FileLoader({ onLoaded, label, buttonVariant }: FileLoaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +30,7 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
   }
 
   return (
-    <>
+    <div className={styles.root}>
       {error && (
         <p className={styles.error} role="alert">
           {`Failed to load JSON: ${error}`}
@@ -47,10 +48,11 @@ export function FileLoader({ onLoaded, hasExistingData = false }: FileLoaderProp
           e.target.value = "";
         }}
       />
-      <details className={styles.disclosure}>
-        <summary>Danger zone</summary>
-        <Button label="Override with a JSON" onClick={() => inputRef.current?.click()} variant={hasExistingData ? "danger" : "main"} />
-      </details>
-    </>
+      <Button
+        label={label}
+        onClick={() => inputRef.current?.click()}
+        variant={buttonVariant}
+      />
+    </div>
   );
 }

@@ -72,11 +72,6 @@ export function saveLastEdited(timestamp: string): void {
   writeAppData({ ...readAppData(), lastEdited: timestamp });
 }
 
-export function clearFilename(): void {
-  const { lastLoadedFilename: _omit, ...rest } = readAppData();
-  writeAppData(rest);
-}
-
 export function clearAllData(): void {
   localStorage.removeItem(STORAGE_KEY_USER_DATA);
   localStorage.removeItem(STORAGE_KEY_APP_DATA);

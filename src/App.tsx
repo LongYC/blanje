@@ -1,11 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { ConfirmDialog } from "./components/ConfirmDialog";
 import { CategoriesTable } from "./components/tables/CategoriesTable";
-import { Toast } from "./components/Toast";
 import { downloadJson } from "./download";
 import {
   clearAllData,
-  clearFilename,
   readUserData,
   readLastLoadedFilename,
   readHiddenAccountIds,
@@ -18,7 +15,6 @@ import {
 import { type UserData, type Item } from "./data";
 import { AccountsTable } from "./components/tables/AccountsTable";
 import { AppHeader } from "./components/AppHeader";
-import { DangerZone } from "./components/DangerZone";
 import { EmptyState } from "./components/EmptyState";
 import { LabelsTable } from "./components/tables/LabelsTable";
 import { NoteField } from "./components/NoteField";
@@ -45,22 +41,12 @@ export function App() {
   const [userData, setUserData] = useState<UserData | null>(() => readUserData());
   const [lastLoadedFilename, setLastLoadedFilename] = useState<string | null>(() => readLastLoadedFilename());
   const [selectedMonth, setSelectedMonth] = useState<number>(getNowAsSelectedMonth());
-  const [confirmingClear, setConfirmingClear] = useState(false);
   const [hiddenAccountIds, setHiddenAccountIds] = useState<string[]>(() =>
     readHiddenAccountIds(),
   );
   // Timestamp of the last item name/amount edit (YYYY-MM-DD_HHmm_ss), or "" if
   // nothing has been edited since the current file was loaded.
   const [lastEdited, setLastEdited] = useState<string>(() => readLastEdited());
-  // When a load replaces existing data we stash it (and its filename) here so
-  // the Undo toast can restore both; a non-null `previousData` also drives the
-  // toast's visibility.
-  const [previousData, setPreviousData] = useState<UserData | null>(null);
-  const [previousFilename, setPreviousFilename] = useState<string | null>(null);
-  const [previousLastEdited, setPreviousLastEdited] = useState<string>("");
-  // Bumped on each load so a back-to-back replacement remounts the toast and
-  // restarts its countdown rather than inheriting the previous one's progress.
-  const [toastToken, setToastToken] = useState(0);
 
   // Default the selected month to the first available one whenever data changes.
   useEffect(() => {
@@ -87,10 +73,6 @@ export function App() {
   }
 
   function handleLoaded(newUserData: UserData, newFilename: string) {
-    // For undoing load JSON.
-    setPreviousData(userData);
-    setPreviousFilename(lastLoadedFilename);
-    setPreviousLastEdited(lastEdited);
     setHiddenAccountIds([]);
     saveHiddenAccounts([]);
 
@@ -101,7 +83,6 @@ export function App() {
     saveLastLoadedFilename(newFilename);
     setLastEdited("");
     saveLastEdited("");
-    setToastToken((t) => t + 1);
   }
 
   function handleAccountVisibility(accountId: string) {
@@ -114,31 +95,10 @@ export function App() {
     });
   }
 
-  function handleUndoLoad() {
-    if (!previousData) return;
-    setUserData(previousData);
-    writeUserData(previousData);
-    setLastLoadedFilename(previousFilename);
-    if (previousFilename) saveLastLoadedFilename(previousFilename);
-    else clearFilename();
-    setLastEdited(previousLastEdited);
-    saveLastEdited(previousLastEdited);
-    setPreviousData(null);
-    setPreviousFilename(null);
-    setPreviousLastEdited("");
-  }
-
   function handleClear() {
-    setConfirmingClear(true);
-  }
-
-  function confirmClear() {
     clearAllData();
     setUserData(null);
     setLastLoadedFilename(null);
-    setPreviousData(null);
-    setPreviousFilename(null);
-    setConfirmingClear(false);
   }
 
   function updateAndSaveUserData(latestData: UserData) {
@@ -264,6 +224,7 @@ export function App() {
           onLoadedNewFile={handleLoaded}
           lastLoadedFilename={null}
           onDownload={handleDownload}
+          onClear={handleClear}
         />
       </section>
       <section className={styles.section}>
@@ -281,6 +242,7 @@ export function App() {
           onLoadedNewFile={handleLoaded}
           lastLoadedFilename={lastLoadedFilename}
           onDownload={handleDownload}
+          onClear={handleClear}
         />
       </section>
       <section className={styles.sectionUserData}>
@@ -318,28 +280,6 @@ export function App() {
           {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
         </div>
       </section>
-      <section className={styles.sectionDangerZone}>
-        {userData && userData.spendings.length > 0 && <DangerZone onClear={handleClear} />}
-      </section>
-      <ConfirmDialog
-        open={confirmingClear}
-        title="Clear all loaded data?"
-        description="This permanently deletes all the data loaded. Make sure you have saved all your edits to a new JSON file so your data is not lost."
-        confirmLabel="Delete data"
-        onConfirm={confirmClear}
-        cancelLabel="Keep data"
-        onCancel={() => setConfirmingClear(false)}
-      />
-      {previousData && (
-        <Toast
-          key={toastToken}
-          message="Replaced your previous data."
-          actionLabel="Undo"
-          actionAriaLabel="Undo replacing data"
-          onAction={handleUndoLoad}
-          onDismiss={() => setPreviousData(null)}
-        />
-      )}
     </main>
   );
 }

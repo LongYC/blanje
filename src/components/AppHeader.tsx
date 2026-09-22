@@ -1,27 +1,37 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { UserData } from "../data";
 import styles from "./AppHeader.module.css";
 import { Button } from "./Button";
+import { ConfirmDialog } from "./ConfirmDialog";
 import { FileLoader } from "./FileLoader";
 
 interface AppHeaderProps {
   onLoadedNewFile: (newUserData: UserData, newFilename: string) => void;
   lastLoadedFilename: string | null;
   onDownload: () => void;
+  onClear: () => void;
 }
 
 export function AppHeader({
   onLoadedNewFile,
   lastLoadedFilename,
-  onDownload
+  onDownload,
+  onClear,
 }: AppHeaderProps) {
   const hasExistingData = Boolean(lastLoadedFilename);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const [confirmingClear, setConfirmingClear] = useState(false);
+
   const onLoadedNewFileClosePopover = (data: UserData, filename: string) => {
     onLoadedNewFile(data, filename);
     if (popoverRef.current) {
       popoverRef.current.hidePopover();
     }
+  };
+
+  const handleConfirmClear = () => {
+    onClear();
+    setConfirmingClear(false);
   };
  
   return <div className={styles.header}>
@@ -45,11 +55,25 @@ export function AppHeader({
                       buttonVariant="danger"
                       onLoaded={onLoadedNewFileClosePopover}
                     />
+                  <Button
+                    label="Reset & delete data"
+                    variant="muted"
+                    onClick={() => setConfirmingClear(true)}
+                  />
                   <span className={styles.file}>
                     Last loaded from: <span className={styles.filename}>{lastLoadedFilename}</span>
                   </span>
                 </div>
               </details>
+              <ConfirmDialog
+                open={confirmingClear}
+                title="Are you sure?"
+                description="This permanently deletes all the data on this page, it cannot be undone."
+                confirmLabel="Delete data"
+                onConfirm={handleConfirmClear}
+                cancelLabel="Keep data"
+                onCancel={() => setConfirmingClear(false)}
+              />
             </>
           : <FileLoader
               label="Load a JSON"

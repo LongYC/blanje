@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CategoriesTable } from "./components/tables/CategoriesTable";
+import { MonthlyItemsTable } from "./components/tables/MonthlyItemsTable";
 import { downloadJson } from "./download";
 import {
   clearAllData,
@@ -265,7 +265,7 @@ export function App() {
           editable
           onChange={handleEditNote}
         />
-        <CategoriesTable
+        <MonthlyItemsTable
           categoryGroups={categoryGroups}
           budgets={selected.budgets ?? {}}
           accounts={userData.accounts}

@@ -1,5 +1,7 @@
 import styles from "./MonthlyHeader.module.css";
 
+export type MonthlyViewMode = "category" | "name";
+
 interface MonthlyHeaderProps {
   month: number;
   year: number;

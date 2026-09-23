@@ -20,7 +20,7 @@ import { LabelsTable } from "./components/tables/LabelsTable";
 import { NoteField } from "./components/NoteField";
 import { groupItemsByCategory } from "./group";
 import styles from "./App.module.css";
-import { MonthlyHeader } from "./components/MonthlyHeader";
+import { MonthlyHeader, type MonthlyViewMode } from "./components/MonthlyHeader";
 import { formatCents } from "./format";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
@@ -41,6 +41,7 @@ export function App() {
   const [userData, setUserData] = useState<UserData | null>(() => readUserData());
   const [lastLoadedFilename, setLastLoadedFilename] = useState<string | null>(() => readLastLoadedFilename());
   const [selectedMonth, setSelectedMonth] = useState<number>(getNowAsSelectedMonth());
+  const [monthlyViewMode, setMonthlyViewMode] = useState<MonthlyViewMode>("category");
   const [hiddenAccountIds, setHiddenAccountIds] = useState<string[]>(() =>
     readHiddenAccountIds(),
   );
@@ -225,6 +226,8 @@ export function App() {
           lastLoadedFilename={null}
           onDownload={handleDownload}
           onClear={handleClear}
+          monthlyViewMode={monthlyViewMode}
+          onMonthlyViewModeChange={setMonthlyViewMode}
         />
       </section>
       <section className={styles.section}>
@@ -243,6 +246,8 @@ export function App() {
           lastLoadedFilename={lastLoadedFilename}
           onDownload={handleDownload}
           onClear={handleClear}
+          monthlyViewMode={monthlyViewMode}
+          onMonthlyViewModeChange={setMonthlyViewMode}
         />
       </section>
       <section className={styles.sectionUserData}>
@@ -266,6 +271,7 @@ export function App() {
           accounts={userData.accounts}
           hiddenAccountIds={hiddenAccountIds}
           grandTotal={grandTotal}
+          viewMode={monthlyViewMode}
           onEditItem={handleEditSpending}
           onAddItem={handleAddItem}
           onToggleIgnore={handleToggleIgnore}

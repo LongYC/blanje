@@ -85,6 +85,25 @@
   margin-top: 0;
 }
 
+.viewMode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.viewMode select {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+}
+
 .advanced summary {
   cursor: pointer;
   padding: 0.5rem 1rem;

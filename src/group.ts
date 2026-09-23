@@ -33,6 +33,12 @@ export interface GroupedResult {
   labelTotals: LabelTotal[];
 }
 
+export function sortGroupedItemsByName(items: GroupedItem[]): GroupedItem[] {
+  return [...items].sort(
+    (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }) || a.index - b.index,
+  );
+}
+
 
 export interface LabelTotal {
   label: string;

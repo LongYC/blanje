@@ -4,12 +4,15 @@ import styles from "./AppHeader.module.css";
 import { Button } from "./Button";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { FileLoader } from "./FileLoader";
+import type { MonthlyViewMode } from "./MonthlyHeader";
 
 interface AppHeaderProps {
   onLoadedNewFile: (newUserData: UserData, newFilename: string) => void;
   lastLoadedFilename: string | null;
   onDownload: () => void;
   onClear: () => void;
+  monthlyViewMode: MonthlyViewMode;
+  onMonthlyViewModeChange: (mode: MonthlyViewMode) => void;
 }
 
 export function AppHeader({
@@ -17,6 +20,8 @@ export function AppHeader({
   lastLoadedFilename,
   onDownload,
   onClear,
+  monthlyViewMode,
+  onMonthlyViewModeChange,
 }: AppHeaderProps) {
   const hasExistingData = Boolean(lastLoadedFilename);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -43,6 +48,17 @@ export function AppHeader({
       <span></span>
     </button>
     <div id="app-menu-popover" popover="auto" ref={popoverRef} className={styles.popover}>
+      <label className={styles.viewMode}>
+        <span>Monthly view</span>
+        <select
+          aria-label="Monthly view"
+          value={monthlyViewMode}
+          onChange={(event) => onMonthlyViewModeChange(event.target.value as MonthlyViewMode)}
+        >
+          <option value="category">Grouped by categories</option>
+          <option value="name">Sort by name</option>
+        </select>
+      </label>
       {
         hasExistingData
           ? <>

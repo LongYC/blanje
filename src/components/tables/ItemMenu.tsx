@@ -4,6 +4,7 @@ import styles from "./ItemMenu.module.css";
 interface ItemMenuProps {
   isItemIgnored: boolean;
   isFirstInCategory: boolean;
+  showMoveUp?: boolean;
   isButtonDisabled?: boolean;
   onEdit: () => void;
   onMoveUp: () => void;
@@ -13,6 +14,7 @@ interface ItemMenuProps {
 export function ItemMenu({
   isItemIgnored,
   isFirstInCategory,
+  showMoveUp = true,
   isButtonDisabled = false,
   onEdit,
   onMoveUp,
@@ -67,7 +69,7 @@ export function ItemMenu({
           >
             Edit
           </button>
-          {!isFirstInCategory && <button
+          {showMoveUp && !isFirstInCategory && <button
             type="button"
             role="menuitem"
             className={styles.item}

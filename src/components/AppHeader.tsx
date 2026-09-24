@@ -48,20 +48,20 @@ export function AppHeader({
       <span></span>
     </button>
     <div id="app-menu-popover" popover="auto" ref={popoverRef} className={styles.popover}>
-      <label className={styles.viewMode}>
-        <span>Monthly view</span>
-        <select
-          aria-label="Monthly view"
-          value={monthlyViewMode}
-          onChange={(event) => onMonthlyViewModeChange(event.target.value as MonthlyViewMode)}
-        >
-          <option value="category">Grouped by categories</option>
-          <option value="name">Sort by name</option>
-        </select>
-      </label>
       {
         hasExistingData
           ? <>
+              <label className={styles.viewMode}>
+                <span>Monthly view mode</span>
+                <select
+                  aria-label="Monthly view mode"
+                  value={monthlyViewMode}
+                  onChange={(event) => onMonthlyViewModeChange(event.target.value as MonthlyViewMode)}
+                >
+                  <option value="category">Group by category</option>
+                  <option value="name">Sort by name</option>
+                </select>
+              </label>
               <Button label="Save to a JSON" variant="main"  onClick={onDownload} />
               <details className={styles.advanced}>
                 <summary>Advanced options</summary>

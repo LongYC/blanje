@@ -15,6 +15,7 @@ import {
 import { type UserData, type Item } from "./data";
 import { AccountsTable } from "./components/tables/AccountsTable";
 import { AppHeader } from "./components/AppHeader";
+import { ScrollToTopButton } from "./components/ScrollToTopButton";
 import { EmptyState } from "./components/EmptyState";
 import { LabelsTable } from "./components/tables/LabelsTable";
 import { NoteField } from "./components/NoteField";
@@ -220,6 +221,7 @@ export function App() {
 
   if (!userData || !selected) {
     return <main className={styles.main}>
+      <ScrollToTopButton />
       <section className={styles.sectionAppHeader}>
         <AppHeader
           onLoadedNewFile={handleLoaded}
@@ -240,6 +242,7 @@ export function App() {
 
   return (
     <main className={styles.main}>
+      <ScrollToTopButton />
       <section className={styles.sectionAppHeader}>
         <AppHeader
           onLoadedNewFile={handleLoaded}

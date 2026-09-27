@@ -65,6 +65,11 @@ select {
   font-size: 1rem;
 }
 
+select,
+select::picker(select) {
+  appearance: base-select;
+}
+
 *::backdrop {
   background: rgb(0 0 0 / 0.4);
   transition: background 0.15s ease;

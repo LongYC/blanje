@@ -54,7 +54,6 @@ export function AppHeader({
               <label className={styles.viewMode}>
                 <span>Monthly view mode</span>
                 <select
-                  aria-label="Monthly view mode"
                   name="monthly-view-mode"
                   value={monthlyViewMode}
                   onChange={(event) => onMonthlyViewModeChange(event.target.value as MonthlyViewMode)}

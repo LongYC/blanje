@@ -12,19 +12,19 @@
 }
 
 .nav h2 {
-  flex-grow: 2  ;
-  margin: -0.75rem 0 0;
+  flex-grow: 2;
+  margin: -1.15rem 0 0;
   padding: 0;
   min-width: 8rem;
-  max-height: 2rem;
+  max-height: 3rem;
   font-family: monospace;
   font-size: 1.25rem;
   font-weight: bolder;
-  letter-spacing: -0.05rem;
+  letter-spacing: -0.1rem;
 }
 
 .nav .month {
-  font-size: 2.75rem;
+  font-size: 4.2rem;
   letter-spacing: -0.1rem;
 }
 
@@ -44,7 +44,7 @@
 
 .prev {
   width: 100%;
-  padding: .6rem .75rem .4rem;
+  padding: 1rem .75rem .6rem;
   font-weight: bold;
   border: 1px solid var(--border);
   border-radius: 16px 4px 4px 4px;

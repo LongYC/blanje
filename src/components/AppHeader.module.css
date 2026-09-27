@@ -12,7 +12,7 @@
 
 .header > p {
   font-size: 0.85rem;
-  margin: 0 auto -0.5rem 1rem;
+  margin: 0 auto -0.5rem .5rem;
 }
 
 @media (min-width: 640px) {
@@ -23,6 +23,7 @@
   .header > p {
     font-size: 1rem;
     margin-bottom: -0.75rem;
+    margin-left: 1rem;
   }
 }
 
@@ -53,7 +54,7 @@
 .popover {
   width: calc(100% - 1rem);
   max-width: calc(320px - 2rem);
-  padding: 1rem;
+  padding: 1.2rem;
   margin-top: 0.5rem;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -69,7 +70,7 @@
   transition: opacity 0.15s ease;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 @starting-style {
@@ -79,18 +80,14 @@
   }
 }
 
-.popover > * {
-  margin-top: 1rem;
-}
-
-.popover > *:first-child {
-  margin-top: 0;
-}
-
 .viewMode {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   color: var(--muted);
   font-size: 1rem;
 }
@@ -107,6 +104,11 @@
   background: var(--surface);
   color: inherit;
   font: inherit;
+}
+
+.viewMode select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .advanced summary {
@@ -131,8 +133,8 @@
 .advanced .expandable {
   display: flex;
   flex-direction: column;
-  padding: 1rem 0 0;
-  gap: 1rem;
+  padding: .5rem 0 0;
+  gap: .5rem;
 }
 
 .file {

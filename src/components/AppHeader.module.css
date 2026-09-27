@@ -12,7 +12,7 @@
 
 .header > p {
   font-size: 0.85rem;
-  margin: 0 auto 0 1rem;
+  margin: 0 auto -0.5rem 1rem;
 }
 
 @media (min-width: 640px) {
@@ -22,6 +22,7 @@
 
   .header > p {
     font-size: 1rem;
+    margin-bottom: -0.75rem;
   }
 }
 
@@ -29,18 +30,18 @@
   anchor-name: --menu;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   cursor: pointer;
   background: var(--surface);
-  border-radius: 4px;
-  padding: 5px
+  border-radius: 6px;
+  padding: 6px
 }
 
 .menu > span {
-  width: 25px;
-  height: 4px;
+  width: 30px;
+  height: 6px;
   background: var(--app-header-bg);
-  border-radius: 4px;
+  border-radius: 16px;
   transition: background 0.2s ease;
 }
 

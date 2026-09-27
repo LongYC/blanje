@@ -221,7 +221,6 @@ export function App() {
 
   if (!userData || !selected) {
     return <main className={styles.main}>
-      <ScrollToTopButton />
       <section className={styles.sectionAppHeader}>
         <AppHeader
           onLoadedNewFile={handleLoaded}
@@ -235,6 +234,7 @@ export function App() {
       <section className={styles.section}>
         <EmptyState />
       </section>
+      <ScrollToTopButton />
     </main>;
   }
 
@@ -242,7 +242,6 @@ export function App() {
 
   return (
     <main className={styles.main}>
-      <ScrollToTopButton />
       <section className={styles.sectionAppHeader}>
         <AppHeader
           onLoadedNewFile={handleLoaded}
@@ -289,6 +288,7 @@ export function App() {
           {labelTotals.length > 0 && <LabelsTable labelTotals={labelTotals} />}
         </div>
       </section>
+      <ScrollToTopButton />
     </main>
   );
 }

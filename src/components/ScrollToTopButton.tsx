@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./ScrollToTopButton.module.css";
 
-const SCROLL_THRESHOLD = 240;
+const SCROLL_THRESHOLD = 80;
 
 export function ScrollToTopButton() {
   const [isScrolled, setIsScrolled] = useState(false);

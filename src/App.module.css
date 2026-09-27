@@ -17,14 +17,7 @@
 
 .sectionAppHeader {
   composes: section;
-  padding: 1rem 0;
-  background-color: var(--app-header-bg);
-  color: var(--app-header-text);
-}
-
-.sectionDangerZone {
-  composes: section;
-  padding: 1.5rem 0;
+  padding: 18px 0;
   background-color: var(--app-header-bg);
   color: var(--app-header-text);
 }

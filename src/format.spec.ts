@@ -37,4 +37,8 @@ describe("toCents", () => {
       'Amount "123.456" has more than two decimal places',
     );
   });
+
+  it("handles untrimmed string gracefully", () => {
+    expect(toCents(" 98.76 ")).toBe(9876);
+  });
 });

@@ -1,4 +1,4 @@
-import { formatCents, toCents } from "../../format";
+import { formatCents } from "../../format";
 import type { Account, Item } from "../../data";
 import type { CategoryGroup } from "../../group";
 import { ItemEditor } from "./ItemEditor";
@@ -7,7 +7,7 @@ import styles from "./MonthlyItemsTable.module.css";
 
 interface CategorySectionProps {
   categoryGroup: CategoryGroup;
-  budget?: string;
+  budgetInCents?: number;
   accounts: Account[];
   hidden: Set<string>;
   grandTotal: number;
@@ -20,9 +20,27 @@ interface CategorySectionProps {
   onMoveItemUp: (index: number) => void;
 }
 
+function BudgetText({
+  budgetInCents,
+  spentInCents
+}: {
+  budgetInCents?: number;
+  spentInCents: number;
+}) {
+  const budgetLeftInCents = budgetInCents === undefined ? null : budgetInCents - spentInCents;
+
+  if (budgetInCents === undefined || budgetLeftInCents === null) {
+    return null;
+  }
+
+  return <span className={styles.budget} title={`Budget: ${formatCents(budgetInCents)}`}>{
+    `${budgetLeftInCents < 0 ? "⚠️ over budget" : "budget left"}: ${formatCents(budgetLeftInCents)}`
+  }</span>;
+}
+
 export function CategorySection({
   categoryGroup,
-  budget,
+  budgetInCents,
   accounts,
   hidden,
   grandTotal,
@@ -39,8 +57,8 @@ export function CategorySection({
   return <tbody>
     <tr className={styles.row}>
       <th scope="rowgroup">
-        {categoryName}
-        {budget ? ` (${budget}, ${formatCents(toCents(budget) - total)})` : ""}
+        <span>{categoryName}</span>
+        <BudgetText budgetInCents={budgetInCents} spentInCents={total} />
       </th>
       <td className={styles.total}>
         <span className={styles.percent} title="Percentage of this category out of this month's grand total">
@@ -62,7 +80,7 @@ export function CategorySection({
         hidden={hidden}
         grandTotal={grandTotal}
         isEditing={editingIndex === groupedItem.index}
-        isFirstInCategory={groupedItems[0].index === groupedItem.index}
+        isFirstInCategory={groupedItems[0]?.index === groupedItem.index}
         showMoveUp={true}
         isActionDisabled={editingIndex !== null}
         onEditItem={onEditItem}

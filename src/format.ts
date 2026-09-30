@@ -5,7 +5,7 @@ const currencyFormatter = new Intl.NumberFormat(undefined, {
 
 /** Convert an amount string to a number, allowing at most two decimals. */
 export function toCents(amount: string): number {
-  const decimals = amount.split(".")[1];
+  const decimals = amount.trim().split(".")[1];
 
   if (!decimals) {
     return Number(amount) * 100;
@@ -15,7 +15,7 @@ export function toCents(amount: string): number {
     throw new Error(`Amount "${amount}" has more than two decimal places`);
   }
 
-  return Math.round(Number(amount) * 100)
+  return Math.round(Number(amount) * 100);
 }
 
 /** Format an integer number of cents with thousands separators and 2 decimals. */

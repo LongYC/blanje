@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import type { CategoryGroup } from "../../group";
-import type { Account, Item } from "../../data";
 import { CategorySection } from "./CategorySection";
 import { SortedItemsSection } from "./SortedItemsSection";
+import { toCents } from "../../format";
 import styles from "./MonthlyItemsTable.module.css";
 import type { MonthlyViewMode } from "../MonthlyHeader";
+import type { Account, Item } from "../../data";
+import type { CategoryGroup } from "../../group";
 
 interface SpendingsTableProps {
   categoryGroups: CategoryGroup[];
@@ -39,6 +40,11 @@ export function MonthlyItemsTable({
   );
 
   return <table className={styles.table}>
+    <colgroup>
+      <col className={styles.col} />
+      <col />
+      <col />
+    </colgroup>
     <thead>
       <tr>
         <th scope="col">Item</th>
@@ -63,7 +69,7 @@ export function MonthlyItemsTable({
       <CategorySection
         key={categoryId}
         categoryGroup={{ categoryId, categoryName, total, percentage, groupedItems }}
-        budget={budgets[categoryId]}
+        budgetInCents={budgets[categoryId] ? toCents(budgets[categoryId]) : undefined}
         accounts={accounts}
         hidden={hidden}
         grandTotal={grandTotal}

@@ -15,6 +15,7 @@
     "typecheck": "tsc -b --noEmit",
     "pretest": "pnpm run typecheck",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist -t -m \"Deploy: $(git rev-parse --short HEAD)\""
   },
@@ -29,6 +30,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/coverage-v8": "4.1.10",
     "gh-pages": "^6.3.0",
     "jsdom": "^30.0.0",
     "typescript": "^5.8.3",

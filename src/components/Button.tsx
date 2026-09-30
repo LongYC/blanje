@@ -15,7 +15,7 @@ export function Button({
   variant,
   ...props 
 }: ButtonProps) {
-  const variantClass: string = variant ? `${styles.button} ${styles[variant]}` : styles.button;
+  const variantClass = variant ? `${styles.button} ${styles[variant]}` : styles.button;
 
   return <button {...props} type="button" className={variantClass} onClick={onClick}>
     {label}

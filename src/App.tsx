@@ -53,9 +53,11 @@ export function App() {
   // Default the selected month to the first available one whenever data changes.
   useEffect(() => {
     if (userData && userData?.spendings.length > 0) {
-      const firstMonth = userData.spendings[0].month;
-      setSelectedMonth((current) =>
-        userData.spendings.some((s) => s.month === current) ? current : firstMonth
+      const firstMonth = userData.spendings[0]?.month;
+      setSelectedMonth((lastSelectedMonth) =>
+        userData.spendings.some((s) => s.month === lastSelectedMonth)
+          ? lastSelectedMonth
+          : firstMonth ?? lastSelectedMonth
       );
     }
   }, [userData]);
@@ -71,7 +73,7 @@ export function App() {
     if (!userData || selectedIndex < 0) return;
     const next = selectedIndex + delta;
     if (next < 0 || next >= userData.spendings.length) return;
-    setSelectedMonth(userData.spendings[next].month);
+    setSelectedMonth((lastSelectedMonth) => userData.spendings[next]?.month ?? lastSelectedMonth);
   }
 
   function handleLoaded(newUserData: UserData, newFilename: string) {
@@ -180,7 +182,7 @@ export function App() {
 
     let insertBefore = -1;
     for (let i = index - 1; i >= 0; i--) {
-      if (items[i].categoryId === categoryId) {
+      if (items[i]?.categoryId === categoryId) {
         insertBefore = i;
         break;
       }
@@ -189,15 +191,17 @@ export function App() {
 
     const ItemsClone = [...items];
     const [moved] = ItemsClone.splice(index, 1);
-    ItemsClone.splice(insertBefore, 0, moved);
+    if (moved) {
+      ItemsClone.splice(insertBefore, 0, moved);
 
-    const newUserData: UserData = {
-      ...userData,
-      spendings: userData.spendings.map((monthlySpending) =>
-        monthlySpending.month !== selectedMonth ? monthlySpending : { ...monthlySpending, items: ItemsClone },
-      ),
-    };
-    updateAndSaveUserData(newUserData);
+      const newUserData: UserData = {
+        ...userData,
+        spendings: userData.spendings.map((monthlySpending) =>
+          monthlySpending.month !== selectedMonth ? monthlySpending : { ...monthlySpending, items: ItemsClone },
+        ),
+      };
+      updateAndSaveUserData(newUserData);
+    }
   }
 
   function handleAddItem(newItem: Item) {

@@ -35,6 +35,10 @@
   font-size: 0.95rem;
 }
 
+.table th:first-child {
+  overflow-wrap: anywhere;
+}
+
 @media (min-width: 640px) {
   .table tbody td:first-of-type {
     padding-left: 2rem;

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { CategorySection } from "./CategorySection";
 import { SortedItemsSection } from "./SortedItemsSection";
 import { toCents } from "../../format";
@@ -20,6 +20,24 @@ interface SpendingsTableProps {
   onMoveItemUp: (index: number) => void;
 }
 
+function TableFrame({ firstColumnName, children }: { firstColumnName: string; children: ReactNode }) {
+  return <table className={styles.table}>
+    <colgroup>
+      <col className={styles.col} />
+      <col />
+      <col />
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">{firstColumnName}</th>
+        <th scope="col" className={styles.amount}>Spent</th>
+        <th scope="col">Account</th>
+      </tr>
+    </thead>
+    {children}
+  </table>;
+}
+
 export function MonthlyItemsTable({
   categoryGroups,
   accounts,
@@ -39,20 +57,8 @@ export function MonthlyItemsTable({
     [hiddenAccountIds],
   );
 
-  return <table className={styles.table}>
-    <colgroup>
-      <col className={styles.col} />
-      <col />
-      <col />
-    </colgroup>
-    <thead>
-      <tr>
-        <th scope="col">Item</th>
-        <th scope="col" className={styles.amount}>Spent</th>
-        <th scope="col">Account</th>
-      </tr>
-    </thead>
-    {viewMode === "name" ? (
+  if (viewMode === "name") {
+    return <TableFrame firstColumnName="Item">
       <SortedItemsSection
         items={categoryGroups.flatMap((categoryGroup) => categoryGroup.groupedItems)}
         accounts={accounts}
@@ -65,9 +71,12 @@ export function MonthlyItemsTable({
         onToggleIgnore={onToggleIgnore}
         onMoveItemUp={onMoveItemUp}
       />
-    ) : categoryGroups.map(({categoryId, categoryName, total, percentage, groupedItems}) => (
+    </TableFrame>;
+  }
+
+  return categoryGroups.map(({categoryId, categoryName, total, percentage, groupedItems}) => (
+    <TableFrame key={categoryId} firstColumnName="Category">
       <CategorySection
-        key={categoryId}
         categoryGroup={{ categoryId, categoryName, total, percentage, groupedItems }}
         budgetInCents={budgets[categoryId] ? toCents(budgets[categoryId]) : undefined}
         accounts={accounts}
@@ -81,6 +90,6 @@ export function MonthlyItemsTable({
         onToggleIgnore={onToggleIgnore}
         onMoveItemUp={onMoveItemUp}
       />
-    ))}
-  </table>;
+    </TableFrame>
+  ));
 }

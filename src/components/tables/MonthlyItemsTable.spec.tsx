@@ -38,7 +38,7 @@ function renderTable(viewMode: "category" | "name") {
       accounts={accounts}
       hiddenAccountIds={[]}
       grandTotal={grandTotal}
-      budgets={{}}
+      budgets={{ food: "7.00", travel: "10.00" }}
       viewMode={viewMode}
       onAddItem={onAddItem}
       onEditItem={onEditItem}
@@ -56,18 +56,28 @@ describe("MonthlyItemsTable", () => {
 
     const tables = screen.getAllByRole("table");
     expect(tables).toHaveLength(3);
-    expect(tables.map((table) => table.querySelector("tbody tr th")?.textContent)).toEqual([
+    const categoryNames = [
       "Food",
       "Home",
       "Travel",
-    ]);
-    for (const table of tables) {
+    ];
+    expect(screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual(categoryNames);
+    tables.forEach((table, index) => {
+      const heading = screen.getByRole("heading", { name: categoryNames[index] });
+      expect(table.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+      expect(table.getAttribute("aria-labelledby")).toBe(heading.id);
+      expect(screen.getByRole("table", { name: categoryNames[index] })).toBe(table);
       expect(within(table).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
-        "Category",
+        "Item",
         "Spent",
         "Account",
       ]);
-    }
+    });
+    expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("5.50");
+    expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("31.4%");
+    expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("Budget left1.50");
+    expect(screen.getByRole("region", { name: "Travel" }).textContent).toContain("Over budget-2.00");
+    expect(screen.getByRole("region", { name: "Home" }).textContent).toContain("0.00");
     expect(within(tables[0]!).getByText("Coffee")).toBeTruthy();
     expect(within(tables[0]!).getByText("Tea")).toBeTruthy();
     expect(within(tables[1]!).getByText("No spendings")).toBeTruthy();

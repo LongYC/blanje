@@ -4,7 +4,47 @@
   background: var(--surface);
   border: 1px solid var(--border);
   overflow: visible;
+}
+
+.category, .table {
   margin-top: 1.5rem;
+}
+
+.category .table {
+  margin-top: 0;
+}
+
+.categoryHeading {
+  margin: 0;
+  padding: 0.85rem 0.85rem 0.25rem;
+  background: var(--category-bg);
+  border-radius: 4px 4px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  padding: 0.25rem 0.85rem 0.85rem;
+  background: var(--category-bg);
+  font-size: 0.85rem;
+}
+
+.summaryItem {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.summaryItem dt {
+  color: var(--muted);
+}
+
+.summaryItem dd {
+  margin: 0;
+  font-weight: 600;
 }
 
 @media (min-width: 640px) {
@@ -13,9 +53,10 @@
   }
 }
 
-.table thead {
+.table thead th {
   background-color: var(--border);
   color: var(--muted);
+  font-size: 0.8rem;
 }
 
 .table th {
@@ -45,21 +86,6 @@
   }
 }
 
-.row,
-.row th,
-.row td {
-  background: var(--category-bg);
-  padding: 0.85rem;
-  font-size: 1rem;
-}
-
-.row .budget {
-  margin-left: 0.5rem;
-  font-weight: normal;
-  font-style: italic;
-  font-size: 0.8rem;
-}
-
 .labels {
   margin-left: 0.4rem;
 }
@@ -75,15 +101,6 @@
   border-radius: 999px;
 }
 
-.total {
-  composes: amount;
-  font-weight: 600;
-  text-align: right;
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column-reverse;
-}
-
 .percent {
   font-size: 0.75rem;
   font-weight: 500;
@@ -94,11 +111,6 @@
 }
 
 @media (min-width: 640px) {
-  .total {
-    flex-direction: row;
-    align-items: center;
-  }
-
   .percent {
     display: inline;
     margin-top: 0;

@@ -1,4 +1,3 @@
-import { formatCents } from "../../format";
 import type { Account, Item } from "../../data";
 import type { CategoryGroup } from "../../group";
 import { ItemEditor } from "./ItemEditor";
@@ -7,7 +6,6 @@ import styles from "./MonthlyItemsTable.module.css";
 
 interface CategorySectionProps {
   categoryGroup: CategoryGroup;
-  budgetInCents?: number;
   accounts: Account[];
   hidden: Set<string>;
   grandTotal: number;
@@ -20,27 +18,8 @@ interface CategorySectionProps {
   onMoveItemUp: (index: number) => void;
 }
 
-function BudgetText({
-  budgetInCents,
-  spentInCents
-}: {
-  budgetInCents?: number;
-  spentInCents: number;
-}) {
-  const budgetLeftInCents = budgetInCents === undefined ? null : budgetInCents - spentInCents;
-
-  if (budgetInCents === undefined || budgetLeftInCents === null) {
-    return null;
-  }
-
-  return <span className={styles.budget} title={`Budget: ${formatCents(budgetInCents)}`}>{
-    `${budgetLeftInCents < 0 ? "⚠️ over budget" : "budget left"}: ${formatCents(budgetLeftInCents)}`
-  }</span>;
-}
-
 export function CategorySection({
   categoryGroup,
-  budgetInCents,
   accounts,
   hidden,
   grandTotal,
@@ -52,22 +31,9 @@ export function CategorySection({
   onToggleIgnore,
   onMoveItemUp,
 }: CategorySectionProps) {
-  const { categoryId, categoryName, total, percentage, groupedItems } = categoryGroup;
+  const { categoryId, groupedItems } = categoryGroup;
 
   return <tbody>
-    <tr className={styles.row}>
-      <th scope="rowgroup">
-        <span>{categoryName}</span>
-        <BudgetText budgetInCents={budgetInCents} spentInCents={total} />
-      </th>
-      <td className={styles.total}>
-        <span className={styles.percent} title="Percentage of this category out of this month's grand total">
-          {percentage.toFixed(1)}%
-        </span>
-        {formatCents(total)}
-      </td>
-      <td aria-label="No value"></td>
-    </tr>
     {groupedItems.length === 0 ? (
       <tr className={styles.empty}>
         <td colSpan={3}>No spendings</td>

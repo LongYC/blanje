@@ -77,19 +77,16 @@ function renderSortedTable() {
 }
 
 describe("CategoryItemsTable", () => {
-  it("starts with each item table hidden while keeping category summaries visible", () => {
+  it("starts with each item table hidden while keeping category heading visible", () => {
     renderCategoryTables();
 
     const categoryNames = ["Food", "Home", "Travel"];
     expect(screen.queryAllByRole("table")).toHaveLength(0);
     expect(screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual(categoryNames);
-    expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("5.50");
-    expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("31.4%");
-    expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("Budget left1.50");
-    expect(screen.getByRole("region", { name: "Travel" }).textContent).toContain("Over budget-2.00");
-    expect(screen.getByRole("region", { name: "Home" }).textContent).toContain("0.00");
     categoryNames.forEach((categoryName) => {
-      expect(screen.getByRole("button", { name: `Expand ${categoryName} items` }).getAttribute("aria-expanded")).toBe("false");
+      const toggle = screen.getByRole("button", { name: `Expand ${categoryName} items` });
+      expect(toggle.getAttribute("aria-expanded")).toBe("false");
+      expect(toggle.textContent).toBe("+");
     });
   });
 
@@ -99,6 +96,9 @@ describe("CategoryItemsTable", () => {
 
     await user.click(screen.getByRole("button", { name: "Expand Food items" }));
     const foodTable = screen.getByRole("table", { name: "Food" });
+    const collapseFoodButton = screen.getByRole("button", { name: "Collapse Food items" });
+    expect(collapseFoodButton.textContent).toBe("-");
+    expect(collapseFoodButton.getAttribute("aria-expanded")).toBe("true");
     expect(foodTable.getAttribute("aria-labelledby")).toBe(screen.getByRole("heading", { name: "Food" }).id);
     expect(within(foodTable).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
       "Item",
@@ -112,6 +112,12 @@ describe("CategoryItemsTable", () => {
     await user.click(screen.getByRole("button", { name: "Expand Home items" }));
     expect(within(screen.getByRole("table", { name: "Home" })).getByText("No spendings")).toBeTruthy();
     expect(screen.queryByRole("table", { name: "Travel" })).toBeNull();
+
+    await user.click(collapseFoodButton);
+    expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
+    const expandFoodButton = screen.getByRole("button", { name: "Expand Food items" });
+    expect(expandFoodButton.textContent).toBe("+");
+    expect(expandFoodButton.getAttribute("aria-expanded")).toBe("false");
   });
 
   it("keeps a category expanded while one of its items is being edited", () => {

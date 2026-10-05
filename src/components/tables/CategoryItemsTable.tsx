@@ -52,40 +52,35 @@ export function CategoryItemsTable({
   const tableId = `${headingId}-items`;
   const isEditingInCategory = editingIndex !== null && groupedItems.some(({ index }) => index === editingIndex);
   const [isExpanded, setIsExpanded] = useState(isEditingInCategory);
+  const isOverBudget = budgetLeftInCents === null ? false : budgetLeftInCents < 0;
 
   return <section className={styles.category} aria-labelledby={headingId}>
     <div className={styles.categoryHeader}>
       <h3 id={headingId} className={styles.categoryHeading}>{categoryName}</h3>
+      <p className={styles.summary}>
+        <strong>{percentage.toFixed(1)}%</strong> ({formatCents(total)}) of monthly total
+        {budgetLeftInCents !== null && budgetInCents !== undefined ? (
+          <span
+            className={isOverBudget ? styles.over : styles.within}
+            title={`Budget: ${formatCents(budgetInCents)}`}
+          >
+            , {isOverBudget ? "over budget:" : "budget left:"} <em>{formatCents(budgetLeftInCents)}</em>
+          </span>
+        ) : "."}
+      </p>
       <button
         type="button"
         className={styles.toggle}
         aria-label={`${isExpanded ? "Collapse" : "Expand"} ${categoryName} items`}
         aria-controls={tableId}
         aria-expanded={isExpanded}
+        title={isExpanded ? "Hide items and add item form" : "Show items and add item form"}
         disabled={isEditingInCategory}
         onClick={() => setIsExpanded((expanded) => !expanded)}
       >
-        {isExpanded ? "Hide items" : "Show items"}
+        {isExpanded ? "-" : "+"}
       </button>
     </div>
-    <dl className={styles.summary}>
-      <div className={styles.summaryItem}>
-        <dt>Spent</dt>
-        <dd>{formatCents(total)}</dd>
-      </div>
-      <div className={styles.summaryItem}>
-        <dt>Of monthly total</dt>
-        <dd>{percentage.toFixed(1)}%</dd>
-      </div>
-      {budgetLeftInCents !== null && budgetInCents !== undefined && (
-        <div className={styles.summaryItem}>
-          <dt>{budgetLeftInCents < 0 ? "Over budget" : "Budget left"}</dt>
-          <dd title={`Budget: ${formatCents(budgetInCents)}`}>
-            {formatCents(budgetLeftInCents)}
-          </dd>
-        </div>
-      )}
-    </dl>
     <table id={tableId} hidden={!isExpanded} className={styles.table} aria-labelledby={headingId}>
       <colgroup>
         <col className={styles.col} />

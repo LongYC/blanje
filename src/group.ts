@@ -39,6 +39,21 @@ export function sortGroupedItemsByName(items: GroupedItem[]): GroupedItem[] {
   );
 }
 
+export function orderItemsByCategory(items: Item[], categories: Category[]): Item[] {
+  const itemsByCategory = new Map<string, Item[]>();
+  for (const item of items) {
+    const categoryItems = itemsByCategory.get(item.categoryId) ?? [];
+    categoryItems.push(item);
+    itemsByCategory.set(item.categoryId, categoryItems);
+  }
+
+  const orderedCategoryIds = [
+    ...new Set(categories.map(({ id }) => id)),
+    ...[...itemsByCategory.keys()].filter((id) => !categories.some((category) => category.id === id)),
+  ];
+  return orderedCategoryIds.flatMap((id) => itemsByCategory.get(id) ?? []);
+}
+
 export function moveItemDown(items: Item[], itemIndex: number): Item[] {
   const item = items[itemIndex];
   if (!item) return items;

@@ -42,14 +42,22 @@ function changeView(mode: "category" | "name") {
 describe("App monthly table views", () => {
   it("selects the category and name tables directly from the current view mode", () => {
     render(<App />);
+    expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
+    expect(screen.queryByRole("table", { name: "Home" })).toBeNull();
+    expect(screen.queryByRole("table", { name: "Travel" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Expand Food items" }));
     expect(screen.getByRole("table", { name: "Food" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Expand Home items" }));
     expect(screen.getByRole("table", { name: "Home" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Expand Travel items" }));
     expect(screen.getByRole("table", { name: "Travel" })).toBeTruthy();
 
     changeView("name");
     expect(screen.getByRole("table", { name: "Items sorted by name" })).toBeTruthy();
 
     changeView("category");
+    expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Expand Food items" }));
     expect(screen.getByRole("table", { name: "Food" })).toBeTruthy();
   });
 
@@ -57,6 +65,7 @@ describe("App monthly table views", () => {
     const user = userEvent.setup();
     render(<App />);
 
+    await user.click(screen.getByRole("button", { name: "Expand Food items" }));
     const coffeeRow = within(screen.getByRole("table", { name: "Food" }))
       .getByRole("row", { name: /Coffee/ });
     await user.click(within(coffeeRow).getByRole("button", { name: "Item actions" }));
@@ -68,6 +77,7 @@ describe("App monthly table views", () => {
     changeView("category");
     expect((screen.getByRole("textbox", { name: "New item name" }) as HTMLInputElement).value).toBe("Coffee");
 
+    await user.click(screen.getByRole("button", { name: "Expand Travel items" }));
     const trainRow = within(screen.getByRole("table", { name: "Travel" }))
       .getByRole("row", { name: /Train/ });
     expect(within(trainRow).getByRole("button", { name: "Item actions" }).hasAttribute("disabled")).toBe(true);

@@ -38,7 +38,7 @@ function createHandlers() {
   };
 }
 
-function renderCategoryTables() {
+function renderCategoryTables(editingIndex: number | null = null) {
   const handlers = createHandlers();
   const view = render(
     <>
@@ -49,7 +49,7 @@ function renderCategoryTables() {
           accounts={accounts}
           hidden={new Set()}
           grandTotal={grandTotal}
-          editingIndex={null}
+          editingIndex={editingIndex}
           budgetInCents={categoryGroup.categoryId === "food" ? 700 : categoryGroup.categoryId === "travel" ? 1000 : undefined}
           {...handlers}
         />
@@ -77,37 +77,54 @@ function renderSortedTable() {
 }
 
 describe("CategoryItemsTable", () => {
-  it("renders a separate headed table for every category, including empty categories", () => {
+  it("starts with each item table hidden while keeping category summaries visible", () => {
     renderCategoryTables();
 
-    const tables = screen.getAllByRole("table");
     const categoryNames = ["Food", "Home", "Travel"];
-    expect(tables).toHaveLength(3);
+    expect(screen.queryAllByRole("table")).toHaveLength(0);
     expect(screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual(categoryNames);
-    tables.forEach((table, index) => {
-      const heading = screen.getByRole("heading", { name: categoryNames[index] });
-      expect(table.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
-      expect(table.getAttribute("aria-labelledby")).toBe(heading.id);
-      expect(within(table).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
-        "Item",
-        "Spent",
-        "Account",
-      ]);
-    });
     expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("5.50");
     expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("31.4%");
     expect(screen.getByRole("region", { name: "Food" }).textContent).toContain("Budget left1.50");
     expect(screen.getByRole("region", { name: "Travel" }).textContent).toContain("Over budget-2.00");
     expect(screen.getByRole("region", { name: "Home" }).textContent).toContain("0.00");
-    expect(within(tables[0]!).getByText("Coffee")).toBeTruthy();
-    expect(within(tables[0]!).getByText("Tea")).toBeTruthy();
-    expect(within(tables[1]!).getByText("No spendings")).toBeTruthy();
-    expect(within(tables[2]!).getByText("Train")).toBeTruthy();
+    categoryNames.forEach((categoryName) => {
+      expect(screen.getByRole("button", { name: `Expand ${categoryName} items` }).getAttribute("aria-expanded")).toBe("false");
+    });
+  });
+
+  it("expands category tables independently", async () => {
+    const user = userEvent.setup();
+    renderCategoryTables();
+
+    await user.click(screen.getByRole("button", { name: "Expand Food items" }));
+    const foodTable = screen.getByRole("table", { name: "Food" });
+    expect(foodTable.getAttribute("aria-labelledby")).toBe(screen.getByRole("heading", { name: "Food" }).id);
+    expect(within(foodTable).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
+      "Item",
+      "Spent",
+      "Account",
+    ]);
+    expect(within(foodTable).getByText("Coffee")).toBeTruthy();
+    expect(within(foodTable).getByText("Tea")).toBeTruthy();
+    expect(screen.queryByRole("table", { name: "Home" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Expand Home items" }));
+    expect(within(screen.getByRole("table", { name: "Home" })).getByText("No spendings")).toBeTruthy();
+    expect(screen.queryByRole("table", { name: "Travel" })).toBeNull();
+  });
+
+  it("keeps a category expanded while one of its items is being edited", () => {
+    renderCategoryTables(0);
+
+    expect(screen.getByRole("table", { name: "Food" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Collapse Food items" }).hasAttribute("disabled")).toBe(true);
   });
 
   it("allows moving an item down within its category", async () => {
     const user = userEvent.setup();
     const { onMoveItemDown } = renderCategoryTables();
+    await user.click(screen.getByRole("button", { name: "Expand Food items" }));
     const foodTable = screen.getByRole("table", { name: "Food" });
     const names = Array.from(foodTable.querySelectorAll("tbody tr td:first-child"))
       .map((cell) => cell.textContent?.trim())

@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { useState } from "react";
 import type { Account, Item } from "../../data";
 import type { CategoryGroup } from "../../group";
 import { formatCents } from "../../format";
@@ -48,9 +49,25 @@ export function CategoryItemsTable({
   const headingId = useId();
   const { categoryId, categoryName, groupedItems, total, percentage } = categoryGroup;
   const budgetLeftInCents = budgetInCents === undefined ? null : budgetInCents - total;
+  const tableId = `${headingId}-items`;
+  const isEditingInCategory = editingIndex !== null && groupedItems.some(({ index }) => index === editingIndex);
+  const [isExpanded, setIsExpanded] = useState(isEditingInCategory);
 
   return <section className={styles.category} aria-labelledby={headingId}>
-    <h3 id={headingId} className={styles.categoryHeading}>{categoryName}</h3>
+    <div className={styles.categoryHeader}>
+      <h3 id={headingId} className={styles.categoryHeading}>{categoryName}</h3>
+      <button
+        type="button"
+        className={styles.toggle}
+        aria-label={`${isExpanded ? "Collapse" : "Expand"} ${categoryName} items`}
+        aria-controls={tableId}
+        aria-expanded={isExpanded}
+        disabled={isEditingInCategory}
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+      >
+        {isExpanded ? "Hide items" : "Show items"}
+      </button>
+    </div>
     <dl className={styles.summary}>
       <div className={styles.summaryItem}>
         <dt>Spent</dt>
@@ -69,7 +86,7 @@ export function CategoryItemsTable({
         </div>
       )}
     </dl>
-    <table className={styles.table} aria-labelledby={headingId}>
+    <table id={tableId} hidden={!isExpanded} className={styles.table} aria-labelledby={headingId}>
       <colgroup>
         <col className={styles.col} />
         <col />

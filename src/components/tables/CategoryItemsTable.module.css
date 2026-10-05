@@ -1,17 +1,5 @@
-.table {
-  width: 100%;
-  table-layout: fixed;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  overflow: visible;
-}
-
-.category, .table {
+.category {
   margin-top: 1.5rem;
-}
-
-.category .table {
-  margin-top: 0;
 }
 
 .categoryHeading {
@@ -47,8 +35,17 @@
   font-weight: 600;
 }
 
+.table {
+  width: 100%;
+  table-layout: fixed;
+  margin-top: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: visible;
+}
+
 @media (min-width: 640px) {
-  .table .col {
+  .col {
     width: 50%;
   }
 }
@@ -102,12 +99,12 @@
 }
 
 .percent {
+  display: block;
+  margin-top: 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--muted);
   cursor: help;
-  display: block;
-  margin-top: 0.5rem;
 }
 
 @media (min-width: 640px) {

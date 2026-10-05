@@ -1,0 +1,103 @@
+.table {
+  width: 100%;
+  table-layout: fixed;
+  margin-top: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: visible;
+}
+
+@media (min-width: 640px) {
+  .col {
+    width: 50%;
+  }
+}
+
+.table thead th {
+  background-color: var(--border);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.table th {
+  text-align: left;
+}
+
+.table .amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 0.6rem 0.85rem;
+  border: none;
+  border-top: 1px solid var(--category-bg);
+  font-size: 0.95rem;
+}
+
+.table th:first-child {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 640px) {
+  .table tbody td:first-of-type {
+    padding-left: 2rem;
+  }
+}
+
+.labels {
+  margin-left: 0.4rem;
+}
+
+.label {
+  display: inline-block;
+  margin-left: 0.3rem;
+  padding: 0.08rem 0.45rem;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--muted);
+  background: rgb(0 0 0 / 0.03);
+  border-radius: 999px;
+}
+
+.percent {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: help;
+}
+
+@media (min-width: 640px) {
+  .percent {
+    display: inline;
+    margin-top: 0;
+    margin-right: 0.5rem;
+  }
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.ignored {
+  color: var(--muted);
+}
+
+.ignored,
+.ignored td,
+.ignored button:not([aria-haspopup]):not([role]) {
+  text-decoration: line-through;
+  text-decoration-color: var(--muted);
+}
+
+.invisible td * {
+  visibility: hidden;
+}

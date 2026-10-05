@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { MonthlyItemsTable } from "./components/tables/MonthlyItemsTable";
+import { CategoryItemsTable } from "./components/tables/CategoryItemsTable";
+import { SortedItemsTable } from "./components/tables/SortedItemsTable";
 import { downloadJson } from "./download";
 import {
   clearAllData,
@@ -22,7 +23,7 @@ import { NoteField } from "./components/NoteField";
 import { groupItemsByCategory, moveItemDown } from "./group";
 import styles from "./App.module.css";
 import { MonthlyHeader, type MonthlyViewMode } from "./components/MonthlyHeader";
-import { formatCents } from "./format";
+import { formatCents, toCents } from "./format";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
 function formatTimestamp(date: Date): string {
@@ -46,6 +47,8 @@ export function App() {
   const [hiddenAccountIds, setHiddenAccountIds] = useState<string[]>(() =>
     readHiddenAccountIds(),
   );
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const hidden = useMemo(() => new Set(hiddenAccountIds), [hiddenAccountIds]);
   // Timestamp of the last item name/amount edit (YYYY-MM-DD_HHmm_ss), or "" if
   // nothing has been edited since the current file was loaded.
   const [lastEdited, setLastEdited] = useState<string>(() => readLastEdited());
@@ -255,18 +258,40 @@ export function App() {
           editable
           onChange={handleEditNote}
         />
-        <MonthlyItemsTable
-          categoryGroups={categoryGroups}
-          budgets={selected.budgets ?? {}}
-          accounts={userData.accounts}
-          hiddenAccountIds={hiddenAccountIds}
-          grandTotal={grandTotal}
-          viewMode={monthlyViewMode}
-          onEditItem={handleEditSpending}
-          onAddItem={handleAddItem}
-          onToggleIgnore={handleToggleIgnore}
-          onMoveItemDown={handleMoveItemDown}
-        />
+        {monthlyViewMode === "name" ? (
+          <SortedItemsTable
+            items={categoryGroups.flatMap((categoryGroup) => categoryGroup.groupedItems)}
+            accounts={userData.accounts}
+            hidden={hidden}
+            grandTotal={grandTotal}
+            editingIndex={editingIndex}
+            onEditItem={handleEditSpending}
+            onCancelEdit={() => setEditingIndex(null)}
+            onStartEdit={setEditingIndex}
+            onToggleIgnore={handleToggleIgnore}
+            onMoveItemDown={handleMoveItemDown}
+          />
+        ) : (
+          categoryGroups.map((categoryGroup) => {
+            const budget = selected.budgets?.[categoryGroup.categoryId];
+
+            return <CategoryItemsTable
+              key={categoryGroup.categoryId}
+              categoryGroup={categoryGroup}
+              budgetInCents={budget ? toCents(budget) : undefined}
+              accounts={userData.accounts}
+              hidden={hidden}
+              grandTotal={grandTotal}
+              editingIndex={editingIndex}
+              onEditItem={handleEditSpending}
+              onCancelEdit={() => setEditingIndex(null)}
+              onStartEdit={setEditingIndex}
+              onAddItem={handleAddItem}
+              onToggleIgnore={handleToggleIgnore}
+              onMoveItemDown={handleMoveItemDown}
+            />;
+          })
+        )}
         <div className={styles.breakdown}>
           <AccountsTable
             accountTotals={accountTotals}

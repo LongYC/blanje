@@ -3,10 +3,20 @@ import type { Account, Item } from "../../data";
 import type { GroupedItem } from "../../group";
 import { ItemEditor } from "./ItemEditor";
 import { ItemMenu } from "./ItemMenu";
-import styles from "./MonthlyItemsTable.module.css";
+
+export interface ItemRowStyles {
+  ignored: string | undefined;
+  invisible: string | undefined;
+  labels: string | undefined;
+  label: string | undefined;
+  amount: string | undefined;
+  percent: string | undefined;
+  cell: string | undefined;
+}
 
 interface ItemRowProps {
   groupedItem: GroupedItem;
+  rowStyles: ItemRowStyles;
   accounts: Account[];
   hidden: Set<string>;
   grandTotal: number;
@@ -28,6 +38,7 @@ function spentPercentage(spentAmount: number, totalSpent: number): string {
 
 export function ItemRow({
   groupedItem,
+  rowStyles,
   accounts,
   hidden,
   grandTotal,
@@ -56,32 +67,32 @@ export function ItemRow({
   }
 
   const rowClass = [];
-  if (groupedItem.ignore) rowClass.push(styles.ignored);
-  if (hidden.has(groupedItem.accountId)) rowClass.push(styles.invisible);
+  if (groupedItem.ignore) rowClass.push(rowStyles.ignored);
+  if (hidden.has(groupedItem.accountId)) rowClass.push(rowStyles.invisible);
 
-  return <tr className={rowClass.join(" ")}>
+  return <tr className={rowClass.join(" ") || undefined}>
     <td>
       <div>
         {groupedItem.name}
         {groupedItem.labels && groupedItem.labels.length > 0 && (
-          <span className={styles.labels}>
+          <span className={rowStyles.labels}>
             {groupedItem.labels.map((label) => (
-              <span className={styles.label} key={label}>{label}</span>
+              <span className={rowStyles.label} key={label}>{label}</span>
             ))}
           </span>
         )}
       </div>
     </td>
-    <td className={styles.amount}>
+    <td className={rowStyles.amount}>
       <div>
-        <span className={styles.percent} title="Percentage of this item out of this months's grand total">
+        <span className={rowStyles.percent} title="Percentage of this item out of this months's grand total">
           {spentPercentage(groupedItem.amountCents, grandTotal)}
         </span>
         {formatCents(groupedItem.amountCents)}
       </div>
     </td>
     <td>
-      <div className={styles.cell}>
+      <div className={rowStyles.cell}>
         <span>{groupedItem.accountName}</span>
         <ItemMenu
           isItemIgnored={Boolean(groupedItem.ignore)}

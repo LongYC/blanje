@@ -15,7 +15,7 @@ interface CategorySectionProps {
   onStartEdit: (index: number) => void;
   onAddItem: (item: Item) => void;
   onToggleIgnore: (index: number) => void;
-  onMoveItemUp: (index: number) => void;
+  onMoveItemDown: (index: number) => void;
 }
 
 export function CategorySection({
@@ -29,16 +29,22 @@ export function CategorySection({
   onStartEdit,
   onAddItem,
   onToggleIgnore,
-  onMoveItemUp,
+  onMoveItemDown,
 }: CategorySectionProps) {
   const { categoryId, groupedItems } = categoryGroup;
 
   return <tbody>
+    <ItemEditor
+      categoryId={categoryId}
+      accountOptions={accounts}
+      isAddButtonDisabled={editingIndex !== null}
+      onAddOrUpdate={onAddItem}
+    />
     {groupedItems.length === 0 ? (
       <tr className={styles.empty}>
         <td colSpan={3}>No spendings</td>
       </tr>
-    ) : groupedItems.map((groupedItem) => (
+    ) : groupedItems.map((groupedItem, index) => (
       <ItemRow
         key={groupedItem.index}
         groupedItem={groupedItem}
@@ -46,21 +52,15 @@ export function CategorySection({
         hidden={hidden}
         grandTotal={grandTotal}
         isEditing={editingIndex === groupedItem.index}
-        isFirstInCategory={groupedItems[0]?.index === groupedItem.index}
-        showMoveUp={true}
+        isLastInCategory={index === groupedItems.length - 1}
+        showMoveDown={true}
         isActionDisabled={editingIndex !== null}
         onEditItem={onEditItem}
         onCancelEdit={onCancelEdit}
         onStartEdit={() => onStartEdit(groupedItem.index)}
         onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
-        onMoveUp={() => onMoveItemUp(groupedItem.index)}
+        onMoveDown={() => onMoveItemDown(groupedItem.index)}
       />
     ))}
-    <ItemEditor
-      categoryId={categoryId}
-      accountOptions={accounts}
-      isAddButtonDisabled={editingIndex !== null}
-      onAddOrUpdate={onAddItem}
-    />
   </tbody>;
 }

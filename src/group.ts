@@ -39,6 +39,21 @@ export function sortGroupedItemsByName(items: GroupedItem[]): GroupedItem[] {
   );
 }
 
+export function moveItemDown(items: Item[], itemIndex: number): Item[] {
+  const item = items[itemIndex];
+  if (!item) return items;
+
+  let nextIndex = itemIndex + 1;
+  while (nextIndex < items.length && items[nextIndex]?.categoryId !== item.categoryId) {
+    nextIndex++;
+  }
+  if (nextIndex === items.length) return items;
+
+  const reorderedItems = [...items];
+  const [movedItem] = reorderedItems.splice(itemIndex, 1);
+  if (movedItem) reorderedItems.splice(nextIndex, 0, movedItem);
+  return reorderedItems;
+}
 
 export interface LabelTotal {
   label: string;

@@ -3,21 +3,21 @@ import styles from "./ItemMenu.module.css";
 
 interface ItemMenuProps {
   isItemIgnored: boolean;
-  isFirstInCategory: boolean;
-  showMoveUp?: boolean;
+  isLastInCategory: boolean;
+  showMoveDown?: boolean;
   isButtonDisabled?: boolean;
   onEdit: () => void;
-  onMoveUp: () => void;
+  onMoveDown: () => void;
   onToggleIgnore: () => void;
 }
 
 export function ItemMenu({
   isItemIgnored,
-  isFirstInCategory,
-  showMoveUp = true,
+  isLastInCategory,
+  showMoveDown = true,
   isButtonDisabled = false,
   onEdit,
-  onMoveUp,
+  onMoveDown,
   onToggleIgnore
 }: ItemMenuProps) {
   const [open, setOpen] = useState(false);
@@ -69,18 +69,18 @@ export function ItemMenu({
           >
             Edit
           </button>
-          {showMoveUp && !isFirstInCategory && <button
+          {showMoveDown && !isLastInCategory && <button
             type="button"
             role="menuitem"
             className={styles.item}
-            disabled={isFirstInCategory}
+            disabled={isLastInCategory}
             onClick={() => {
-              onMoveUp();
+              onMoveDown();
               setOpen(false);
             }}
-            title="Move this item to one row above"
+            title="Move this item to one row below"
           >
-            Move up
+            Move down
           </button>}
           <button
             type="button"

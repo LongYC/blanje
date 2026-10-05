@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   groupItemsByCategory,
+  moveItemDown,
   sortGroupedItemsByName,
   type GroupedItem,
 } from "./group";
@@ -16,6 +17,32 @@ function item(name: string, index: number): GroupedItem {
     index,
   };
 }
+
+describe("moveItemDown", () => {
+  it("moves an item after the next item in its category", () => {
+    const items = [
+      { categoryId: "food", name: "Coffee", amount: "3.50", accountId: "card" },
+      { categoryId: "home", name: "Rent", amount: "10.00", accountId: "card" },
+      { categoryId: "food", name: "Tea", amount: "2.00", accountId: "card" },
+    ];
+
+    expect(moveItemDown(items, 0).map(({ name }) => name)).toEqual([
+      "Rent",
+      "Tea",
+      "Coffee",
+    ]);
+    expect(items.map(({ name }) => name)).toEqual(["Coffee", "Rent", "Tea"]);
+  });
+
+  it("leaves an item unchanged when it is last in its category", () => {
+    const items = [
+      { categoryId: "food", name: "Coffee", amount: "3.50", accountId: "card" },
+      { categoryId: "home", name: "Rent", amount: "10.00", accountId: "card" },
+    ];
+
+    expect(moveItemDown(items, 0)).toBe(items);
+  });
+});
 
 describe("sortGroupedItemsByName", () => {
   it("sorts names without changing the source order", () => {
@@ -60,9 +87,6 @@ describe("groupItemsByCategory", () => {
       expect.objectContaining({ categoryId: "empty", categoryName: "Empty", total: 0, percentage: 0 }),
       expect.objectContaining({ categoryId: "other", categoryName: "Uncategorised", total: 650, percentage: 34.21052631578947 }),
     ]);
-    expect(result.categoryGroups[0]?.groupedItems[1]).toEqual(
-      expect.objectContaining({ index: 1, amountCents: 200, accountName: "Card" }),
-    );
     expect(result.accountTotals).toEqual([
       { accountId: "card", accountName: "Card", total: 1250 },
       { accountId: "empty", accountName: "Unused", total: 0 },

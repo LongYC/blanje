@@ -30,7 +30,7 @@ function renderTable(viewMode: "category" | "name") {
   const onAddItem = vi.fn();
   const onEditItem = vi.fn();
   const onToggleIgnore = vi.fn();
-  const onMoveItemUp = vi.fn();
+  const onMoveItemDown = vi.fn();
 
   const view = render(
     <MonthlyItemsTable
@@ -43,11 +43,11 @@ function renderTable(viewMode: "category" | "name") {
       onAddItem={onAddItem}
       onEditItem={onEditItem}
       onToggleIgnore={onToggleIgnore}
-      onMoveItemUp={onMoveItemUp}
+      onMoveItemDown={onMoveItemDown}
     />,
   );
 
-  return { ...view, onAddItem, onEditItem, onToggleIgnore, onMoveItemUp };
+  return { ...view, onAddItem, onEditItem, onToggleIgnore, onMoveItemDown };
 }
 
 describe("MonthlyItemsTable", () => {
@@ -82,6 +82,26 @@ describe("MonthlyItemsTable", () => {
     expect(within(tables[0]!).getByText("Tea")).toBeTruthy();
     expect(within(tables[1]!).getByText("No spendings")).toBeTruthy();
     expect(within(tables[2]!).getByText("Train")).toBeTruthy();
+  });
+
+  it("allows moving the first category item down", async () => {
+    const user = userEvent.setup();
+    const { onMoveItemDown } = renderTable("category");
+    const foodTable = screen.getByRole("table", { name: "Food" });
+    const names = Array.from(foodTable.querySelectorAll("tbody tr td:first-child"))
+      .map((cell) => cell.textContent?.trim())
+      .filter((name) => ["Coffee", "Tea"].includes(name ?? ""));
+
+    expect(names).toEqual(["Coffee", "Tea"]);
+
+    const teaRow = within(foodTable).getByRole("row", { name: /Tea/ });
+    await user.click(within(teaRow).getByRole("button", { name: "Item actions" }));
+    expect(screen.queryByRole("menuitem", { name: "Move down" })).toBeNull();
+
+    const coffeeRow = within(foodTable).getByRole("row", { name: /Coffee/ });
+    await user.click(within(coffeeRow).getByRole("button", { name: "Item actions" }));
+    await user.click(screen.getByRole("menuitem", { name: "Move down" }));
+    expect(onMoveItemDown).toHaveBeenCalledWith(0);
   });
 
   it("keeps name-sorted items in one table", () => {

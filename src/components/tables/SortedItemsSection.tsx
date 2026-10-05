@@ -12,7 +12,7 @@ interface SortedItemsSectionProps {
   onCancelEdit: () => void;
   onStartEdit: (index: number) => void;
   onToggleIgnore: (index: number) => void;
-  onMoveItemUp: (index: number) => void;
+  onMoveItemDown: (index: number) => void;
 }
 
 export function SortedItemsSection({
@@ -25,7 +25,7 @@ export function SortedItemsSection({
   onCancelEdit,
   onStartEdit,
   onToggleIgnore,
-  onMoveItemUp,
+  onMoveItemDown,
 }: SortedItemsSectionProps) {
   const sortedItems = sortGroupedItemsByName(items);
 
@@ -38,14 +38,14 @@ export function SortedItemsSection({
         hidden={hidden}
         grandTotal={grandTotal}
         isEditing={editingIndex === groupedItem.index}
-        isFirstInCategory={false}
-        showMoveUp={false}
+        isLastInCategory={false}
+        showMoveDown={false}
         isActionDisabled={editingIndex !== null}
         onEditItem={onEditItem}
         onCancelEdit={onCancelEdit}
         onStartEdit={() => onStartEdit(groupedItem.index)}
         onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
-        onMoveUp={() => onMoveItemUp(groupedItem.index)}
+        onMoveDown={() => onMoveItemDown(groupedItem.index)}
       />
     ))}
   </tbody>;

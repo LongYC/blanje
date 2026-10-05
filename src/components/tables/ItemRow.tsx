@@ -11,14 +11,14 @@ interface ItemRowProps {
   hidden: Set<string>;
   grandTotal: number;
   isEditing: boolean;
-  isFirstInCategory: boolean;
-  showMoveUp: boolean;
+  isLastInCategory: boolean;
+  showMoveDown: boolean;
   isActionDisabled: boolean;
   onEditItem: (index: number, patch: Partial<Item>) => void;
   onCancelEdit: () => void;
   onStartEdit: () => void;
   onToggleIgnore: () => void;
-  onMoveUp: () => void;
+  onMoveDown: () => void;
 }
 
 function spentPercentage(spentAmount: number, totalSpent: number): string {
@@ -32,14 +32,14 @@ export function ItemRow({
   hidden,
   grandTotal,
   isEditing,
-  isFirstInCategory,
-  showMoveUp,
+  isLastInCategory,
+  showMoveDown,
   isActionDisabled,
   onEditItem,
   onCancelEdit,
   onStartEdit,
   onToggleIgnore,
-  onMoveUp,
+  onMoveDown,
 }: ItemRowProps) {
   if (isEditing) {
     return <ItemEditor
@@ -85,11 +85,11 @@ export function ItemRow({
         <span>{groupedItem.accountName}</span>
         <ItemMenu
           isItemIgnored={Boolean(groupedItem.ignore)}
-          isFirstInCategory={isFirstInCategory}
-          showMoveUp={showMoveUp}
+          isLastInCategory={isLastInCategory}
+          showMoveDown={showMoveDown}
           isButtonDisabled={isActionDisabled}
           onEdit={onStartEdit}
-          onMoveUp={onMoveUp}
+          onMoveDown={onMoveDown}
           onToggleIgnore={onToggleIgnore}
         />
       </div>

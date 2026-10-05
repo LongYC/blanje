@@ -17,7 +17,7 @@ interface SpendingsTableProps {
   onAddItem: (item: Item) => void;
   onEditItem: (index: number, patch: Partial<Item>) => void;
   onToggleIgnore: (index: number) => void;
-  onMoveItemUp: (index: number) => void;
+  onMoveItemDown: (index: number) => void;
 }
 
 function TableFrame({ ariaLabelledBy, children }: {
@@ -62,7 +62,7 @@ function CategoryTable({
   onAddItem,
   onEditItem,
   onToggleIgnore,
-  onMoveItemUp,
+  onMoveItemDown,
 }: CategoryTableProps) {
   const headingId = useId();
   const { categoryName, total, percentage } = categoryGroup;
@@ -100,7 +100,7 @@ function CategoryTable({
         onStartEdit={onStartEdit}
         onAddItem={onAddItem}
         onToggleIgnore={onToggleIgnore}
-        onMoveItemUp={onMoveItemUp}
+        onMoveItemDown={onMoveItemDown}
       />
     </TableFrame>
   </section>;
@@ -116,7 +116,7 @@ export function MonthlyItemsTable({
   onAddItem,
   onEditItem,
   onToggleIgnore,
-  onMoveItemUp
+  onMoveItemDown
 }: SpendingsTableProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -137,7 +137,7 @@ export function MonthlyItemsTable({
         onCancelEdit={() => setEditingIndex(null)}
         onStartEdit={setEditingIndex}
         onToggleIgnore={onToggleIgnore}
-        onMoveItemUp={onMoveItemUp}
+        onMoveItemDown={onMoveItemDown}
       />
     </TableFrame>;
   }
@@ -158,7 +158,7 @@ export function MonthlyItemsTable({
       onEditItem={onEditItem}
       onAddItem={onAddItem}
       onToggleIgnore={onToggleIgnore}
-      onMoveItemUp={onMoveItemUp}
+      onMoveItemDown={onMoveItemDown}
     />;
   });
 }

@@ -19,7 +19,7 @@ import { ScrollToTopButton } from "./components/ScrollToTopButton";
 import { EmptyState } from "./components/EmptyState";
 import { LabelsTable } from "./components/tables/LabelsTable";
 import { NoteField } from "./components/NoteField";
-import { groupItemsByCategory } from "./group";
+import { groupItemsByCategory, moveItemDown } from "./group";
 import styles from "./App.module.css";
 import { MonthlyHeader, type MonthlyViewMode } from "./components/MonthlyHeader";
 import { formatCents } from "./format";
@@ -169,39 +169,23 @@ export function App() {
     updateAndSaveUserData(newUserData);
   }
 
-  // Move the item at `index` to just before the closest preceding item that shares the same category.
-  // No-op if it is already first in its category.
-  function handleMoveItemUp(index: number) {
+  // Move the item at `index` after the next item in the same category.
+  // No-op if it is already last in its category.
+  function handleMoveItemDown(index: number) {
     if (!userData || selectedMonth === null) return;
     const monthEntry = userData.spendings.find((s) => s.month === selectedMonth);
     if (!monthEntry) return;
 
-    const items = monthEntry.items;
-    const categoryId = items[index]?.categoryId;
-    if (categoryId === undefined) return;
+    const reorderedItems = moveItemDown(monthEntry.items, index);
+    if (reorderedItems === monthEntry.items) return;
 
-    let insertBefore = -1;
-    for (let i = index - 1; i >= 0; i--) {
-      if (items[i]?.categoryId === categoryId) {
-        insertBefore = i;
-        break;
-      }
-    }
-    if (insertBefore === -1) return;
-
-    const ItemsClone = [...items];
-    const [moved] = ItemsClone.splice(index, 1);
-    if (moved) {
-      ItemsClone.splice(insertBefore, 0, moved);
-
-      const newUserData: UserData = {
-        ...userData,
-        spendings: userData.spendings.map((monthlySpending) =>
-          monthlySpending.month !== selectedMonth ? monthlySpending : { ...monthlySpending, items: ItemsClone },
-        ),
-      };
-      updateAndSaveUserData(newUserData);
-    }
+    const newUserData: UserData = {
+      ...userData,
+      spendings: userData.spendings.map((monthlySpending) =>
+        monthlySpending.month !== selectedMonth ? monthlySpending : { ...monthlySpending, items: reorderedItems },
+      ),
+    };
+    updateAndSaveUserData(newUserData);
   }
 
   function handleAddItem(newItem: Item) {
@@ -210,7 +194,7 @@ export function App() {
       ...userData,
       spendings: userData.spendings.map((month) =>
         month.month === selectedMonth
-          ? { ...month, items: [...month.items, newItem] }
+          ? { ...month, items: [newItem, ...month.items] }
           : month,
       ),
     };
@@ -281,7 +265,7 @@ export function App() {
           onEditItem={handleEditSpending}
           onAddItem={handleAddItem}
           onToggleIgnore={handleToggleIgnore}
-          onMoveItemUp={handleMoveItemUp}
+          onMoveItemDown={handleMoveItemDown}
         />
         <div className={styles.breakdown}>
           <AccountsTable

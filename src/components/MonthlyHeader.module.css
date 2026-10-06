@@ -28,18 +28,35 @@
   letter-spacing: -0.1rem;
 }
 
-.nav p {
+.summary {
   grid-column: 1 / -1;
-  text-align: center;
-  margin: 0;
-  padding: 0.6rem 0;
   border-radius: 4px 4px 0 0;
   background-color: black;
   color: white;
-  font-size: 1.25rem;
+}
+
+.summary dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  text-align: center;
+}
+
+.summary dl > div {
+  min-width: 0;
+  padding: 0.75rem 0;
+}
+
+.summary dt {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.summary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
   font-weight: bold;
-  cursor: help;
 }
 
 .prev {

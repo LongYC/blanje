@@ -40,6 +40,34 @@ function changeView(mode: "category" | "name") {
 }
 
 describe("App monthly table views", () => {
+  it("shows the monthly budget, spent, and remaining totals", () => {
+    render(<App />);
+
+    const summary = screen.getByRole("group", { name: "Monthly totals" });
+    expect(summary.querySelectorAll("dt")).toHaveLength(3);
+    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
+      "17.00",
+      "17.50",
+      "-0.50",
+    ]);
+  });
+
+  it("shows zero budget and the negative spent total when no budgets are configured", () => {
+    const userDataWithoutBudgets: UserData = {
+      ...userData,
+      spendings: userData.spendings.map((spending) => ({ ...spending, budgets: {} })),
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(userDataWithoutBudgets));
+    render(<App />);
+
+    const summary = screen.getByRole("group", { name: "Monthly totals" });
+    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
+      "0.00",
+      "17.50",
+      "-17.50",
+    ]);
+  });
+
   it("selects the category and name tables directly from the current view mode", () => {
     render(<App />);
     expect(screen.queryByRole("table", { name: "Food" })).toBeNull();

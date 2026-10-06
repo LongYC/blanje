@@ -5,7 +5,9 @@ export type MonthlyViewMode = "category" | "name";
 interface MonthlyHeaderProps {
   month: number;
   year: number;
-  monthlyTotal: string;
+  monthlyBudget: string;
+  monthlySpent: string;
+  monthlyLeft: string;
   isPrevHidden: boolean;
   isNextHidden: boolean;
   onPrev: () => void;
@@ -30,7 +32,9 @@ const MONTH_LABELS = [
 export function MonthlyHeader({
   year,
   month,
-  monthlyTotal,
+  monthlyBudget,
+  monthlySpent,
+  monthlyLeft,
   isPrevHidden,
   isNextHidden,
   onPrev,
@@ -62,6 +66,21 @@ export function MonthlyHeader({
         Next
       </button>
     }
-    <p title="Grand total for this month">{monthlyTotal}</p>
+    <div className={styles.summary} role="group" aria-label="Monthly totals">
+      <dl>
+        <div>
+          <dt>Budget</dt>
+          <dd>{monthlyBudget}</dd>
+        </div>
+        <div>
+          <dt>Spent</dt>
+          <dd>{monthlySpent}</dd>
+        </div>
+        <div>
+          <dt>Budget left</dt>
+          <dd>{monthlyLeft}</dd>
+        </div>
+      </dl>
+    </div>
   </div>;
 }

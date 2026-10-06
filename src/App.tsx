@@ -230,6 +230,11 @@ export function App() {
   }
 
   const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
+  const monthlyBudgetTotal = Object.values(selected.budgets ?? {}).reduce(
+    (total, budget) => total + toCents(budget),
+    0,
+  );
+  const monthlyBudgetLeft = monthlyBudgetTotal - grandTotal;
 
   return (
     <main className={styles.main}>
@@ -247,7 +252,9 @@ export function App() {
         <MonthlyHeader
           year={Math.trunc(selected.month / 100)}
           month={selected.month % 100}
-          monthlyTotal={formatCents(grandTotal)}
+          monthlyBudget={formatCents(monthlyBudgetTotal)}
+          monthlySpent={formatCents(grandTotal)}
+          monthlyLeft={formatCents(monthlyBudgetLeft)}
           isPrevHidden={selectedIndex <= 0}
           isNextHidden={selectedIndex >= userData.spendings.length - 1}
           onPrev={() => stepMonth(-1)}

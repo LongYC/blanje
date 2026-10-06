@@ -7,7 +7,7 @@ interface SortedItemsTableProps {
   items: GroupedItem[];
   accounts: Account[];
   hidden: Set<string>;
-  grandTotal: number;
+  totalSpentInCents: number;
   editingIndex: number | null;
   onEditItem: (index: number, patch: Partial<Item>) => void;
   onCancelEdit: () => void;
@@ -30,7 +30,7 @@ export function SortedItemsTable({
   items,
   accounts,
   hidden,
-  grandTotal,
+  totalSpentInCents,
   editingIndex,
   onEditItem,
   onCancelEdit,
@@ -61,7 +61,7 @@ export function SortedItemsTable({
           rowStyles={rowStyles}
           accounts={accounts}
           hidden={hidden}
-          grandTotal={grandTotal}
+          totalSpentInCents={totalSpentInCents}
           isEditing={editingIndex === groupedItem.index}
           isLastInCategory={false}
           showMoveDown={false}

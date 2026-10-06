@@ -11,7 +11,7 @@ interface CategoryItemsTableProps {
   categoryGroup: CategoryGroup;
   accounts: Account[];
   hidden: Set<string>;
-  grandTotal: number;
+  totalSpentInCents: number;
   editingIndex: number | null;
   budgetInCents?: number;
   budgetAmount?: string;
@@ -39,7 +39,7 @@ export function CategoryItemsTable({
   categoryGroup,
   accounts,
   hidden,
-  grandTotal,
+  totalSpentInCents,
   editingIndex,
   budgetInCents,
   budgetAmount,
@@ -148,22 +148,22 @@ export function CategoryItemsTable({
                 role="menuitem"
                 className={styles.menuItem}
                 onClick={() => {
-                  setIsBudgetFormOpen(true);
+                  setIsItemsExpanded((expanded) => !expanded);
                   setIsMenuOpen(false);
                 }}
               >
-                {budgetAmount === undefined ? "Set budget" : "Edit budget"}
+                {isItemsExpanded ? "Hide items" : "Show items"}
               </button>
               <button
                 type="button"
                 role="menuitem"
                 className={styles.menuItem}
                 onClick={() => {
-                  setIsItemsExpanded((expanded) => !expanded);
+                  setIsBudgetFormOpen(true);
                   setIsMenuOpen(false);
                 }}
               >
-                {isItemsExpanded ? "Hide items" : "Show items"}
+                {budgetAmount === undefined ? "Set budget" : "Edit budget"}
               </button>
             </div>
           )}
@@ -211,7 +211,7 @@ export function CategoryItemsTable({
             rowStyles={rowStyles}
             accounts={accounts}
             hidden={hidden}
-            grandTotal={grandTotal}
+            totalSpentInCents={totalSpentInCents}
             isEditing={editingIndex === groupedItem.index}
             isLastInCategory={index === groupedItems.length - 1}
             showMoveDown={true}

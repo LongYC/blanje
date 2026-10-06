@@ -1,3 +1,4 @@
+import { formatCents } from "../format";
 import styles from "./MonthlyHeader.module.css";
 
 export type MonthlyViewMode = "category" | "name";
@@ -5,10 +6,9 @@ export type MonthlyViewMode = "category" | "name";
 interface MonthlyHeaderProps {
   month: number;
   year: number;
-  totalBudget: string;
-  totalSpent: string;
-  totalUnspentBudget: string;
-  totalUnbudgetedSpent: string;
+  totalBudgetInCents: number;
+  totalSpentInCents: number;
+  totalUnbudgetedSpentInCents: number;
   isPrevHidden: boolean;
   isNextHidden: boolean;
   onPrev: () => void;
@@ -33,10 +33,9 @@ const MONTH_LABELS = [
 export function MonthlyHeader({
   year,
   month,
-  totalBudget,
-  totalSpent,
-  totalUnspentBudget,
-  totalUnbudgetedSpent,
+  totalBudgetInCents,
+  totalSpentInCents,
+  totalUnbudgetedSpentInCents,
   isPrevHidden,
   isNextHidden,
   onPrev,
@@ -71,20 +70,20 @@ export function MonthlyHeader({
     <div className={styles.summary} role="group" aria-label="Monthly totals">
       <dl>
         <div>
-          <dt>Total Budget</dt>
-          <dd>{totalBudget}</dd>
-        </div>
-        <div>
-          <dt>Total Spent</dt>
-          <dd>{totalSpent}</dd>
-        </div>
-        <div>
-          <dt>Unspent budget</dt>
-          <dd>{totalUnspentBudget}</dd>
+          <dt>Budget</dt>
+          <dd>{formatCents(totalBudgetInCents)}</dd>
         </div>
         <div>
           <dt>Unbudgeted spent</dt>
-          <dd>{totalUnbudgetedSpent}</dd>
+          <dd>{formatCents(totalUnbudgetedSpentInCents)}</dd>
+        </div>
+        <div>
+          <dt>Expected spent</dt>
+          <dd>{formatCents(totalBudgetInCents + totalUnbudgetedSpentInCents)}</dd>
+        </div>
+        <div>
+          <dt>Current spent</dt>
+          <dd>{formatCents(totalSpentInCents)}</dd>
         </div>
       </dl>
     </div>

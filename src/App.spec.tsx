@@ -47,9 +47,9 @@ describe("App monthly table views", () => {
     expect(summary.querySelectorAll("dt")).toHaveLength(4);
     expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
       "17.00",
-      "17.50",
-      "1.50",
-      "-2.00",
+      "2.00",
+      "19.00",
+      "17.50"
     ]);
   });
 
@@ -79,9 +79,9 @@ describe("App monthly table views", () => {
     const summary = screen.getByRole("group", { name: "Monthly totals" });
     expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
       "500.00",
-      "437.00",
-      "123.00",
-      "-60.00",
+      "60.00",
+      "560.00",
+      "437.00"
     ]);
   });
 
@@ -96,9 +96,9 @@ describe("App monthly table views", () => {
     const summary = screen.getByRole("group", { name: "Monthly totals" });
     expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
       "0.00",
-      "17.50",
       "0.00",
       "0.00",
+      "17.50"
     ]);
   });
 

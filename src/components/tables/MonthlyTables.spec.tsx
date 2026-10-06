@@ -21,7 +21,7 @@ const items: Item[] = [
   { categoryId: "travel", name: "Train", amount: "12.00", accountId: "card" },
 ];
 
-const { categoryGroups, grandTotal } = groupItemsByCategory(items, categories, accounts);
+const { categoryGroups, totalSpentInCents } = groupItemsByCategory(items, categories, accounts);
 
 afterEach(() => {
   cleanup();
@@ -50,7 +50,7 @@ function renderCategoryTables(editingIndex: number | null = null) {
           categoryGroup={categoryGroup}
           accounts={accounts}
           hidden={new Set()}
-          grandTotal={grandTotal}
+          totalSpentInCents={totalSpentInCents}
           editingIndex={editingIndex}
           budgetAmount={categoryGroup.categoryId === "food" ? "7.00" : categoryGroup.categoryId === "travel" ? "10.00" : undefined}
           budgetInCents={categoryGroup.categoryId === "food" ? 700 : categoryGroup.categoryId === "travel" ? 1000 : undefined}
@@ -70,7 +70,7 @@ function renderSortedTable() {
       items={categoryGroups.flatMap((categoryGroup) => categoryGroup.groupedItems)}
       accounts={accounts}
       hidden={new Set()}
-      grandTotal={grandTotal}
+      totalSpentInCents={totalSpentInCents}
       editingIndex={null}
       {...handlers}
     />,

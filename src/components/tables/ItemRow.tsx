@@ -19,7 +19,7 @@ interface ItemRowProps {
   rowStyles: ItemRowStyles;
   accounts: Account[];
   hidden: Set<string>;
-  grandTotal: number;
+  totalSpentInCents: number;
   isEditing: boolean;
   isLastInCategory: boolean;
   showMoveDown: boolean;
@@ -41,7 +41,7 @@ export function ItemRow({
   rowStyles,
   accounts,
   hidden,
-  grandTotal,
+  totalSpentInCents,
   isEditing,
   isLastInCategory,
   showMoveDown,
@@ -84,7 +84,7 @@ export function ItemRow({
     <td className={rowStyles.amount}>
       <div>
         <span className={rowStyles.percent} title="Percentage of this item out of this months's grand total">
-          {spentPercentage(groupedItem.amountCents, grandTotal)}
+          {spentPercentage(groupedItem.amountCents, totalSpentInCents)}
         </span>
         {formatCents(groupedItem.amountCents)}
       </div>

@@ -92,7 +92,7 @@ describe("groupItemsByCategory", () => {
       { accountId: "empty", accountName: "Unused", total: 0 },
       { accountId: "cash", accountName: "Unknown account", total: 650 },
     ]);
-    expect(result.grandTotal).toBe(1900);
+    expect(result.totalSpentInCents).toBe(1900);
     expect(result.labelTotals).toEqual([
       { label: "work", total: 1775 },
       { label: "gift", total: 525 },
@@ -109,7 +109,7 @@ describe("groupItemsByCategory", () => {
       [],
     );
 
-    expect(result.grandTotal).toBe(-200);
+    expect(result.totalSpentInCents).toBe(-200);
     expect(result.categoryGroups.map(({ categoryName, percentage }) => [categoryName, percentage])).toEqual([
       ["Uncategorised", 0],
       ["Uncategorised", 0],

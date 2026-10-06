@@ -23,7 +23,7 @@ import { NoteField } from "./components/NoteField";
 import { groupItemsByCategory, moveItemDown } from "./group";
 import styles from "./App.module.css";
 import { MonthlyHeader, type MonthlyViewMode } from "./components/MonthlyHeader";
-import { formatCents, toCents } from "./format";
+import { toCents } from "./format";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
 function formatTimestamp(date: Date): string {
@@ -267,20 +267,17 @@ export function App() {
     </main>;
   }
 
-  const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
+  const { categoryGroups, accountTotals, totalSpentInCents, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
   const totalBudget = Object.values(selected.budgets ?? {}).reduce(
     (total, budget) => total + toCents(budget),
     0,
   );
-  const { unspentBudget, unbudgetedSpent } = categoryGroups.reduce((totals, categoryGroup) => {
+  const unbudgetedSpent = Math.abs(categoryGroups.reduce((totals, categoryGroup) => {
     const budgetAmount = selected.budgets?.[categoryGroup.categoryId];
     if (budgetAmount === undefined) return totals;
     const budgetLeft = toCents(budgetAmount) - categoryGroup.total;
-    return {
-      unspentBudget: totals.unspentBudget + Math.max(budgetLeft, 0),
-      unbudgetedSpent: totals.unbudgetedSpent + Math.min(budgetLeft, 0),
-    };
-  }, { unspentBudget: 0, unbudgetedSpent: 0 });
+    return totals + Math.min(budgetLeft, 0);
+  }, 0));
 
   return (
     <main className={styles.main}>
@@ -298,10 +295,9 @@ export function App() {
         <MonthlyHeader
           year={Math.trunc(selected.month / 100)}
           month={selected.month % 100}
-          totalBudget={formatCents(totalBudget)}
-          totalSpent={formatCents(grandTotal)}
-          totalUnspentBudget={formatCents(unspentBudget)}
-          totalUnbudgetedSpent={formatCents(unbudgetedSpent)}
+          totalBudgetInCents={totalBudget}
+          totalSpentInCents={totalSpentInCents}
+          totalUnbudgetedSpentInCents={unbudgetedSpent}
           isPrevHidden={selectedIndex <= 0 || isEditing}
           isNextHidden={selectedIndex >= userData.spendings.length - 1 || isEditing}
           onPrev={() => stepMonth(-1)}
@@ -317,7 +313,7 @@ export function App() {
             items={categoryGroups.flatMap((categoryGroup) => categoryGroup.groupedItems)}
             accounts={userData.accounts}
             hidden={hidden}
-            grandTotal={grandTotal}
+            totalSpentInCents={totalSpentInCents}
             editingIndex={editingIndex}
             onEditItem={handleEditSpending}
             onCancelEdit={() => setEditingIndex(null)}
@@ -336,7 +332,7 @@ export function App() {
               budgetInCents={budget === undefined ? undefined : toCents(budget)}
               accounts={userData.accounts}
               hidden={hidden}
-              grandTotal={grandTotal}
+              totalSpentInCents={totalSpentInCents}
               editingIndex={editingIndex}
               onEditItem={handleEditSpending}
               onCancelEdit={() => setEditingIndex(null)}

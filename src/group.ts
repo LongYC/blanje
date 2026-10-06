@@ -29,7 +29,7 @@ export interface AccountTotal {
 export interface GroupedResult {
   categoryGroups: CategoryGroup[];
   accountTotals: AccountTotal[];
-  grandTotal: number;
+  totalSpentInCents: number;
   labelTotals: LabelTotal[];
 }
 
@@ -146,10 +146,10 @@ export function groupItemsByCategory(
   });
 
   const categoryGroups = [...categoryGroupMap.values()];
-  const grandTotal = categoryGroups.reduce((sum, g) => sum + g.total, 0);
-  if (grandTotal > 0) {
+  const totalSpentInCents = categoryGroups.reduce((sum, g) => sum + g.total, 0);
+  if (totalSpentInCents > 0) {
     for (const categoryGroup of categoryGroups) {
-      categoryGroup.percentage = (categoryGroup.total / grandTotal) * 100;
+      categoryGroup.percentage = (categoryGroup.total / totalSpentInCents) * 100;
     }
   }
 
@@ -169,7 +169,7 @@ export function groupItemsByCategory(
   return {
     categoryGroups,
     accountTotals: [...accountTotalsMap.values()],
-    grandTotal,
+    totalSpentInCents,
     labelTotals
   };
 }

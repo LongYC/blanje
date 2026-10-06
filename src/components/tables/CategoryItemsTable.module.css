@@ -6,8 +6,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    "heading toggle"
-    "summary toggle";
+    "heading actions"
+    "summary actions";
   align-items: center;
   gap: 0.25rem 0.75rem;
   padding: 0.65rem 0.85rem 0.85rem;
@@ -23,36 +23,13 @@
   font-weight: 600;
 }
 
-.toggle {
-  grid-area: toggle;
-  align-self: center;
-  flex: 0 0 auto;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0.3rem 0.5rem;
-  font: inherit;
-  font-size: 1.1rem;
-  color: var(--muted);
-  border-radius: 16px;
-  background-color: var(--category-expand-button-bg);
-}
-
-.toggle:not(:disabled):hover,
-.toggle:not(:disabled):focus-visible {
-  color: var(--text);
-}
-
-.toggle:disabled {
-  cursor: not-allowed;
-}
-
 .summary {
   grid-area: summary;
   margin: 0;
   padding: 0.25rem 0 0;
   background: var(--category-bg);
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   line-height: 1.5;
 }
 
@@ -67,6 +44,103 @@
 
 .summary .within {
   font-style: normal;
+}
+
+.headerActions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.addToggleSlot {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+}
+
+.toggle {
+  align-self: center;
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.3rem 0.5rem;
+  font: inherit;
+  font-size: 1.1rem;
+  color: var(--muted);
+  border-radius: 16px;
+  background-color: var(--category-button-bg);
+}
+
+.toggle:not(:disabled):hover,
+.toggle:not(:disabled):focus-visible {
+  color: var(--text);
+}
+
+.toggle:disabled {
+  background-color: var(--category-button-bg-disabled);
+  border: none;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.menuContainer {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.menuTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  background-color: var(--category-button-bg);
+  font-size: 1.1rem;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.menuTrigger:disabled {
+  background-color: var(--category-button-bg-disabled);
+  border: none;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.menuTrigger:not(:disabled):hover,
+.menuTrigger[aria-expanded="true"] {
+  color: var(--text);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  z-index: 10;
+  min-width: 8rem;
+  padding: 0.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px 4px 16px 16px;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.12);
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  border: none;
+  transition: color 0.2s ease;
+}
+
+.menuItem:focus-visible,
+.menuItem:hover {
+  color: var(--accent);
 }
 
 .table {

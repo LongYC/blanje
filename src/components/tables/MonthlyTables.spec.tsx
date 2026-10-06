@@ -84,21 +84,46 @@ describe("CategoryItemsTable", () => {
     expect(screen.queryAllByRole("table")).toHaveLength(0);
     expect(screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual(categoryNames);
     categoryNames.forEach((categoryName) => {
-      const toggle = screen.getByRole("button", { name: `Expand ${categoryName} items` });
+      const toggle = screen.getByRole("button", { name: `Open add form for ${categoryName}` });
       expect(toggle.getAttribute("aria-expanded")).toBe("false");
       expect(toggle.textContent).toBe("+");
     });
+  });
+
+  it("opens the add form without showing the item list", async () => {
+    const user = userEvent.setup();
+    renderCategoryTables();
+
+    await user.click(screen.getByRole("button", { name: "Open add form for Food" }));
+
+    const foodTable = screen.getByRole("table", { name: "Food" });
+    const nameInput = within(foodTable).getByRole("textbox", { name: "New item name" });
+    expect(nameInput).toBeTruthy();
+    expect(document.activeElement).toBe(nameInput);
+    expect(screen.queryByRole("button", { name: "Open add form for Food" })).toBeNull();
+    expect(within(foodTable).queryAllByRole("columnheader")).toHaveLength(0);
+    expect(within(foodTable).queryByText("Coffee")).toBeNull();
+    expect(screen.queryByRole("table", { name: "Home" })).toBeNull();
+
+    await user.click(within(foodTable).getByRole("button", { name: "Discard" }));
+    expect(screen.getByRole("button", { name: "Open add form for Food" })).toBeTruthy();
+    expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Open add form for Food" }));
+    expect(document.activeElement).toBe(
+      within(screen.getByRole("table", { name: "Food" })).getByRole("textbox", { name: "New item name" }),
+    );
   });
 
   it("expands category tables independently", async () => {
     const user = userEvent.setup();
     renderCategoryTables();
 
-    await user.click(screen.getByRole("button", { name: "Expand Food items" }));
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
     const foodTable = screen.getByRole("table", { name: "Food" });
-    const collapseFoodButton = screen.getByRole("button", { name: "Collapse Food items" });
-    expect(collapseFoodButton.textContent).toBe("-");
-    expect(collapseFoodButton.getAttribute("aria-expanded")).toBe("true");
+    const foodMenuButton = screen.getByRole("button", { name: "Food item list menu" });
+    expect(foodMenuButton.getAttribute("aria-expanded")).toBe("false");
     expect(foodTable.getAttribute("aria-labelledby")).toBe(screen.getByRole("heading", { name: "Food" }).id);
     expect(within(foodTable).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
       "Item",
@@ -109,28 +134,42 @@ describe("CategoryItemsTable", () => {
     expect(within(foodTable).getByText("Tea")).toBeTruthy();
     expect(screen.queryByRole("table", { name: "Home" })).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Expand Home items" }));
+    await user.click(screen.getByRole("button", { name: "Home item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
     expect(within(screen.getByRole("table", { name: "Home" })).getByText("No spendings")).toBeTruthy();
     expect(screen.queryByRole("table", { name: "Travel" })).toBeNull();
 
-    await user.click(collapseFoodButton);
+    await user.click(foodMenuButton);
+    await user.click(screen.getByRole("menuitem", { name: "Hide items" }));
     expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
-    const expandFoodButton = screen.getByRole("button", { name: "Expand Food items" });
-    expect(expandFoodButton.textContent).toBe("+");
-    expect(expandFoodButton.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.getByRole("button", { name: "Food item list menu" })).toBeTruthy();
+  });
+
+  it("keeps the add form open when expanding the item list", async () => {
+    const user = userEvent.setup();
+    renderCategoryTables();
+
+    await user.click(screen.getByRole("button", { name: "Open add form for Food" }));
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
+
+    const foodTable = screen.getByRole("table", { name: "Food" });
+    expect(within(foodTable).getByRole("textbox", { name: "New item name" })).toBeTruthy();
+    expect(within(foodTable).getByText("Coffee")).toBeTruthy();
   });
 
   it("keeps a category expanded while one of its items is being edited", () => {
     renderCategoryTables(0);
 
     expect(screen.getByRole("table", { name: "Food" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Collapse Food items" }).hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("button", { name: "Food item list menu" }).hasAttribute("disabled")).toBe(true);
   });
 
   it("allows moving an item down within its category", async () => {
     const user = userEvent.setup();
     const { onMoveItemDown } = renderCategoryTables();
-    await user.click(screen.getByRole("button", { name: "Expand Food items" }));
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
     const foodTable = screen.getByRole("table", { name: "Food" });
     const names = Array.from(foodTable.querySelectorAll("tbody tr td:first-child"))
       .map((cell) => cell.textContent?.trim())

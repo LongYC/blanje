@@ -18,7 +18,7 @@ afterEach(() => {
 
 function renderEditor(props: Partial<ComponentProps<typeof ItemEditor>> = {}) {
   const onAddOrUpdate = vi.fn();
-  const onCancelOrKeep = vi.fn();
+  const onDismiss = vi.fn();
 
   const view = render(
     <table>
@@ -27,26 +27,20 @@ function renderEditor(props: Partial<ComponentProps<typeof ItemEditor>> = {}) {
           categoryId="food"
           accountOptions={accountOptions}
           onAddOrUpdate={onAddOrUpdate}
-          onCancelOrKeep={onCancelOrKeep}
+          onDismiss={onDismiss}
           {...props}
         />
       </tbody>
     </table>,
   );
 
-  return { ...view, onAddOrUpdate, onCancelOrKeep };
+  return { ...view, onAddOrUpdate, onDismiss };
 }
 
 describe("ItemEditor", () => {
-  it("opens the editor from the add button and closes after a valid submit", async () => {
+  it("submits a valid item and dismisses", async () => {
     const user = userEvent.setup();
-    const { onAddOrUpdate } = renderEditor();
-
-    const addButton = screen.getByRole("button", { name: /add a new item to this category/i });
-    expect(addButton).toBeTruthy();
-    expect(screen.queryByLabelText("New item name")).toBeNull();
-
-    await user.click(addButton);
+    const { onAddOrUpdate, onDismiss } = renderEditor();
 
     const nameInput = screen.getByLabelText("New item name");
     const amountInput = screen.getByLabelText("New amount");
@@ -65,12 +59,12 @@ describe("ItemEditor", () => {
       accountId: "checking",
       labels: ["milk", "sugar"],
     });
-    expect(screen.queryByLabelText("New item name")).toBeNull();
+    expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
   it("includes the editor buttons in the keyboard tab order", async () => {
     const user = userEvent.setup();
-    renderEditor({ isOpenByDefault: true });
+    renderEditor();
 
     expect(document.activeElement).toBe(screen.getByLabelText("New item name"));
 
@@ -94,14 +88,13 @@ describe("ItemEditor", () => {
     expect(document.activeElement).toBe(submitButton);
 
     await user.tab();
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: /cancel/i }));
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: /discard/i }));
   });
 
   it("does not submit when the form is invalid", async () => {
     const user = userEvent.setup();
     const { onAddOrUpdate } = renderEditor();
 
-    await user.click(screen.getByRole("button", { name: /add a new item to this category/i }));
     await user.type(screen.getByLabelText("New amount"), "5.00");
     await user.selectOptions(screen.getByLabelText("Account"), "checking");
     await user.click(screen.getByRole("button", { name: /^add$/i }));
@@ -110,31 +103,20 @@ describe("ItemEditor", () => {
     expect(screen.getByLabelText("New item name")).toBeTruthy();
   });
 
-  it("shows the disabled add button state when the editor is disabled", () => {
-    renderEditor({ isAddButtonDisabled: true });
-
-    const button = screen.getByRole("button", { name: /add a new item to this category/i });
-    expect(button.hasAttribute("disabled")).toBe(true);
-    expect(screen.queryByLabelText("New item name")).toBeNull();
-  });
-
-  it("cancels a new entry and clears the form", async () => {
+  it("discards a new entry and dismisses", async () => {
     const user = userEvent.setup();
-    const { onCancelOrKeep } = renderEditor();
+    const { onDismiss } = renderEditor();
 
-    await user.click(screen.getByRole("button", { name: /add a new item to this category/i }));
     await user.type(screen.getByLabelText("New item name"), "Lunch");
-    await user.click(screen.getByRole("button", { name: /cancel/i }));
+    await user.click(screen.getByRole("button", { name: /discard/i }));
 
-    expect(onCancelOrKeep).toHaveBeenCalledTimes(1);
-    expect(screen.queryByLabelText("New item name")).toBeNull();
+    expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
   it("toggles the amount sign before submitting", async () => {
     const user = userEvent.setup();
     const { onAddOrUpdate } = renderEditor();
 
-    await user.click(screen.getByRole("button", { name: /add a new item to this category/i }));
     await user.type(screen.getByLabelText("New item name"), "Taxi");
     await user.click(screen.getByRole("button", { name: /toggle negative amount/i }));
     await user.type(screen.getByLabelText("New amount"), "12.00");
@@ -153,7 +135,6 @@ describe("ItemEditor", () => {
   it("supports editing an existing item with undo and update flow", async () => {
     const user = userEvent.setup();
     const { onAddOrUpdate } = renderEditor({
-      isOpenByDefault: true,
       groupedItemInEdit: {
         categoryId: "food",
         name: "Original",

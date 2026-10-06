@@ -1,5 +1,4 @@
-import { useId } from "react";
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { Account, Item } from "../../data";
 import type { CategoryGroup } from "../../group";
 import { formatCents } from "../../format";
@@ -46,13 +45,37 @@ export function CategoryItemsTable({
   onToggleIgnore,
   onMoveItemDown,
 }: CategoryItemsTableProps) {
-  const headingId = useId();
   const { categoryId, categoryName, groupedItems, total, percentage } = categoryGroup;
-  const budgetLeftInCents = budgetInCents === undefined ? null : budgetInCents - total;
+
+  const headingId = useId();
   const tableId = `${headingId}-items`;
   const isEditingInCategory = editingIndex !== null && groupedItems.some(({ index }) => index === editingIndex);
-  const [isExpanded, setIsExpanded] = useState(isEditingInCategory);
+  const budgetLeftInCents = budgetInCents === undefined ? null : budgetInCents - total;
   const isOverBudget = budgetLeftInCents === null ? false : budgetLeftInCents < 0;
+
+  const [isItemsExpanded, setIsItemsExpanded] = useState(isEditingInCategory);
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) setIsMenuOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsMenuOpen(false);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMenuOpen]);
 
   return <section className={styles.category} aria-labelledby={headingId}>
     <div className={styles.categoryHeader}>
@@ -68,26 +91,60 @@ export function CategoryItemsTable({
           </span>
         ) : "."}
       </p>
-      <button
-        type="button"
-        className={styles.toggle}
-        aria-label={`${isExpanded ? "Collapse" : "Expand"} ${categoryName} items`}
-        aria-controls={tableId}
-        aria-expanded={isExpanded}
-        title={isExpanded ? "Hide items and add item form" : "Show items and add item form"}
-        disabled={isEditingInCategory}
-        onClick={() => setIsExpanded((expanded) => !expanded)}
-      >
-        {isExpanded ? "-" : "+"}
-      </button>
+      <div className={styles.headerActions}>
+        <div className={styles.addToggleSlot}>
+          {!isAddFormOpen && (
+            <button
+              type="button"
+              className={styles.toggle}
+              aria-label={`Open add form for ${categoryName}`}
+              aria-controls={tableId}
+              aria-expanded={false}
+              title="Add an item to this category"
+              disabled={editingIndex !== null}
+              onClick={() => setIsAddFormOpen(true)}
+            >
+              +
+            </button>
+          )}
+        </div>
+        <div className={styles.menuContainer} ref={menuRef}>
+          <button
+            type="button"
+            className={styles.menuTrigger}
+            aria-label={`${categoryName} item list menu`}
+            aria-haspopup="menu"
+            aria-expanded={isMenuOpen}
+            disabled={isEditingInCategory}
+            onClick={() => setIsMenuOpen((open) => !open)}
+          >
+            ⋯
+          </button>
+          {isMenuOpen && (
+            <div className={styles.menu} role="menu">
+              <button
+                type="button"
+                role="menuitem"
+                className={styles.menuItem}
+                onClick={() => {
+                  setIsItemsExpanded((expanded) => !expanded);
+                  setIsMenuOpen(false);
+                }}
+              >
+                {isItemsExpanded ? "Hide items" : "Show items"}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-    <table id={tableId} hidden={!isExpanded} className={styles.table} aria-labelledby={headingId}>
+    <table id={tableId} hidden={!isItemsExpanded && !isAddFormOpen} className={styles.table} aria-labelledby={headingId}>
       <colgroup>
         <col className={styles.col} />
         <col />
         <col />
       </colgroup>
-      <thead>
+      <thead hidden={!isItemsExpanded}>
         <tr>
           <th scope="col">Item</th>
           <th scope="col" className={styles.amount}>Spent</th>
@@ -95,13 +152,15 @@ export function CategoryItemsTable({
         </tr>
       </thead>
       <tbody>
-        <ItemEditor
-          categoryId={categoryId}
-          accountOptions={accounts}
-          isAddButtonDisabled={editingIndex !== null}
-          onAddOrUpdate={onAddItem}
-        />
-        {groupedItems.length === 0 ? (
+        {isAddFormOpen && (
+          <ItemEditor
+            categoryId={categoryId}
+            accountOptions={accounts}
+            onAddOrUpdate={onAddItem}
+            onDismiss={() => setIsAddFormOpen(false)}
+          />
+        )}
+        {isItemsExpanded && (groupedItems.length === 0 ? (
           <tr className={styles.empty}>
             <td colSpan={3}>No spendings</td>
           </tr>
@@ -123,7 +182,7 @@ export function CategoryItemsTable({
             onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
             onMoveDown={() => onMoveItemDown(groupedItem.index)}
           />
-        ))}
+        )))}
       </tbody>
     </table>
   </section>;

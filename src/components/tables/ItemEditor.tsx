@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import type { Account, Item } from "../../data";
 import styles from "./ItemEditor.module.css";
 import type { GroupedItem } from "../../group";
@@ -6,29 +6,24 @@ import type { GroupedItem } from "../../group";
 interface ItemEditorProps {
   categoryId: string;
   accountOptions: Account[];
-  isAddButtonDisabled?: boolean;
-  isOpenByDefault?: boolean;
   groupedItemInEdit?: GroupedItem;
   onAddOrUpdate: (item: Item) => void;
-  onCancelOrKeep?: () => void;
+  onDismiss: () => void;
 }
 
 export function ItemEditor({
   categoryId,
   accountOptions,
-  isOpenByDefault = false,
   groupedItemInEdit,
-  isAddButtonDisabled = false,
   onAddOrUpdate,
-  onCancelOrKeep
+  onDismiss
 }: ItemEditorProps) {
   const originalName = groupedItemInEdit?.name ?? "";
   const originalAmount = groupedItemInEdit?.amount ?? "";
   const originalAccountId = groupedItemInEdit?.accountId ?? "";
   const originalLabelsString = groupedItemInEdit?.labels?.join(", ") ?? "";
 
-  const [isOpen, setIsOpen] = useState(isOpenByDefault);
-  const [isAutofocus, setIsAutofocus] = useState(true);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(originalName);
   const [amount, setAmount] = useState(originalAmount);
   const [accountId, setAccountId] = useState(originalAccountId);
@@ -41,6 +36,10 @@ export function ItemEditor({
     labelsString !== originalLabelsString
   );
 
+  useEffect(() => {
+    nameInputRef.current?.focus();
+  }, []);
+
   function undoChanges() {
     setName(originalName);
     setAmount(originalAmount);
@@ -48,13 +47,12 @@ export function ItemEditor({
     setLabelsString(originalLabelsString);
   }
 
-  function clearData() {
-    setIsOpen(false);
+  function dismissEditor() {
     setName("");
     setAmount("");
     setAccountId("");
     setLabelsString("");
-    onCancelOrKeep?.();
+    onDismiss();
   }
 
   function handleSubmit(e: SubmitEvent) {
@@ -65,7 +63,7 @@ export function ItemEditor({
     }
 
     if (!hasChanges) {
-      clearData();
+      dismissEditor();
       return;
     }
 
@@ -82,27 +80,7 @@ export function ItemEditor({
       labels: [...new Set(parsedLabelsArray)]
     });
 
-    clearData();
-  }
-
-  if (!isOpen || isAddButtonDisabled) {
-    return (
-      <tr>
-        <td colSpan={3}>
-          <button
-            type="button"
-            className={styles.add}
-            disabled={isAddButtonDisabled}
-            onClick={() => {
-              setIsAutofocus(true);
-              setIsOpen(true);
-            }}
-          >
-            + Add a new item to this category
-          </button>
-        </td>
-      </tr>
-    );
+    dismissEditor();
   }
 
   return (
@@ -110,13 +88,12 @@ export function ItemEditor({
       <td colSpan={3}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <input
+            ref={nameInputRef}
             type="text"
             aria-label="New item name"
             placeholder="Item name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            onBlur={() => setIsAutofocus(false)}
-            autoFocus={isAutofocus}
           />
           <div className={styles.amount}>
             <button
@@ -195,10 +172,10 @@ export function ItemEditor({
               ><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg></button>
               : <button
                 type="button"
-                className={styles.cancel}
-                aria-label="Cancel"
-                title="Cancel"
-                onClick={() => clearData()}
+                className={styles.discard}
+                aria-label="Discard"
+                title="Discard"
+                onClick={dismissEditor}
               >×</button>
           }
         </form>

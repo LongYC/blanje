@@ -73,11 +73,14 @@ describe("App monthly table views", () => {
     expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
     expect(screen.queryByRole("table", { name: "Home" })).toBeNull();
     expect(screen.queryByRole("table", { name: "Travel" })).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Expand Food items" }));
+    fireEvent.click(screen.getByRole("button", { name: "Food item list menu" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Show items" }));
     expect(screen.getByRole("table", { name: "Food" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Expand Home items" }));
+    fireEvent.click(screen.getByRole("button", { name: "Home item list menu" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Show items" }));
     expect(screen.getByRole("table", { name: "Home" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Expand Travel items" }));
+    fireEvent.click(screen.getByRole("button", { name: "Travel item list menu" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Show items" }));
     expect(screen.getByRole("table", { name: "Travel" })).toBeTruthy();
 
     changeView("name");
@@ -85,7 +88,8 @@ describe("App monthly table views", () => {
 
     changeView("category");
     expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Expand Food items" }));
+    fireEvent.click(screen.getByRole("button", { name: "Food item list menu" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Show items" }));
     expect(screen.getByRole("table", { name: "Food" })).toBeTruthy();
   });
 
@@ -93,7 +97,8 @@ describe("App monthly table views", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: "Expand Food items" }));
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
     const coffeeRow = within(screen.getByRole("table", { name: "Food" }))
       .getByRole("row", { name: /Coffee/ });
     await user.click(within(coffeeRow).getByRole("button", { name: "Item actions" }));
@@ -105,7 +110,8 @@ describe("App monthly table views", () => {
     changeView("category");
     expect((screen.getByRole("textbox", { name: "New item name" }) as HTMLInputElement).value).toBe("Coffee");
 
-    await user.click(screen.getByRole("button", { name: "Expand Travel items" }));
+    await user.click(screen.getByRole("button", { name: "Travel item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
     const trainRow = within(screen.getByRole("table", { name: "Travel" }))
       .getByRole("row", { name: /Train/ });
     expect(within(trainRow).getByRole("button", { name: "Item actions" }).hasAttribute("disabled")).toBe(true);

@@ -57,12 +57,10 @@ export function ItemRow({
       categoryId={groupedItem.categoryId}
       accountOptions={accounts}
       groupedItemInEdit={groupedItem}
-      isOpenByDefault={true}
       onAddOrUpdate={(itemPatch) => {
         onEditItem(groupedItem.index, itemPatch);
-        onCancelEdit();
       }}
-      onCancelOrKeep={onCancelEdit}
+      onDismiss={onCancelEdit}
     />;
   }
 

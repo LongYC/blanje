@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CategoryItemsTable } from "./components/tables/CategoryItemsTable";
 import { SortedItemsTable } from "./components/tables/SortedItemsTable";
 import { downloadJson } from "./download";
@@ -48,10 +48,21 @@ export function App() {
     readHiddenAccountIds(),
   );
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingBudgetCategoryIds, setEditingBudgetCategoryIds] = useState<Set<string>>(() => new Set());
   const hidden = useMemo(() => new Set(hiddenAccountIds), [hiddenAccountIds]);
   // Timestamp of the last item name/amount edit (YYYY-MM-DD_HHmm_ss), or "" if
   // nothing has been edited since the current file was loaded.
   const [lastEdited, setLastEdited] = useState<string>(() => readLastEdited());
+
+  const handleBudgetEditorStateChange = useCallback((categoryId: string, isOpen: boolean) => {
+    setEditingBudgetCategoryIds((current) => {
+      if (current.has(categoryId) === isOpen) return current;
+      const next = new Set(current);
+      if (isOpen) next.add(categoryId);
+      else next.delete(categoryId);
+      return next;
+    });
+  }, []);
 
   // Default the selected month to the first available one whenever data changes.
   useEffect(() => {
@@ -71,6 +82,7 @@ export function App() {
   }, [userData, selectedMonth]);
 
   const selected = selectedIndex >= 0 ? userData!.spendings[selectedIndex] : null;
+  const isEditing = editingIndex !== null || editingBudgetCategoryIds.size > 0;
 
   function stepMonth(delta: number) {
     if (!userData || selectedIndex < 0) return;
@@ -204,6 +216,32 @@ export function App() {
     updateAndSaveUserData(newUserData);
   }
 
+  function handleEditBudget(categoryId: string, budget: string | null) {
+    if (!userData || selectedMonth === null) return;
+    const newUserData: UserData = {
+      ...userData,
+      spendings: userData.spendings.map((month) => {
+        if (month.month !== selectedMonth) return month;
+
+        const budgets = { ...month.budgets };
+        if (budget === null) {
+          delete budgets[categoryId];
+        } else {
+          budgets[categoryId] = budget;
+        }
+
+        const updatedMonth = { ...month };
+        if (Object.keys(budgets).length === 0) {
+          delete updatedMonth.budgets;
+        } else {
+          updatedMonth.budgets = budgets;
+        }
+        return updatedMonth;
+      }),
+    };
+    updateAndSaveUserData(newUserData);
+  }
+
   function handleDownload() {
     if (!userData) return;
     const name = lastEdited ? `blanje_${lastEdited}.json` : lastLoadedFilename ?? "blanje.json";
@@ -264,8 +302,8 @@ export function App() {
           totalSpent={formatCents(grandTotal)}
           totalUnspentBudget={formatCents(unspentBudget)}
           totalUnbudgetedSpent={formatCents(unbudgetedSpent)}
-          isPrevHidden={selectedIndex <= 0}
-          isNextHidden={selectedIndex >= userData.spendings.length - 1}
+          isPrevHidden={selectedIndex <= 0 || isEditing}
+          isNextHidden={selectedIndex >= userData.spendings.length - 1 || isEditing}
           onPrev={() => stepMonth(-1)}
           onNext={() => stepMonth(1)}
         />
@@ -294,7 +332,8 @@ export function App() {
             return <CategoryItemsTable
               key={categoryGroup.categoryId}
               categoryGroup={categoryGroup}
-              budgetInCents={budget ? toCents(budget) : undefined}
+              budgetAmount={budget}
+              budgetInCents={budget === undefined ? undefined : toCents(budget)}
               accounts={userData.accounts}
               hidden={hidden}
               grandTotal={grandTotal}
@@ -305,6 +344,8 @@ export function App() {
               onAddItem={handleAddItem}
               onToggleIgnore={handleToggleIgnore}
               onMoveItemDown={handleMoveItemDown}
+              onEditBudget={handleEditBudget}
+              onBudgetEditorStateChange={handleBudgetEditorStateChange}
             />;
           })
         )}

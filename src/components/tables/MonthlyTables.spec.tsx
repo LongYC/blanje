@@ -35,6 +35,8 @@ function createHandlers() {
     onStartEdit: vi.fn(),
     onToggleIgnore: vi.fn(),
     onMoveItemDown: vi.fn(),
+    onEditBudget: vi.fn(),
+    onBudgetEditorStateChange: vi.fn(),
   };
 }
 
@@ -50,6 +52,7 @@ function renderCategoryTables(editingIndex: number | null = null) {
           hidden={new Set()}
           grandTotal={grandTotal}
           editingIndex={editingIndex}
+          budgetAmount={categoryGroup.categoryId === "food" ? "7.00" : categoryGroup.categoryId === "travel" ? "10.00" : undefined}
           budgetInCents={categoryGroup.categoryId === "food" ? 700 : categoryGroup.categoryId === "travel" ? 1000 : undefined}
           {...handlers}
         />
@@ -143,6 +146,85 @@ describe("CategoryItemsTable", () => {
     await user.click(screen.getByRole("menuitem", { name: "Hide items" }));
     expect(screen.queryByRole("table", { name: "Food" })).toBeNull();
     expect(screen.getByRole("button", { name: "Food item list menu" })).toBeTruthy();
+  });
+
+  it("edits an existing category budget from the menu", async () => {
+    const user = userEvent.setup();
+    const { onEditBudget } = renderCategoryTables();
+
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit budget" }));
+
+    const budgetInput = screen.getByRole("textbox", { name: "Monthly budget" }) as HTMLInputElement;
+    expect(budgetInput.value).toBe("7.00");
+    expect(document.activeElement).toBe(budgetInput);
+    expect(screen.getByRole("button", { name: "Keep" })).toBeTruthy();
+    await user.clear(budgetInput);
+    await user.type(budgetInput, "8.25");
+    expect(screen.getByRole("button", { name: "Update" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    expect(onEditBudget).toHaveBeenCalledWith("food", "8.25");
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Food item list menu" }));
+  });
+
+  it("adds a category budget and rejects invalid values", async () => {
+    const user = userEvent.setup();
+    const { onEditBudget } = renderCategoryTables();
+
+    await user.click(screen.getByRole("button", { name: "Home item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Set budget" }));
+    const budgetInput = screen.getByRole("textbox", { name: "Monthly budget" });
+    expect((budgetInput as HTMLInputElement).value).toBe("");
+    await user.type(budgetInput, "-1.00");
+    await user.click(screen.getByRole("button", { name: "Add" }));
+    expect(screen.getByRole("alert").textContent).toContain("nonnegative");
+    expect(onEditBudget).not.toHaveBeenCalled();
+
+    await user.clear(budgetInput);
+    await user.type(budgetInput, "1.001");
+    await user.click(screen.getByRole("button", { name: "Add" }));
+    expect(screen.getByRole("alert").textContent).toContain("up to 2 decimal places");
+    expect(onEditBudget).not.toHaveBeenCalled();
+
+    await user.clear(budgetInput);
+    await user.type(budgetInput, "4.25");
+    await user.click(screen.getByRole("button", { name: "Add" }));
+    expect(onEditBudget).toHaveBeenCalledWith("home", "4.25");
+  });
+
+  it("uses discard for a new budget and discards without saving", async () => {
+    const user = userEvent.setup();
+    const { onEditBudget } = renderCategoryTables();
+
+    await user.click(screen.getByRole("button", { name: "Home item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Set budget" }));
+    const budgetInput = screen.getByRole("textbox", { name: "Monthly budget" });
+    expect(screen.getByRole("button", { name: "Add" }).getAttribute("aria-disabled")).toBe("true");
+    await user.click(screen.getByRole("button", { name: "Add" }));
+    expect(screen.getByRole("textbox", { name: "Monthly budget" })).toBe(budgetInput);
+    expect(onEditBudget).not.toHaveBeenCalled();
+    await user.type(budgetInput, "4.25");
+    await user.click(screen.getByRole("button", { name: "Discard" }));
+
+    expect(onEditBudget).not.toHaveBeenCalled();
+    expect(screen.queryByRole("textbox", { name: "Monthly budget" })).toBeNull();
+  });
+
+  it("undoes changes to an existing budget and keeps the original value", async () => {
+    const user = userEvent.setup();
+    const { onEditBudget } = renderCategoryTables();
+
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit budget" }));
+    const budgetInput = screen.getByRole("textbox", { name: "Monthly budget" }) as HTMLInputElement;
+    await user.clear(budgetInput);
+    await user.type(budgetInput, "8.25");
+    await user.click(screen.getByRole("button", { name: "Undo" }));
+
+    expect(budgetInput.value).toBe("7.00");
+    await user.click(screen.getByRole("button", { name: "Keep" }));
+    expect(onEditBudget).not.toHaveBeenCalled();
   });
 
   it("keeps the add form open when expanding the item list", async () => {

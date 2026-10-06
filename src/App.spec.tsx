@@ -102,6 +102,110 @@ describe("App monthly table views", () => {
     ]);
   });
 
+  it("persists a category budget edit for the selected month only", async () => {
+    const user = userEvent.setup();
+    const dataWithSecondMonth: UserData = {
+      ...userData,
+      spendings: [
+        ...userData.spendings,
+        { month: 202602, budgets: { food: "99.00", home: "12.00" }, items: [] },
+      ],
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(dataWithSecondMonth));
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit budget" }));
+    const budgetInput = screen.getByRole("textbox", { name: "Monthly budget" });
+    await user.clear(budgetInput);
+    await user.type(budgetInput, "9.50");
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    const savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]?.budgets).toEqual({ food: "9.50", travel: "10.00" });
+    expect(savedData.spendings[1]?.budgets).toEqual({ food: "99.00", home: "12.00" });
+  });
+
+  it("disables month navigation while editing a category budget", async () => {
+    const user = userEvent.setup();
+    const dataWithThreeMonths: UserData = {
+      ...userData,
+      spendings: [
+        ...userData.spendings,
+        { month: 202602, budgets: { food: "99.00" }, items: [] },
+        { month: 202603, budgets: {}, items: [] },
+      ],
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(dataWithThreeMonths));
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Next month" }));
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit budget" }));
+    expect(screen.getByRole("button", { name: "Previous month" }).hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("button", { name: "Next month" }).hasAttribute("disabled")).toBe(true);
+
+    await user.click(screen.getByRole("button", { name: "Keep" }));
+    expect(screen.getByRole("button", { name: "Previous month" }).hasAttribute("disabled")).toBe(false);
+    expect(screen.getByRole("button", { name: "Next month" }).hasAttribute("disabled")).toBe(false);
+  });
+
+  it("disables month navigation while editing an existing item", async () => {
+    const user = userEvent.setup();
+    const dataWithThreeMonths: UserData = {
+      ...userData,
+      spendings: [
+        ...userData.spendings,
+        { ...userData.spendings[0]!, month: 202602 },
+        { month: 202603, budgets: {}, items: [] },
+      ],
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(dataWithThreeMonths));
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Next month" }));
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
+    const coffeeRow = within(screen.getByRole("table", { name: "Food" }))
+      .getByRole("row", { name: /Coffee/ });
+    await user.click(within(coffeeRow).getByRole("button", { name: "Item actions" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit" }));
+
+    expect(screen.getByRole("button", { name: "Previous month" }).hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("button", { name: "Next month" }).hasAttribute("disabled")).toBe(true);
+  });
+
+  it("removes a cleared category budget without dropping other budgets", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit budget" }));
+    await user.clear(screen.getByRole("textbox", { name: "Monthly budget" }));
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    const savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]?.budgets).toEqual({ travel: "10.00" });
+  });
+
+  it("omits the budgets object when the last category budget is cleared", async () => {
+    const user = userEvent.setup();
+    const dataWithSingleBudget: UserData = {
+      ...userData,
+      spendings: userData.spendings.map((spending) => ({ ...spending, budgets: { food: "7.00" } })),
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(dataWithSingleBudget));
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit budget" }));
+    await user.clear(screen.getByRole("textbox", { name: "Monthly budget" }));
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    const savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]).not.toHaveProperty("budgets");
+  });
+
   it("selects the category and name tables directly from the current view mode", () => {
     render(<App />);
     expect(screen.queryByRole("table", { name: "Food" })).toBeNull();

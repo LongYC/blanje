@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import type { Account, Item } from "../../data";
 import type { CategoryGroup } from "../../group";
 import { formatCents } from "../../format";
+import { BudgetEditor } from "./BudgetEditor";
 import { ItemEditor } from "./ItemEditor";
 import { ItemRow, type ItemRowStyles } from "./ItemRow";
 import styles from "./CategoryItemsTable.module.css";
@@ -13,12 +14,15 @@ interface CategoryItemsTableProps {
   grandTotal: number;
   editingIndex: number | null;
   budgetInCents?: number;
+  budgetAmount?: string;
   onEditItem: (index: number, patch: Partial<Item>) => void;
   onCancelEdit: () => void;
   onStartEdit: (index: number) => void;
   onAddItem: (item: Item) => void;
   onToggleIgnore: (index: number) => void;
   onMoveItemDown: (index: number) => void;
+  onEditBudget: (categoryId: string, budget: string | null) => void;
+  onBudgetEditorStateChange: (categoryId: string, isOpen: boolean) => void;
 }
 
 const rowStyles: ItemRowStyles = {
@@ -38,12 +42,15 @@ export function CategoryItemsTable({
   grandTotal,
   editingIndex,
   budgetInCents,
+  budgetAmount,
   onEditItem,
   onCancelEdit,
   onStartEdit,
   onAddItem,
   onToggleIgnore,
   onMoveItemDown,
+  onEditBudget,
+  onBudgetEditorStateChange,
 }: CategoryItemsTableProps) {
   const { categoryId, categoryName, groupedItems, total, percentage } = categoryGroup;
 
@@ -56,7 +63,15 @@ export function CategoryItemsTable({
   const [isItemsExpanded, setIsItemsExpanded] = useState(isEditingInCategory);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isBudgetFormOpen, setIsBudgetFormOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isBudgetFormOpen) return;
+    onBudgetEditorStateChange(categoryId, true);
+    return () => onBudgetEditorStateChange(categoryId, false);
+  }, [categoryId, isBudgetFormOpen, onBudgetEditorStateChange]);
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -76,6 +91,11 @@ export function CategoryItemsTable({
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isMenuOpen]);
+
+  function dismissBudgetForm() {
+    setIsBudgetFormOpen(false);
+    menuTriggerRef.current?.focus();
+  }
 
   return <section className={styles.category} aria-labelledby={headingId}>
     <div className={styles.categoryHeader}>
@@ -101,7 +121,7 @@ export function CategoryItemsTable({
               aria-controls={tableId}
               aria-expanded={false}
               title="Add an item to this category"
-              disabled={editingIndex !== null}
+              disabled={editingIndex !== null || isBudgetFormOpen}
               onClick={() => setIsAddFormOpen(true)}
             >
               +
@@ -110,6 +130,7 @@ export function CategoryItemsTable({
         </div>
         <div className={styles.menuContainer} ref={menuRef}>
           <button
+            ref={menuTriggerRef}
             type="button"
             className={styles.menuTrigger}
             aria-label={`${categoryName} item list menu`}
@@ -127,6 +148,17 @@ export function CategoryItemsTable({
                 role="menuitem"
                 className={styles.menuItem}
                 onClick={() => {
+                  setIsBudgetFormOpen(true);
+                  setIsMenuOpen(false);
+                }}
+              >
+                {budgetAmount === undefined ? "Set budget" : "Edit budget"}
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className={styles.menuItem}
+                onClick={() => {
                   setIsItemsExpanded((expanded) => !expanded);
                   setIsMenuOpen(false);
                 }}
@@ -137,6 +169,14 @@ export function CategoryItemsTable({
           )}
         </div>
       </div>
+      {isBudgetFormOpen && (
+        <BudgetEditor
+          categoryName={categoryName}
+          budgetAmount={budgetAmount}
+          onSave={(budget) => onEditBudget(categoryId, budget)}
+          onDismiss={dismissBudgetForm}
+        />
+      )}
     </div>
     <table id={tableId} hidden={!isItemsExpanded && !isAddFormOpen} className={styles.table} aria-labelledby={headingId}>
       <colgroup>

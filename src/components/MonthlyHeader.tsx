@@ -5,9 +5,10 @@ export type MonthlyViewMode = "category" | "name";
 interface MonthlyHeaderProps {
   month: number;
   year: number;
-  monthlyBudget: string;
-  monthlySpent: string;
-  monthlyLeft: string;
+  totalBudget: string;
+  totalSpent: string;
+  totalUnspentBudget: string;
+  totalUnbudgetedSpent: string;
   isPrevHidden: boolean;
   isNextHidden: boolean;
   onPrev: () => void;
@@ -32,9 +33,10 @@ const MONTH_LABELS = [
 export function MonthlyHeader({
   year,
   month,
-  monthlyBudget,
-  monthlySpent,
-  monthlyLeft,
+  totalBudget,
+  totalSpent,
+  totalUnspentBudget,
+  totalUnbudgetedSpent,
   isPrevHidden,
   isNextHidden,
   onPrev,
@@ -69,16 +71,20 @@ export function MonthlyHeader({
     <div className={styles.summary} role="group" aria-label="Monthly totals">
       <dl>
         <div>
-          <dt>Budget</dt>
-          <dd>{monthlyBudget}</dd>
+          <dt>Total Budget</dt>
+          <dd>{totalBudget}</dd>
         </div>
         <div>
-          <dt>Spent</dt>
-          <dd>{monthlySpent}</dd>
+          <dt>Total Spent</dt>
+          <dd>{totalSpent}</dd>
         </div>
         <div>
-          <dt>Budget left</dt>
-          <dd>{monthlyLeft}</dd>
+          <dt>Unspent budget</dt>
+          <dd>{totalUnspentBudget}</dd>
+        </div>
+        <div>
+          <dt>Unbudgeted spent</dt>
+          <dd>{totalUnbudgetedSpent}</dd>
         </div>
       </dl>
     </div>

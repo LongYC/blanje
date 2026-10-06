@@ -10,6 +10,8 @@
 
   --app-header-bg: var(--muted);
   --app-header-text: var(--bg);
+
+  --monthly-header-dt: var(--muted);
   
   --category-bg: #eef2ff;
   --category-button-bg: #d5defa;

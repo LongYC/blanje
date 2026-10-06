@@ -40,15 +40,48 @@ function changeView(mode: "category" | "name") {
 }
 
 describe("App monthly table views", () => {
-  it("shows the monthly budget, spent, and remaining totals", () => {
+  it("shows monthly totals without letting under-budget categories offset overspending", () => {
     render(<App />);
 
     const summary = screen.getByRole("group", { name: "Monthly totals" });
-    expect(summary.querySelectorAll("dt")).toHaveLength(3);
+    expect(summary.querySelectorAll("dt")).toHaveLength(4);
     expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
       "17.00",
       "17.50",
-      "-0.50",
+      "1.50",
+      "-2.00",
+    ]);
+  });
+
+  it("sums only positive remaining budget across budgeted categories", () => {
+    const categoriesWithDifferentBalances: UserData = {
+      ...userData,
+      categories: [
+        { id: "a", name: "A" },
+        { id: "b", name: "B" },
+        { id: "c", name: "C" },
+        { id: "d", name: "D" },
+      ],
+      spendings: [{
+        month: 202601,
+        budgets: { a: "200.00", b: "100.00", c: "100.00", d: "100.00" },
+        items: [
+          { categoryId: "a", name: "A item", amount: "77.00", accountId: "card" },
+          { categoryId: "b", name: "B item", amount: "100.00", accountId: "card" },
+          { categoryId: "c", name: "C item", amount: "120.00", accountId: "card" },
+          { categoryId: "d", name: "D item", amount: "140.00", accountId: "card" },
+        ],
+      }],
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(categoriesWithDifferentBalances));
+    render(<App />);
+
+    const summary = screen.getByRole("group", { name: "Monthly totals" });
+    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
+      "500.00",
+      "437.00",
+      "123.00",
+      "-60.00",
     ]);
   });
 
@@ -64,7 +97,8 @@ describe("App monthly table views", () => {
     expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
       "0.00",
       "17.50",
-      "-17.50",
+      "0.00",
+      "0.00",
     ]);
   });
 

@@ -230,11 +230,19 @@ export function App() {
   }
 
   const { categoryGroups, accountTotals, grandTotal, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
-  const monthlyBudgetTotal = Object.values(selected.budgets ?? {}).reduce(
+  const totalBudget = Object.values(selected.budgets ?? {}).reduce(
     (total, budget) => total + toCents(budget),
     0,
   );
-  const monthlyBudgetLeft = monthlyBudgetTotal - grandTotal;
+  const { unspentBudget, unbudgetedSpent } = categoryGroups.reduce((totals, categoryGroup) => {
+    const budgetAmount = selected.budgets?.[categoryGroup.categoryId];
+    if (budgetAmount === undefined) return totals;
+    const budgetLeft = toCents(budgetAmount) - categoryGroup.total;
+    return {
+      unspentBudget: totals.unspentBudget + Math.max(budgetLeft, 0),
+      unbudgetedSpent: totals.unbudgetedSpent + Math.min(budgetLeft, 0),
+    };
+  }, { unspentBudget: 0, unbudgetedSpent: 0 });
 
   return (
     <main className={styles.main}>
@@ -252,9 +260,10 @@ export function App() {
         <MonthlyHeader
           year={Math.trunc(selected.month / 100)}
           month={selected.month % 100}
-          monthlyBudget={formatCents(monthlyBudgetTotal)}
-          monthlySpent={formatCents(grandTotal)}
-          monthlyLeft={formatCents(monthlyBudgetLeft)}
+          totalBudget={formatCents(totalBudget)}
+          totalSpent={formatCents(grandTotal)}
+          totalUnspentBudget={formatCents(unspentBudget)}
+          totalUnbudgetedSpent={formatCents(unbudgetedSpent)}
           isPrevHidden={selectedIndex <= 0}
           isNextHidden={selectedIndex >= userData.spendings.length - 1}
           onPrev={() => stepMonth(-1)}

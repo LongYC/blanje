@@ -81,13 +81,13 @@ export function CategoryItemsTable({
     <div className={styles.categoryHeader}>
       <h3 id={headingId} className={styles.categoryHeading}>{categoryName}</h3>
       <p className={styles.summary}>
-        <strong>{percentage.toFixed(1)}%</strong> ({formatCents(total)}) of monthly total
+        <strong>{percentage.toFixed(1)}%</strong> of spent
         {budgetLeftInCents !== null && budgetInCents !== undefined ? (
           <span
             className={isOverBudget ? styles.over : styles.within}
             title={`Budget: ${formatCents(budgetInCents)}`}
           >
-            , {isOverBudget ? "over budget:" : "budget left:"} <em>{formatCents(budgetLeftInCents)}</em>
+            , {isOverBudget ? "over budget:" : "budget left:"} {formatCents(budgetInCents)} - {formatCents(total)} = <em>{formatCents(budgetLeftInCents)}</em>
           </span>
         ) : "."}
       </p>

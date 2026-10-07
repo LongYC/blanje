@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { formatCents } from "../format";
 import styles from "./MonthlyHeader.module.css";
 
@@ -41,7 +42,9 @@ export function MonthlyHeader({
   onPrev,
   onNext
 }: MonthlyHeaderProps) {
+  const [isBreakdownExpanded, setIsBreakdownExpanded] = useState(false);
   const monthLabel = MONTH_LABELS[month - 1] ?? month;
+  const expectedSpentInCents = totalBudgetInCents + totalUnbudgetedSpentInCents;
 
   return <div className={styles.nav}>
     <h2><span className={styles.month}>{monthLabel}</span> {year}</h2>
@@ -70,20 +73,38 @@ export function MonthlyHeader({
     <div className={styles.summary} role="group" aria-label="Monthly totals">
       <dl>
         <div>
+          <dt>Expected spent</dt>
+          <dd>
+            <button
+              type="button"
+              className={styles.expected}
+              onClick={() => setIsBreakdownExpanded((expanded) => !expanded)}
+              aria-label={`Expected spent ${formatCents(expectedSpentInCents)}, ${isBreakdownExpanded ? "hide" : "show"} budget breakdown`}
+              aria-expanded={isBreakdownExpanded}
+              aria-controls="monthly-spending-breakdown"
+            >
+              {formatCents(expectedSpentInCents)}
+              <span className={styles.chevron} aria-hidden="true" />
+            </button>
+          </dd>
+        </div>
+        <div>
+          <dt>Current spent</dt>
+          <dd>{formatCents(totalSpentInCents)}</dd>
+        </div>
+      </dl>
+      <dl
+        id="monthly-spending-breakdown"
+        className={styles.breakdown}
+        hidden={!isBreakdownExpanded}
+      >
+        <div>
           <dt>Budget</dt>
           <dd>{formatCents(totalBudgetInCents)}</dd>
         </div>
         <div>
           <dt>Unbudgeted spent</dt>
           <dd>{formatCents(totalUnbudgetedSpentInCents)}</dd>
-        </div>
-        <div>
-          <dt>Expected spent</dt>
-          <dd>{formatCents(totalBudgetInCents + totalUnbudgetedSpentInCents)}</dd>
-        </div>
-        <div>
-          <dt>Current spent</dt>
-          <dd>{formatCents(totalSpentInCents)}</dd>
         </div>
       </dl>
     </div>

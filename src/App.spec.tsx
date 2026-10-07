@@ -39,21 +39,34 @@ function changeView(mode: "category" | "name") {
   });
 }
 
+async function expandMonthlyBreakdown() {
+  await userEvent.click(screen.getByRole("button", { name: /show budget breakdown/i }));
+}
+
+function getMonthlyTotals() {
+  const summary = screen.getByRole("group", { name: "Monthly totals" });
+  return Object.fromEntries(
+    Array.from(summary.querySelectorAll("dt"), (term) => [
+      term.textContent,
+      term.nextElementSibling?.textContent,
+    ]),
+  );
+}
+
 describe("App monthly table views", () => {
-  it("shows monthly totals without letting under-budget categories offset overspending", () => {
+  it("shows monthly totals without letting under-budget categories offset overspending", async () => {
     render(<App />);
 
-    const summary = screen.getByRole("group", { name: "Monthly totals" });
-    expect(summary.querySelectorAll("dt")).toHaveLength(4);
-    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
-      "17.00",
-      "2.00",
-      "19.00",
-      "17.50"
-    ]);
+    await expandMonthlyBreakdown();
+    expect(getMonthlyTotals()).toEqual({
+      "Expected spent": "19.00",
+      "Current spent": "17.50",
+      Budget: "17.00",
+      "Unbudgeted spent": "2.00",
+    });
   });
 
-  it("sums only positive remaining budget across budgeted categories", () => {
+  it("sums only positive remaining budget across budgeted categories", async () => {
     const categoriesWithDifferentBalances: UserData = {
       ...userData,
       categories: [
@@ -76,16 +89,16 @@ describe("App monthly table views", () => {
     localStorage.setItem("blanje:user_data", JSON.stringify(categoriesWithDifferentBalances));
     render(<App />);
 
-    const summary = screen.getByRole("group", { name: "Monthly totals" });
-    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
-      "500.00",
-      "60.00",
-      "560.00",
-      "437.00"
-    ]);
+    await expandMonthlyBreakdown();
+    expect(getMonthlyTotals()).toEqual({
+      "Expected spent": "560.00",
+      "Current spent": "437.00",
+      Budget: "500.00",
+      "Unbudgeted spent": "60.00",
+    });
   });
 
-  it("shows zero budget and the negative spent total when no budgets are configured", () => {
+  it("shows zero budget and the negative spent total when no budgets are configured", async () => {
     const userDataWithoutBudgets: UserData = {
       ...userData,
       spendings: userData.spendings.map((spending) => ({ ...spending, budgets: {} })),
@@ -93,16 +106,16 @@ describe("App monthly table views", () => {
     localStorage.setItem("blanje:user_data", JSON.stringify(userDataWithoutBudgets));
     render(<App />);
 
-    const summary = screen.getByRole("group", { name: "Monthly totals" });
-    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
-      "0.00",
-      "17.50",
-      "17.50",
-      "17.50"
-    ]);
+    await expandMonthlyBreakdown();
+    expect(getMonthlyTotals()).toEqual({
+      "Expected spent": "17.50",
+      "Current spent": "17.50",
+      Budget: "0.00",
+      "Unbudgeted spent": "17.50",
+    });
   });
 
-  it("includes spending from categories without budgets", () => {
+  it("includes spending from categories without budgets", async () => {
     const dataWithUnbudgetedSpending: UserData = {
       ...userData,
       spendings: userData.spendings.map((spending) => ({
@@ -116,13 +129,13 @@ describe("App monthly table views", () => {
     localStorage.setItem("blanje:user_data", JSON.stringify(dataWithUnbudgetedSpending));
     render(<App />);
 
-    const summary = screen.getByRole("group", { name: "Monthly totals" });
-    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
-      "17.00",
-      "6.25",
-      "23.25",
-      "21.75",
-    ]);
+    await expandMonthlyBreakdown();
+    expect(getMonthlyTotals()).toEqual({
+      "Expected spent": "23.25",
+      "Current spent": "21.75",
+      Budget: "17.00",
+      "Unbudgeted spent": "6.25",
+    });
   });
 
   it("persists a category budget edit for the selected month only", async () => {

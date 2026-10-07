@@ -14,7 +14,7 @@
 
 .table thead {
   font-weight: bold;
-  color: var(--muted);
+  color: var(--color-text-muted);
 }
 
 .amount {
@@ -25,7 +25,7 @@
 .table th,
 .table td {
   padding: 0.6rem 0.85rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .table tbody th {

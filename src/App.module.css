@@ -2,7 +2,7 @@
   min-width: 320px;
   display: grid;
   grid-template-columns: [full-start] minmax(20px, 1fr) [content-start] min(880px, 100% - 40px) [content-end] minmax(20px, 1fr) [full-end];
-  background-color: var(--bg);
+  background-color: var(--color-canvas);
   padding-bottom: 3.5rem;
 }
 
@@ -19,8 +19,8 @@
 .sectionAppHeader {
   composes: section;
   padding: 18px 0;
-  background-color: var(--app-header-bg);
-  color: var(--app-header-text);
+  background-color: var(--color-header-surface);
+  color: var(--color-header-text);
 }
 
 .sectionUserData{

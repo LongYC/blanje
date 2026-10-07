@@ -33,7 +33,7 @@
   flex-direction: column;
   gap: 6px;
   cursor: pointer;
-  background: var(--surface);
+  background: var(--color-surface);
   border-radius: 6px;
   padding: 6px
 }
@@ -41,14 +41,14 @@
 .menu > span {
   width: 30px;
   height: 6px;
-  background: var(--app-header-bg);
+  background: var(--color-header-surface);
   border-radius: 16px;
   transition: background 0.2s ease;
 }
 
 .menu:focus-visible,
 .menu:hover {
-  background: var(--category-bg);
+  background: var(--color-category-surface);
 }
 
 .popover {
@@ -56,10 +56,10 @@
   max-width: calc(320px - 2rem);
   padding: 1.2rem;
   margin-top: 0.5rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 16px 4px 16px 16px;
-  box-shadow: -2px 5px 10px rgb(0 0 0 / 0.1);
+  box-shadow: -2px 5px 10px var(--color-shadow-soft);
   position: absolute;
   position-anchor: --menu;
   position-area: block-end span-inline-start;
@@ -85,10 +85,10 @@
   flex-direction: column;
   gap: 0.4rem;
   padding: 0.75rem 1rem;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--color-canvas);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  color: var(--muted);
+  color: var(--color-text-muted);
   font-size: 1rem;
 }
 
@@ -99,31 +99,31 @@
 .viewMode select {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  background: var(--surface);
+  background: var(--color-surface);
   color: inherit;
   font: inherit;
 }
 
 .viewMode select:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
 .advanced summary {
   cursor: pointer;
   padding: 0.75rem 1rem;
-  background-color: var(--bg);
-  border: 1px solid var(--border);
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  color: var(--muted);
+  color: var(--color-text-muted);
   list-style-position: inside;
 }
 
 .advanced summary:hover,
 .advanced summary:focus-visible {
-  background: var(--category-bg);
+  background: var(--color-category-surface);
 }
 
 .advanced::details-content {
@@ -138,7 +138,7 @@
 }
 
 .file {
-  color: var(--muted);
+  color: var(--color-text-muted);
   font-size: 0.85rem;
   overflow-wrap: anywhere;
 }

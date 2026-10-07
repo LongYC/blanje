@@ -1,22 +1,22 @@
 .table {
   width: 100%;
   table-layout: fixed;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   overflow: visible;
   text-align: left;
 }
 
 .table thead {
   font-weight: bold;
-  background-color: var(--border);
-  color: var(--muted);
+  background-color: var(--color-border);
+  color: var(--color-text-muted);
 }
 
 .table th,
 .table td {
   padding: 0.6rem 0.85rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .amount {
@@ -31,7 +31,7 @@
 
 .row th,
 .row td {
-  background: var(--surface);
+  background: var(--color-surface);
   border-bottom: none;
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
@@ -55,20 +55,20 @@
   padding: 0.1rem 0.5rem;
   font-size: 0.75rem;
   line-height: 1.4;
-  color: var(--muted);
+  color: var(--color-text-muted);
   background: transparent;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-border);
   border-radius: 999px;
 }
 
 .toggle:focus-visible,
 .toggle:hover {
-  border-color: var(--accent);
-  color: var(--text);
+  border-color: var(--color-accent);
+  color: var(--color-text);
   filter: none;
 }
 
 .toggle[aria-pressed="true"] {
-  color: var(--text);
+  color: var(--color-text);
   border-style: dashed;
 }

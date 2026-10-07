@@ -6,7 +6,7 @@
 .error {
   flex: 1 100%;
   margin: 1rem 0;
-  color: #b91c1c;
+  color: var(--color-danger);
 }
 
 .hidden {

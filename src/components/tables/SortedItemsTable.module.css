@@ -2,8 +2,8 @@
   width: 100%;
   table-layout: fixed;
   margin-top: 1.5rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   overflow: visible;
 }
 
@@ -14,8 +14,8 @@
 }
 
 .table thead th {
-  background-color: var(--border);
-  color: var(--muted);
+  background-color: var(--color-border);
+  color: var(--color-text-muted);
   font-size: 0.8rem;
 }
 
@@ -32,7 +32,7 @@
 .table td {
   padding: 0.6rem 0.85rem;
   border: none;
-  border-top: 1px solid var(--category-bg);
+  border-top: 1px solid var(--color-category-surface);
   font-size: 0.95rem;
 }
 
@@ -56,8 +56,8 @@
   padding: 0.08rem 0.45rem;
   font-size: 0.75rem;
   font-style: italic;
-  color: var(--muted);
-  background: rgb(0 0 0 / 0.03);
+  color: var(--color-text-muted);
+  background: var(--color-overlay-subtle);
   border-radius: 999px;
 }
 
@@ -66,7 +66,7 @@
   margin-top: 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--muted);
+  color: var(--color-text-muted);
   cursor: help;
 }
 
@@ -83,19 +83,19 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  color: var(--muted);
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
 .ignored {
-  color: var(--muted);
+  color: var(--color-text-muted);
 }
 
 .ignored,
 .ignored td,
 .ignored button:not([aria-haspopup]):not([role]) {
   text-decoration: line-through;
-  text-decoration-color: var(--muted);
+  text-decoration-color: var(--color-text-muted);
 }
 
 .invisible td * {

@@ -96,9 +96,32 @@ describe("App monthly table views", () => {
     const summary = screen.getByRole("group", { name: "Monthly totals" });
     expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
       "0.00",
-      "0.00",
-      "0.00",
+      "17.50",
+      "17.50",
       "17.50"
+    ]);
+  });
+
+  it("includes spending from categories without budgets", () => {
+    const dataWithUnbudgetedSpending: UserData = {
+      ...userData,
+      spendings: userData.spendings.map((spending) => ({
+        ...spending,
+        items: [
+          ...spending.items,
+          { categoryId: "home", name: "Supplies", amount: "4.25", accountId: "card" },
+        ],
+      })),
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(dataWithUnbudgetedSpending));
+    render(<App />);
+
+    const summary = screen.getByRole("group", { name: "Monthly totals" });
+    expect(Array.from(summary.querySelectorAll("dd"), (value) => value.textContent)).toEqual([
+      "17.00",
+      "6.25",
+      "23.25",
+      "21.75",
     ]);
   });
 

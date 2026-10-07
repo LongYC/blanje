@@ -272,12 +272,15 @@ export function App() {
     (total, budget) => total + toCents(budget),
     0,
   );
-  const unbudgetedSpent = Math.abs(categoryGroups.reduce((totals, categoryGroup) => {
-    const budgetAmount = selected.budgets?.[categoryGroup.categoryId];
-    if (budgetAmount === undefined) return totals;
-    const budgetLeft = toCents(budgetAmount) - categoryGroup.total;
-    return totals + Math.min(budgetLeft, 0);
-  }, 0));
+  const unbudgetedSpent = categoryGroups.reduce((acc, categoryGroup) => {
+    const categoryBudget = selected.budgets?.[categoryGroup.categoryId];
+    const categorySpent = categoryGroup.total;
+    if (categoryBudget !== undefined) {
+      const overbudget = Math.min(toCents(categoryBudget) - categorySpent, 0);
+      return acc + Math.abs(overbudget);
+    }
+    return acc + categorySpent;
+  }, 0);
 
   return (
     <main className={styles.main}>

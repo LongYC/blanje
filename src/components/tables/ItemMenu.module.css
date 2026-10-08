@@ -13,7 +13,7 @@
   font-size: 1.1rem;
   line-height: 1;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .trigger:disabled {
@@ -36,18 +36,21 @@
   padding: 0.25rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px 4px 16px 16px;
+  border-radius: 12px 6px 12px 12px;
   box-shadow: 0 6px 24px var(--color-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .item {
-  font: inherit;
   color: var(--color-text);
   border: none;
   display: block;
   width: 100%;
-  padding: 0.45rem 0.6rem;
+  padding: 0 0.75rem;
   text-align: left;
+  line-height: 44px;
   transition: color 0.2s ease;
 }
 

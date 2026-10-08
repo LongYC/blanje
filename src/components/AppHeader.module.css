@@ -69,7 +69,7 @@
   margin-top: 0.5rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px 4px 16px 16px;
+  border-radius: 12px 6px 12px 12px;
   box-shadow: -2px 5px 10px var(--color-shadow-soft);
   position: absolute;
   position-anchor: --menu;
@@ -98,7 +98,7 @@
   padding: 0.75rem 1rem;
   background: var(--color-canvas);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: 12px;
   color: var(--color-text-muted);
   font-size: 1rem;
 }
@@ -111,7 +111,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: 18px;
   background: var(--color-surface);
   color: inherit;
   font: inherit;
@@ -124,37 +124,39 @@
 
 .advanced summary {
   cursor: pointer;
-  padding: 0.75rem 1rem;
-  background-color: var(--color-canvas);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  color: var(--color-text-muted);
+  padding: 0.75rem 1rem 0;
+  border-radius: 6px 6px 0 0;
   list-style-position: inside;
+  background: var(--color-appheader-advanced-bg);
+  color: var(--color-appheader-advanced-text);
+  transition: color 0.2s ease;
 }
 
 .advanced summary:hover,
 .advanced summary:focus-visible {
-  background: var(--color-category-surface);
+  color: var(--color-appheader-advanced-hover-text);
 }
 
 .advanced::details-content {
-  padding: 0 1rem;
+  background: var(--color-appheader-advanced-bg);
+  padding: 0 0 .75rem;
+  border-radius: 0 0 6px 6px;
 }
 
 .advanced .expandable {
   display: flex;
   flex-direction: column;
-  padding: .5rem 0 0;
-  gap: .5rem;
+  padding: .75rem 1.5rem 0;
+  gap: .75rem;
 }
 
 .file {
-  color: var(--color-text-muted);
   font-size: 0.85rem;
   overflow-wrap: anywhere;
 }
 
 .filename {
-  font-weight: 500;
+  font-weight: bold;
   font-style: italic;
+  line-break: anywhere;
 }

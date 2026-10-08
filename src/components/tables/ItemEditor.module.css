@@ -22,7 +22,7 @@
   border-color: var(--color-border);
   padding: 0.3rem 0.4rem;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 6px;
   background: transparent;
 }
 
@@ -56,7 +56,7 @@
   font-size: 1rem;
   line-height: 1;
   color: var(--color-text-muted);
-  border-radius: 4px 0 0 4px;
+  border-radius: 6px 0 0 6px;
 }
 
 .sign:focus-visible,
@@ -102,7 +102,7 @@
 
 .submit {
   padding: .25rem 1rem .35rem;
-  border-radius: 16px;
+  border-radius: 18px;
   font: inherit;
   font-weight: 500;
   color: var(--color-accent);
@@ -124,7 +124,7 @@
   justify-content: center;
   padding: .1rem .5rem;
   width: 2rem;
-  border-radius: 16px;
+  border-radius: 18px;
   border-color: var(--color-border);
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -157,7 +157,7 @@
   justify-content: center;
   padding: .25rem .5rem .35rem;
   width: 2rem;
-  border-radius: 16px;
+  border-radius: 18px;
   border-color: var(--color-border);
   transition: background 0.2s ease, color 0.2s ease;
 }

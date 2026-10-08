@@ -7,7 +7,7 @@
   padding: 0.75rem 1rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 0 0 0 16px; /* Bottom right resizer */
+  border-radius: 0 0 0 18px; /* Bottom right resizer */
 }
 
 .display {
@@ -16,6 +16,10 @@
   cursor: text;
   transition: border 0.2s ease;
   border: 1px solid transparent;
+}
+
+.display:hover {
+  filter: none;
 }
 
 .input {

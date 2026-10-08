@@ -72,8 +72,8 @@ export function AppHeader({
                       onLoaded={onLoadedNewFileClosePopover}
                     />
                   <Button
-                    label="Reset & delete data"
-                    variant="muted"
+                    label="Delete data"
+                    variant="danger"
                     onClick={() => setConfirmingClear(true)}
                   />
                   <span className={styles.file}>

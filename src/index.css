@@ -13,19 +13,27 @@
 
   --color-header-surface: #4f586b;
   --color-header-text: var(--color-canvas);
-  --color-summary-label: var(--color-text-muted);
-  --color-summary-surface: #000000;
-  --color-summary-text: #ffffff;
-  --color-summary-breakdown-surface: var(--color-text-muted);
 
   --color-appheader-menu: #7583a0;
   --color-appheader-menu-hover: #7583a0;
   --color-appheader-menu-lines: #ebf2ff;
   --color-appheader-menu-lines-hover: #ffffff;
+  --color-appheader-advanced-bg: #f7c8c8;
+  --color-appheader-advanced-text: #7b6161;
+  --color-appheader-advanced-hover-text: #917474;
+
+  --color-month-nav-bg: #7583a0;
+  --color-month-nav-text: #ebf2ff;
+  --color-month-nav-hover-text: #ffffff;
+
+  --color-summary-label: #aaacaf;
+  --color-summary-surface: #000000;
+  --color-summary-text: #ffffff;
+  --color-summary-breakdown-surface: var(--color-text-muted);
 
   --color-category-surface: #dbe3f4;
   --color-category-action: #b6c7eb;
-  --color-category-action-text: #ebf2ff;
+  --color-category-action-text: #f3f7ff;
   --color-category-action-hover: #b1c4ed;
   --color-category-action-hover-text: #ffffff;
   --color-category-action-disabled: #c1cbdc;
@@ -73,9 +81,9 @@ button:hover {
 }
 
 button:disabled {
-  background-color: var(--color-text-muted);
-  border-color: var(--color-text-muted);
-  color: var(--color-border);
+  background-color: #dfe1e5;
+  border-color: #dfe1e5;
+  color: #aaacaf;
   cursor: not-allowed;
 }
 

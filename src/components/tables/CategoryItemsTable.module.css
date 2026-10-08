@@ -63,22 +63,32 @@
 .toggle {
   align-self: center;
   flex: 0 0 auto;
-  min-width: 44px;
-  min-height: 44px;
   padding: 0.3rem 0.5rem;
   font: inherit;
-  font-size: 1.1rem;
-  color: var(--color-text-muted);
+}
+
+.toggle,
+.menuTrigger {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
   border-radius: 16px;
   background-color: var(--color-category-action);
+  color: var(--color-category-action-text);
 }
 
 .toggle:not(:disabled):hover,
-.toggle:not(:disabled):focus-visible {
-  color: var(--color-text);
+.toggle:not(:disabled):focus-visible,
+.menuTrigger:not(:disabled):hover,
+.menuTrigger[aria-expanded="true"] {
+  background-color: var(--color-category-action-hover);
+  color: var(--color-category-action-hover-text);
 }
 
-.toggle:disabled {
+.toggle:disabled,
+.menuTrigger:disabled {
   background-color: var(--color-category-action-disabled);
   border: none;
   color: var(--color-text-muted);
@@ -94,25 +104,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
   padding: 0;
-  background-color: var(--color-category-action);
-  font-size: 1.1rem;
   line-height: 1;
-  border-radius: 4px;
-}
-
-.menuTrigger:disabled {
-  background-color: var(--color-category-action-disabled);
-  border: none;
-  color: var(--color-text-muted);
-  cursor: not-allowed;
-}
-
-.menuTrigger:not(:disabled):hover,
-.menuTrigger[aria-expanded="true"] {
-  color: var(--color-text);
 }
 
 .menu {

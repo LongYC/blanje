@@ -1,9 +1,9 @@
 :root {
-  --color-canvas: #f6f7f9;
+  --color-canvas: #f0f1f3;
   --color-surface: #ffffff;
   --color-border: #e2e5ea;
   --color-text: #1c1f26;
-  --color-text-muted: #6b7280;
+  --color-text-muted: #6f747f;
 
   --color-accent: #2563eb;
   --color-danger: #b91c1c;
@@ -11,16 +11,24 @@
   --color-on-accent: #ffffff;
   --color-on-status: var(--color-on-accent);
 
-  --color-header-surface: var(--color-text-muted);
+  --color-header-surface: #4f586b;
   --color-header-text: var(--color-canvas);
   --color-summary-label: var(--color-text-muted);
   --color-summary-surface: #000000;
   --color-summary-text: #ffffff;
   --color-summary-breakdown-surface: var(--color-text-muted);
 
-  --color-category-surface: #eef2ff;
-  --color-category-action: #d5defa;
-  --color-category-action-disabled: #c2c9db;
+  --color-appheader-menu: #7583a0;
+  --color-appheader-menu-hover: #7583a0;
+  --color-appheader-menu-lines: #ebf2ff;
+  --color-appheader-menu-lines-hover: #ffffff;
+
+  --color-category-surface: #dbe3f4;
+  --color-category-action: #b6c7eb;
+  --color-category-action-text: #ebf2ff;
+  --color-category-action-hover: #b1c4ed;
+  --color-category-action-hover-text: #ffffff;
+  --color-category-action-disabled: #c1cbdc;
   --color-budget-over: var(--color-danger);
 
   --color-overlay-subtle: rgb(0 0 0 / 0.03);

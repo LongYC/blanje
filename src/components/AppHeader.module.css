@@ -32,23 +32,34 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  padding: 11px 10px 12px;
   cursor: pointer;
-  background: var(--color-surface);
+  border: none;
   border-radius: 6px;
-  padding: 6px
+  background: var(--color-appheader-menu);
 }
 
 .menu > span {
-  width: 30px;
-  height: 6px;
-  background: var(--color-header-surface);
+  width: 24px;
+  height: 3px;
+  background: var(--color-appheader-menu-lines);
   border-radius: 16px;
-  transition: background 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .menu:focus-visible,
 .menu:hover {
-  background: var(--color-category-surface);
+  background: var(--color-appheader-menu-hover);
+
+  > span {
+    background: var(--color-appheader-menu-lines-hover);
+  }
+}
+
+.menu:active {
+   > span {
+    transform: translateY(1px);
+  }
 }
 
 .popover {

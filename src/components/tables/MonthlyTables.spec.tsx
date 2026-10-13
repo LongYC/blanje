@@ -130,7 +130,7 @@ describe("CategoryItemsTable", () => {
     expect(foodTable.getAttribute("aria-labelledby")).toBe(screen.getByRole("heading", { name: "Food" }).id);
     expect(within(foodTable).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
       "Item",
-      "Spent",
+      "Amount",
       "Account",
     ]);
     expect(within(foodTable).getByText("Coffee")).toBeTruthy();
@@ -278,7 +278,7 @@ describe("SortedItemsTable", () => {
     expect(screen.getAllByRole("table")).toHaveLength(1);
     expect(within(table).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
       "Item",
-      "Spent",
+      "Amount",
       "Account",
     ]);
     const names = Array.from(table.querySelectorAll("tbody tr td:first-child"))

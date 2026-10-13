@@ -98,7 +98,7 @@ describe("App monthly table views", () => {
     });
   });
 
-  it("shows zero budget and the negative spent total when no budgets are configured", async () => {
+  it("shows zero budget and the negative total when no budgets are configured", async () => {
     const userDataWithoutBudgets: UserData = {
       ...userData,
       spendings: userData.spendings.map((spending) => ({ ...spending, budgets: {} })),

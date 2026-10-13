@@ -101,13 +101,13 @@ export function CategoryItemsTable({
     <div className={styles.categoryHeader}>
       <h3 id={headingId} className={styles.categoryHeading}>{categoryName}</h3>
       <p className={styles.summary}>
-        <strong>{percentage.toFixed(1)}%</strong> of spent
+        <strong>{percentage.toFixed(1)}%</strong> ({formatCents(total)}) of recorded
         {budgetLeftInCents !== null && budgetInCents !== undefined ? (
           <span
             className={isOverBudget ? styles.over : styles.within}
             title={`Budget: ${formatCents(budgetInCents)}`}
           >
-            , {isOverBudget ? "over budget:" : "budget left:"} {formatCents(budgetInCents)} - {formatCents(total)} = <em>{formatCents(budgetLeftInCents)}</em>
+            , budget: <strong>{formatCents(Math.abs(budgetLeftInCents))} {isOverBudget ? "over" : "left"} </strong>
           </span>
         ) : "."}
       </p>
@@ -187,7 +187,7 @@ export function CategoryItemsTable({
       <thead hidden={!isItemsExpanded}>
         <tr>
           <th scope="col">Item</th>
-          <th scope="col" className={styles.amount}>Spent</th>
+          <th scope="col" className={styles.amount}>Amount</th>
           <th scope="col">Account</th>
         </tr>
       </thead>

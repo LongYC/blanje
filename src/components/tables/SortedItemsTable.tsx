@@ -49,7 +49,7 @@ export function SortedItemsTable({
     <thead>
       <tr>
         <th scope="col">Item</th>
-        <th scope="col" className={styles.amount}>Spent</th>
+        <th scope="col" className={styles.amount}>Amount</th>
         <th scope="col">Account</th>
       </tr>
     </thead>

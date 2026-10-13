@@ -15,7 +15,7 @@ export interface CategoryGroup {
   groupedItems: GroupedItem[];
   /** Total as an integer number of cents. */
   total: number;
-  /** Share of the grand total, as a percentage (0–100). */
+  /** Share of recorded total, as a percentage (0–100). */
   percentage: number;
 }
 

@@ -75,5 +75,7 @@ totals while keeping it visible (shown greyed out). Toggle it from the item's
 `"ignore": false`.
 
 Each month may include `budgets`, an object mapping category IDs to target
-amounts. The category table shows each budget and the percentage of that
-budget already spent.
+amounts.
+
+The category table automatically calculate budgets left and indicates over budget,
+plus shows the percentage of that the total recorded items in a category against expected total.

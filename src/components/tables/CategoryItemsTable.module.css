@@ -29,7 +29,7 @@
   margin: 0;
   padding: 0.25rem 0 0;
   background: var(--color-category-surface);
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   font-size: 0.8rem;
   line-height: 1.5;
 }
@@ -91,7 +91,7 @@
 .menuTrigger:disabled {
   background-color: var(--color-category-action-disabled);
   border: none;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   cursor: not-allowed;
 }
 
@@ -136,8 +136,8 @@
   transition: color 0.2s ease;
 }
 
-.menuItem:focus-visible,
-.menuItem:hover {
+.menuItem:not(:disabled):focus-visible,
+.menuItem:not(:disabled):hover {
   color: var(--color-accent);
 }
 
@@ -162,7 +162,7 @@
 
 .table thead th {
   background-color: var(--color-border);
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   font-size: 0.8rem;
 }
 
@@ -203,7 +203,7 @@
   padding: 0.08rem 0.45rem;
   font-size: 0.75rem;
   font-style: italic;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   background: var(--color-overlay-subtle);
   border-radius: 999px;
 }
@@ -213,7 +213,7 @@
   margin-top: 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   cursor: help;
 }
 
@@ -230,24 +230,24 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   font-weight: 500;
 }
 
 .empty td {
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   font-style: italic;
 }
 
 .ignored {
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
 }
 
 .ignored,
 .ignored td,
 .ignored button:not([aria-haspopup]):not([role]) {
   text-decoration: line-through;
-  text-decoration-color: var(--color-text-muted);
+  text-decoration-color: var(--color-muted-text);
 }
 
 .invisible td * {

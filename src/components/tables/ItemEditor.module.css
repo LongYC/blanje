@@ -55,7 +55,7 @@
   height: 1.85rem;
   font-size: 1rem;
   line-height: 1;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   border-radius: 6px 0 0 6px;
 }
 
@@ -92,7 +92,7 @@
 }
 
 .account.placeholder {
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   opacity: 0.8;
 }
 
@@ -109,8 +109,8 @@
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.submit:focus-visible,
-.submit:hover {
+.submit:not(:disabled):focus-visible,
+.submit:not(:disabled):hover {
   background: var(--color-accent);
   color: var(--color-on-accent);
 }
@@ -118,7 +118,7 @@
 .undo {
   font: inherit;
   font-weight: 500;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -130,8 +130,8 @@
 }
 
 .undo[aria-disabled="true"] {
-  background-color: var(--color-text-muted);
-  border-color: var(--color-text-muted);
+  background-color: var(--color-muted-text);
+  border-color: var(--color-muted-text);
   color: var(--color-border);
   cursor: not-allowed;
 }
@@ -141,8 +141,8 @@
   outline-offset: 2px;
 }
 
-.discard:focus-visible,
-.discard:hover {
+.discard:not(:disabled):focus-visible,
+.discard:not(:disabled):hover {
   filter: none;
   background: var(--color-border);
   color: var(--color-text);
@@ -151,7 +151,7 @@
 .discard {
   font: inherit;
   font-weight: 500;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;

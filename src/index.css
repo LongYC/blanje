@@ -3,7 +3,8 @@
   --color-surface: #ffffff;
   --color-border: #e2e5ea;
   --color-text: #1c1f26;
-  --color-text-muted: #6f747f;
+  --color-muted-bg: #c7cad0;
+  --color-muted-text: #73757b;
 
   --color-accent: #2563eb;
   --color-danger: #b91c1c;
@@ -29,7 +30,9 @@
   --color-summary-label: #aaacaf;
   --color-summary-surface: #000000;
   --color-summary-text: #ffffff;
-  --color-summary-breakdown-surface: var(--color-text-muted);
+  --color-summary-breakdown-surface: #aaacaf;
+  --color-summary-breakdown-label: #000000;
+  --color-summary-breakdown-text: #000000;
 
   --color-category-surface: #dbe3f4;
   --color-category-action: #b6c7eb;
@@ -63,7 +66,7 @@ body {
 button {
   touch-action: manipulation;
   background: transparent;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   border: 1px solid var(--color-border);
   cursor: pointer;
   font-family: inherit;
@@ -75,20 +78,16 @@ button {
     transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-button:focus-visible,
-button:hover {
+button:not(:disabled):focus-visible,
+button:not(:disabled):hover {
   filter: brightness(0.95);
 }
 
 button:disabled {
-  background-color: #dfe1e5;
-  border-color: #dfe1e5;
-  color: #aaacaf;
+  background-color: var(--color-muted-bg);
+  border-color: var(--color-muted-bg);
+  color: var(--color-muted-text);
   cursor: not-allowed;
-}
-
-button:disabled:hover {
-  filter: none;
 }
 
 input,

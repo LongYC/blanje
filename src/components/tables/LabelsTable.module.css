@@ -14,7 +14,7 @@
 
 .table thead {
   font-weight: bold;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
 }
 
 .amount {

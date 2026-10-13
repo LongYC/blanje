@@ -73,13 +73,13 @@ export function MonthlyHeader({
     <div className={styles.summary} role="group" aria-label="Monthly totals">
       <dl>
         <div>
-          <dt>Expected spent</dt>
+          <dt>Expected total</dt>
           <dd>
             <button
               type="button"
               className={styles.expected}
               onClick={() => setIsBreakdownExpanded((expanded) => !expanded)}
-              aria-label={`Expected spent ${formatCents(expectedSpentInCents)}, ${isBreakdownExpanded ? "hide" : "show"} budget breakdown`}
+              aria-label={`Expected total ${formatCents(expectedSpentInCents)}, ${isBreakdownExpanded ? "hide" : "show"} budget breakdown`}
               aria-expanded={isBreakdownExpanded}
               aria-controls="monthly-spending-breakdown"
             >
@@ -89,7 +89,7 @@ export function MonthlyHeader({
           </dd>
         </div>
         <div>
-          <dt>Current spent</dt>
+          <dt>Recorded total</dt>
           <dd>{formatCents(totalSpentInCents)}</dd>
         </div>
       </dl>
@@ -98,12 +98,12 @@ export function MonthlyHeader({
         className={styles.breakdown}
         hidden={!isBreakdownExpanded}
       >
-        <div>
-          <dt>Budget</dt>
+        <div title="Sum of all budgets">
+          <dt>Budget total</dt>
           <dd>{formatCents(totalBudgetInCents)}</dd>
         </div>
-        <div>
-          <dt>Unbudgeted spent</dt>
+        <div title="Sum of amounts that are over budget or without a budget">
+          <dt>Unbudgeted total</dt>
           <dd>{formatCents(totalUnbudgetedSpentInCents)}</dd>
         </div>
       </dl>

@@ -9,7 +9,7 @@
 
 .form label {
   flex: 1 1 100%;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   font-size: 0.85rem;
 }
 
@@ -46,8 +46,8 @@
   color: var(--color-accent);
 }
 
-.submit:focus-visible,
-.submit:hover {
+.submit:not(:disabled):focus-visible,
+.submit:not(:disabled):hover {
   background: var(--color-accent);
   color: var(--color-on-accent);
 }
@@ -55,13 +55,13 @@
 .undo,
 .discard {
   padding: 0.1rem 0.5rem;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   border-color: var(--color-border);
 }
 
 .undo[aria-disabled="true"] {
-  background-color: var(--color-text-muted);
-  border-color: var(--color-text-muted);
+  background-color: var(--color-muted-text);
+  border-color: var(--color-muted-text);
   color: var(--color-border);
   cursor: not-allowed;
 }
@@ -71,10 +71,10 @@
   outline-offset: 2px;
 }
 
-.undo:focus-visible,
-.undo:hover,
-.discard:focus-visible,
-.discard:hover {
+.undo:not(:disabled):focus-visible,
+.undo:not(:disabled):hover,
+.discard:not(:disabled):focus-visible,
+.discard:not(:disabled):hover {
   filter: none;
   background: var(--color-border);
   color: var(--color-text);

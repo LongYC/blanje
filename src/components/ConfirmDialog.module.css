@@ -34,7 +34,7 @@
 
 .description {
   margin: 0 0 1.25rem;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
 }
 
 .actions {

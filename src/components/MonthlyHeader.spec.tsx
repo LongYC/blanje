@@ -25,25 +25,25 @@ describe("MonthlyHeader totals disclosure", () => {
       />,
     );
 
-    const expectedSpentButton = screen.getByRole("button", {
-      name: "Expected spent 19.00, show budget breakdown",
+    const expectedTotalButton = screen.getByRole("button", {
+      name: "Expected total 19.00, show budget breakdown",
     });
     const breakdown = document.getElementById("monthly-spending-breakdown");
 
-    expect(screen.getByText("Current spent")).toBeTruthy();
+    expect(screen.getByText("Recorded total")).toBeTruthy();
     expect(breakdown?.hidden).toBe(true);
-    expect(expectedSpentButton.getAttribute("aria-controls")).toBe(breakdown?.id);
-    expect(expectedSpentButton.getAttribute("aria-expanded")).toBe("false");
+    expect(expectedTotalButton.getAttribute("aria-controls")).toBe(breakdown?.id);
+    expect(expectedTotalButton.getAttribute("aria-expanded")).toBe("false");
 
-    await user.click(expectedSpentButton);
+    await user.click(expectedTotalButton);
     expect(breakdown?.hidden).toBe(false);
-    expect(screen.getByText("Budget")).toBeTruthy();
-    expect(screen.getByText("Unbudgeted spent")).toBeTruthy();
-    expect(expectedSpentButton.getAttribute("aria-expanded")).toBe("true");
+    expect(screen.getByText("Budget total")).toBeTruthy();
+    expect(screen.getByText("Unbudgeted total")).toBeTruthy();
+    expect(expectedTotalButton.getAttribute("aria-expanded")).toBe("true");
 
-    expectedSpentButton.focus();
+    expectedTotalButton.focus();
     await user.keyboard("{Enter}");
     expect(breakdown?.hidden).toBe(true);
-    expect(expectedSpentButton.getAttribute("aria-expanded")).toBe("false");
+    expect(expectedTotalButton.getAttribute("aria-expanded")).toBe("false");
   });
 });

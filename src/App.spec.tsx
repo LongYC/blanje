@@ -59,10 +59,10 @@ describe("App monthly table views", () => {
 
     await expandMonthlyBreakdown();
     expect(getMonthlyTotals()).toEqual({
-      "Expected spent": "19.00",
-      "Current spent": "17.50",
-      Budget: "17.00",
-      "Unbudgeted spent": "2.00",
+      "Budget total": "17.00",
+      "Expected total": "19.00",
+      "Recorded total": "17.50",
+      "Unbudgeted total": "2.00",
     });
   });
 
@@ -91,10 +91,10 @@ describe("App monthly table views", () => {
 
     await expandMonthlyBreakdown();
     expect(getMonthlyTotals()).toEqual({
-      "Expected spent": "560.00",
-      "Current spent": "437.00",
-      Budget: "500.00",
-      "Unbudgeted spent": "60.00",
+      "Budget total": "500.00",
+      "Expected total": "560.00",
+      "Recorded total": "437.00",
+      "Unbudgeted total": "60.00",
     });
   });
 
@@ -108,10 +108,10 @@ describe("App monthly table views", () => {
 
     await expandMonthlyBreakdown();
     expect(getMonthlyTotals()).toEqual({
-      "Expected spent": "17.50",
-      "Current spent": "17.50",
-      Budget: "0.00",
-      "Unbudgeted spent": "17.50",
+      "Budget total": "0.00",
+      "Expected total": "17.50",
+      "Recorded total": "17.50",
+      "Unbudgeted total": "17.50",
     });
   });
 
@@ -131,10 +131,10 @@ describe("App monthly table views", () => {
 
     await expandMonthlyBreakdown();
     expect(getMonthlyTotals()).toEqual({
-      "Expected spent": "23.25",
-      "Current spent": "21.75",
-      Budget: "17.00",
-      "Unbudgeted spent": "6.25",
+      "Budget total": "17.00",
+      "Expected total": "23.25",
+      "Recorded total": "21.75",
+      "Unbudgeted total": "6.25",
     });
   });
 

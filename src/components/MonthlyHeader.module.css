@@ -42,7 +42,7 @@
 }
 
 .summary dt {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: bold;
   color: var(--color-summary-label);
   padding: 0.75rem 0 0;
@@ -99,14 +99,15 @@
   &[hidden] {
     display: none;
   }
-  
+
   dt {
-    color: var(--color-text);
+    color: var(--color-summary-breakdown-label);
   }
 
   dd {
+    color: var(--color-summary-breakdown-text);
     font-weight: normal;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -119,7 +120,7 @@
   background: var(--color-month-nav-bg);
   color: var(--color-month-nav-text);
 
-  &:hover {
+  &:not(:disabled):hover {
     color: var(--color-month-nav-hover-text);
   }
 }

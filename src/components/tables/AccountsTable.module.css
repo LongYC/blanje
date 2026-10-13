@@ -10,7 +10,7 @@
 .table thead {
   font-weight: bold;
   background-color: var(--color-border);
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
 }
 
 .table th,
@@ -55,7 +55,7 @@
   padding: 0.1rem 0.5rem;
   font-size: 0.75rem;
   line-height: 1.4;
-  color: var(--color-text-muted);
+  color: var(--color-muted-text);
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 999px;

@@ -29,6 +29,7 @@ interface ItemRowProps {
   onStartEdit: () => void;
   onToggleIgnore: () => void;
   onMoveDown: () => void;
+  onDelete: () => void;
 }
 
 function spentPercentage(spentAmount: number, totalSpent: number): string {
@@ -51,6 +52,7 @@ export function ItemRow({
   onStartEdit,
   onToggleIgnore,
   onMoveDown,
+  onDelete,
 }: ItemRowProps) {
   if (isEditing) {
     return <ItemEditor
@@ -100,6 +102,7 @@ export function ItemRow({
           onEdit={onStartEdit}
           onMoveDown={onMoveDown}
           onToggleIgnore={onToggleIgnore}
+          onDelete={onDelete}
         />
       </div>
     </td>

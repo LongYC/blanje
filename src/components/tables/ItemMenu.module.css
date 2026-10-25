@@ -58,3 +58,65 @@
 .item:not(:disabled):hover {
   color: var(--color-accent);
 }
+
+.deleteItem {
+  position: relative;
+  color: var(--color-muted-text);
+  cursor: pointer;
+}
+
+.deleteItem.deleteLocked,
+.deleteItem.deleteLocked:focus-visible,
+.deleteItem.deleteLocked:hover {
+  color: var(--color-muted-text);
+  cursor: not-allowed;
+}
+
+.deleteItem.deleteReady,
+.deleteItem.deleteReady:focus-visible,
+.deleteItem.deleteReady:hover {
+  color: var(--color-danger);
+}
+
+.deleteItem.deleteReady:focus-visible,
+.deleteItem.deleteReady:hover {
+  filter: brightness(1.2);
+}
+
+.deleteCountdown {
+  position: absolute;
+  top: 0;
+  left: 0.75rem;
+  background: none;
+  color: var(--color-danger);
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.deleteItem.deleteArmed .deleteCountdown {
+  opacity: 1;
+  animation: delete-countdown 5s linear forwards; /* Keep this duration in sync with deleteDelayMs */
+}
+
+.deleteItem.deleteReady .deleteCountdown {
+  opacity: 1;
+  clip-path: inset(0);
+  animation: none;
+}
+
+@keyframes delete-countdown {
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deleteItem.deleteArmed .deleteCountdown {
+    animation: none;
+  }
+
+  .deleteItem.deleteReady .deleteCountdown {
+    clip-path: inset(0);
+  }
+}

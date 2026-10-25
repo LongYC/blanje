@@ -14,6 +14,7 @@ interface SortedItemsTableProps {
   onStartEdit: (index: number) => void;
   onToggleIgnore: (index: number) => void;
   onMoveItemDown: (index: number) => void;
+  onDeleteItem: (index: number) => void;
 }
 
 const rowStyles: ItemRowStyles = {
@@ -37,6 +38,7 @@ export function SortedItemsTable({
   onStartEdit,
   onToggleIgnore,
   onMoveItemDown,
+  onDeleteItem,
 }: SortedItemsTableProps) {
   const sortedItems = sortGroupedItemsByName(items);
 
@@ -71,6 +73,7 @@ export function SortedItemsTable({
           onStartEdit={() => onStartEdit(groupedItem.index)}
           onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
           onMoveDown={() => onMoveItemDown(groupedItem.index)}
+          onDelete={() => onDeleteItem(groupedItem.index)}
         />
       ))}
     </tbody>

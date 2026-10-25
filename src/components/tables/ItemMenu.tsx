@@ -9,7 +9,12 @@ interface ItemMenuProps {
   onEdit: () => void;
   onMoveDown: () => void;
   onToggleIgnore: () => void;
+  onDelete: () => void;
 }
+
+// Keep this duration in sync with the delete-countdown animation in ItemMenu.module.css.
+const deleteDelayMs = 5000;
+const deleteAnimationBufferMs = 100;
 
 export function ItemMenu({
   isItemIgnored,
@@ -18,10 +23,41 @@ export function ItemMenu({
   isButtonDisabled = false,
   onEdit,
   onMoveDown,
-  onToggleIgnore
+  onToggleIgnore,
+  onDelete,
 }: ItemMenuProps) {
   const [open, setOpen] = useState(false);
+  const [deleteState, setDeleteState] = useState<"allow" | "countdown" | "ready">("allow");
   const containerRef = useRef<HTMLDivElement>(null);
+  const deleteTimeoutRef = useRef<number | null>(null);
+
+  function resetDeleteState() {
+    setDeleteState("allow");
+    if (deleteTimeoutRef.current !== null) {
+      window.clearTimeout(deleteTimeoutRef.current);
+      deleteTimeoutRef.current = null;
+    }
+  }
+
+  function startDeleteCountdown() {
+    if (deleteTimeoutRef.current !== null) {
+      window.clearTimeout(deleteTimeoutRef.current);
+    }
+    setDeleteState("countdown");
+    deleteTimeoutRef.current = window.setTimeout(
+      () => setDeleteState("ready"),
+      deleteDelayMs + deleteAnimationBufferMs,
+    );
+  }
+
+  useEffect(() => {
+    if (!open) {
+      resetDeleteState();
+      return;
+    }
+
+    return () => resetDeleteState();
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -93,6 +129,31 @@ export function ItemMenu({
             title="Exclude the amount of this item from totals"
           >
             {isItemIgnored ? "Unignore" : "Ignore"}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            aria-disabled={deleteState === "countdown"}
+            className={`${styles.item} ${styles.deleteItem} ${deleteState === "countdown" ? styles.deleteArmed : ""} ${deleteState === "ready" ? styles.deleteReady : ""} ${deleteState === "countdown" ? styles.deleteLocked : ""}`.trim()}
+            onClick={() => {
+              if (deleteState === "allow") {
+                startDeleteCountdown();
+                return;
+              }
+              if (deleteState !== "ready") return;
+              setOpen(false);
+              resetDeleteState();
+              onDelete();
+            }}
+            title="Delete this item"
+          >
+            {deleteState === "ready" ? "Delete" : "Allow delete"}
+            <span
+              className={styles.deleteCountdown}
+              aria-hidden="true"
+            >
+              {deleteState === "ready" ? "Delete" : "Allow delete"}
+            </span>
           </button>
         </div>
       )}

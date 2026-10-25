@@ -172,6 +172,19 @@ export function App() {
     updateAndSaveUserData(newUserData);
   }
 
+  function handleDeleteItem(index: number) {
+    if (!userData || selectedMonth === null) return;
+    const newUserData: UserData = {
+      ...userData,
+      spendings: userData.spendings.map((month) =>
+        month.month !== selectedMonth
+          ? month
+          : { ...month, items: month.items.filter((_, itemIndex) => itemIndex !== index) },
+      ),
+    };
+    updateAndSaveUserData(newUserData);
+  }
+
   // Update the free-form note on the selected month, then persist.
   function handleEditNote(note: string) {
     if (!userData || selectedMonth === null) return;
@@ -323,6 +336,7 @@ export function App() {
             onStartEdit={setEditingIndex}
             onToggleIgnore={handleToggleIgnore}
             onMoveItemDown={handleMoveItemDown}
+            onDeleteItem={handleDeleteItem}
           />
         ) : (
           categoryGroups.map((categoryGroup) => {
@@ -343,6 +357,7 @@ export function App() {
               onAddItem={handleAddItem}
               onToggleIgnore={handleToggleIgnore}
               onMoveItemDown={handleMoveItemDown}
+              onDeleteItem={handleDeleteItem}
               onEditBudget={handleEditBudget}
               onBudgetEditorStateChange={handleBudgetEditorStateChange}
             />;

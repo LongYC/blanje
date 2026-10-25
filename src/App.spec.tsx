@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { UserData } from "./data";
 import { App } from "./App";
 
@@ -31,6 +31,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   localStorage.clear();
+  vi.useRealTimers();
 });
 
 function changeView(mode: "category" | "name") {
@@ -160,6 +161,39 @@ describe("App monthly table views", () => {
     const savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
     expect(savedData.spendings[0]?.budgets).toEqual({ food: "9.50", travel: "10.00" });
     expect(savedData.spendings[1]?.budgets).toEqual({ food: "99.00", home: "12.00" });
+  });
+
+  it("deletes the correct original item in name-sorted view", async () => {
+    vi.useFakeTimers();
+    const dataWithReorderedItems: UserData = {
+      ...userData,
+      spendings: [
+        {
+          ...userData.spendings[0]!,
+          items: [
+            userData.spendings[0]!.items[1]!,
+            userData.spendings[0]!.items[2]!,
+            userData.spendings[0]!.items[0]!,
+          ],
+        },
+        { month: 202602, budgets: { home: "12.00" }, items: [] },
+      ],
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(dataWithReorderedItems));
+    render(<App />);
+    changeView("name");
+
+    const coffeeRow = screen.getByRole("row", { name: /Coffee/ });
+    fireEvent.click(within(coffeeRow).getByRole("button", { name: "Item actions" }));
+    const allowDeleteButton = screen.getByRole("menuitem", { name: "Allow delete" });
+    fireEvent.click(allowDeleteButton);
+    act(() => vi.advanceTimersByTime(5100));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Delete" }));
+
+    const savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]?.items.map(({ name }) => name)).toEqual(["Tea", "Train"]);
+    expect(savedData.spendings[0]?.budgets).toEqual({ food: "7.00", travel: "10.00" });
+    expect(savedData.spendings[1]).toEqual({ month: 202602, budgets: { home: "12.00" }, items: [] });
   });
 
   it("disables month navigation while editing a category budget", async () => {

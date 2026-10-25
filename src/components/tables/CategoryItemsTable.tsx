@@ -21,6 +21,7 @@ interface CategoryItemsTableProps {
   onAddItem: (item: Item) => void;
   onToggleIgnore: (index: number) => void;
   onMoveItemDown: (index: number) => void;
+  onDeleteItem: (index: number) => void;
   onEditBudget: (categoryId: string, budget: string | null) => void;
   onBudgetEditorStateChange: (categoryId: string, isOpen: boolean) => void;
 }
@@ -49,6 +50,7 @@ export function CategoryItemsTable({
   onAddItem,
   onToggleIgnore,
   onMoveItemDown,
+  onDeleteItem,
   onEditBudget,
   onBudgetEditorStateChange,
 }: CategoryItemsTableProps) {
@@ -221,6 +223,7 @@ export function CategoryItemsTable({
             onStartEdit={() => onStartEdit(groupedItem.index)}
             onToggleIgnore={() => onToggleIgnore(groupedItem.index)}
             onMoveDown={() => onMoveItemDown(groupedItem.index)}
+            onDelete={() => onDeleteItem(groupedItem.index)}
           />
         )))}
       </tbody>

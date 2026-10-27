@@ -1,5 +1,6 @@
 import type {
   Account,
+  BudgetTransfer,
   Category,
   MonthlySpending,
   Item,
@@ -92,6 +93,44 @@ function parseBudgets(value: unknown, path: string): Record<string, string> {
   return budgets;
 }
 
+function parseBudgetTransfers(value: unknown, path: string): BudgetTransfer[] {
+  if (!Array.isArray(value)) {
+    throw new ValidationError(`${path} must be an array`);
+  }
+
+  return value.map((transfer, index) => {
+    if (!isObject(transfer)) {
+      throw new ValidationError(`${path}[${index}] must be an object`);
+    }
+    const { fromCategoryId, toCategoryId, amount } = transfer;
+    if (typeof fromCategoryId !== "string") {
+      throw new ValidationError(`${path}[${index}].fromCategoryId must be a string`);
+    }
+    if (typeof toCategoryId !== "string") {
+      throw new ValidationError(`${path}[${index}].toCategoryId must be a string`);
+    }
+    if (fromCategoryId === toCategoryId) {
+      throw new ValidationError(`${path}[${index}].toCategoryId must be different from fromCategoryId`);
+    }
+    let amountStr: string;
+    if (typeof amount === "string") {
+      amountStr = amount;
+    } else if (typeof amount === "number") {
+      amountStr = String(amount);
+    } else {
+      throw new ValidationError(`${path}[${index}].amount must be a string or number`);
+    }
+    if (Number.isNaN(Number(amountStr))) {
+      throw new ValidationError(`${path}[${index}].amount "${amountStr}" is not a valid number`);
+    }
+    const amountNumber = Number(amountStr);
+    if (!Number.isFinite(amountNumber) || amountNumber <= 0) {
+      throw new ValidationError(`${path}[${index}].amount must be a positive number`);
+    }
+    return { fromCategoryId, toCategoryId, amount: amountStr };
+  });
+}
+
 function parseMonthly(value: unknown, path: string): MonthlySpending {
   if (!isObject(value)) {
     throw new ValidationError(`${path} must be an object`);
@@ -111,11 +150,12 @@ function parseMonthly(value: unknown, path: string): MonthlySpending {
     parseItem(s, `${path}.items[${i}]`),
   );
   const budgets = parseBudgets(value.budgets ?? {}, `${path}.budgets`);
+  const budgetTransfers = parseBudgetTransfers(value.budgetTransfers ?? [], `${path}.budgetTransfers`);
   const { note } = value;
   if (note !== undefined && typeof note !== "string") {
     throw new ValidationError(`${path}.note must be a string`);
   }
-  return { month, note, budgets, items };
+  return { month, note, budgets, budgetTransfers, items };
 }
 
 /** Parse and validate the raw JSON text of an uploaded spendings file. */

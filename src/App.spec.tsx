@@ -245,6 +245,32 @@ describe("App monthly table views", () => {
     expect(screen.getByRole("button", { name: "Next month" }).hasAttribute("disabled")).toBe(true);
   });
 
+  it("keeps the raw budget string in the editor while using effective values for calculations", async () => {
+    const user = userEvent.setup();
+    const dataWithLargeBudget: UserData = {
+      ...userData,
+      spendings: [{
+        month: 202601,
+        budgets: { food: "1234.56", travel: "10.00" },
+        items: userData.spendings[0]!.items,
+      }],
+    };
+    localStorage.setItem("blanje:user_data", JSON.stringify(dataWithLargeBudget));
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit budget" }));
+
+    const budgetInput = screen.getByRole("textbox", { name: "Monthly budget" }) as HTMLInputElement;
+    expect(budgetInput.value).toBe("1234.56");
+    await user.clear(budgetInput);
+    await user.type(budgetInput, "1400.00");
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    const savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]?.budgets).toEqual({ food: "1400.00", travel: "10.00" });
+  });
+
   it("removes a cleared category budget without dropping other budgets", async () => {
     const user = userEvent.setup();
     render(<App />);

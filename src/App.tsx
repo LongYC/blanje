@@ -23,7 +23,7 @@ import { NoteField } from "./components/NoteField";
 import { groupItemsByCategory, moveItemDown } from "./group";
 import styles from "./App.module.css";
 import { MonthlyHeader, type MonthlyViewMode } from "./components/MonthlyHeader";
-import { toCents } from "./format";
+import { getEffectiveBudgetMap } from "./data";
 
 // Format a date as `YYYY-MM-DD_HHmm_ss` for use as a download filename suffix.
 function formatTimestamp(date: Date): string {
@@ -281,15 +281,13 @@ export function App() {
   }
 
   const { categoryGroups, accountTotals, totalSpentInCents, labelTotals } = groupItemsByCategory(selected.items, userData.categories, userData.accounts)
-  const totalBudget = Object.values(selected.budgets ?? {}).reduce(
-    (total, budget) => total + toCents(budget),
-    0,
-  );
+  const effectiveBudgets = getEffectiveBudgetMap(selected.budgets, selected.budgetTransfers);
+  const totalBudget = Object.values(effectiveBudgets).reduce((total, budget) => total + budget, 0);
   const unbudgetedSpent = categoryGroups.reduce((acc, categoryGroup) => {
-    const categoryBudget = selected.budgets?.[categoryGroup.categoryId];
+    const categoryBudget = effectiveBudgets[categoryGroup.categoryId];
     const categorySpent = categoryGroup.total;
     if (categoryBudget !== undefined) {
-      const overbudget = Math.min(toCents(categoryBudget) - categorySpent, 0);
+      const overbudget = Math.min(categoryBudget - categorySpent, 0);
       return acc + Math.abs(overbudget);
     }
     return acc + categorySpent;
@@ -340,13 +338,14 @@ export function App() {
           />
         ) : (
           categoryGroups.map((categoryGroup) => {
-            const budget = selected.budgets?.[categoryGroup.categoryId];
+            const budget = effectiveBudgets[categoryGroup.categoryId];
+            const originalBudget = selected.budgets?.[categoryGroup.categoryId];
 
             return <CategoryItemsTable
               key={categoryGroup.categoryId}
               categoryGroup={categoryGroup}
-              budgetAmount={budget}
-              budgetInCents={budget === undefined ? undefined : toCents(budget)}
+              budgetAmount={originalBudget}
+              budgetInCents={budget}
               accounts={userData.accounts}
               hidden={hidden}
               totalSpentInCents={totalSpentInCents}

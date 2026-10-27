@@ -15,11 +15,18 @@ describe("parseRootJson", () => {
     expect(
       parseRootJson(
         makeDocument({
+          categories: [
+            { id: "food", name: "Food" },
+            { id: "car", name: "Car" },
+          ],
           spendings: [
             {
               month: 202609,
               note: "September",
-              budgets: { food: "120.00" },
+              budgets: { food: "120.00", car: "50.00" },
+              budgetTransfers: [
+                { fromCategoryId: "food", toCategoryId: "car", amount: "10.00" },
+              ],
               items: [
                 { categoryId: "food", name: "Lunch", amount: 12.5, accountId: "cash", ignore: true, labels: ["work"] },
                 { categoryId: "food", name: "Tea", amount: "2.00", accountId: "cash", ignore: false },
@@ -30,12 +37,18 @@ describe("parseRootJson", () => {
       ),
     ).toEqual({
       accounts: [{ id: "cash", name: "Cash" }],
-      categories: [{ id: "food", name: "Food" }],
+      categories: [
+        { id: "food", name: "Food" },
+        { id: "car", name: "Car" },
+      ],
       spendings: [
         {
           month: 202609,
           note: "September",
-          budgets: { food: "120.00" },
+          budgets: { food: "120.00", car: "50.00" },
+          budgetTransfers: [
+            { fromCategoryId: "food", toCategoryId: "car", amount: "10.00" },
+          ],
           items: [
             { categoryId: "food", name: "Lunch", amount: "12.5", accountId: "cash", ignore: true, labels: ["work"] },
             { categoryId: "food", name: "Tea", amount: "2.00", accountId: "cash" },
@@ -73,6 +86,11 @@ describe("parseRootJson", () => {
     [makeDocument({ spendings: [{ month: 202609, budgets: "invalid", items: [] }] }), "spendings[0].budgets must be an object"],
     [makeDocument({ spendings: [{ month: 202609, budgets: { food: 12 }, items: [] }] }), "spendings[0].budgets.food must be a string to preserve precision"],
     [makeDocument({ spendings: [{ month: 202609, budgets: { food: "abc" }, items: [] }] }), 'spendings[0].budgets.food "abc" is not a valid number'],
+    [makeDocument({ spendings: [{ month: 202609, budgetTransfers: "invalid", items: [] }] }), "spendings[0].budgetTransfers must be an array"],
+    [makeDocument({ spendings: [{ month: 202609, budgetTransfers: [null], items: [] }] }), "spendings[0].budgetTransfers[0] must be an object"],
+    [makeDocument({ spendings: [{ month: 202609, budgetTransfers: [{ fromCategoryId: "food", amount: "10.00" }], items: [] }] }), "spendings[0].budgetTransfers[0].toCategoryId must be a string"],
+    [makeDocument({ spendings: [{ month: 202609, budgetTransfers: [{ fromCategoryId: "food", toCategoryId: "car" }], items: [] }] }), "spendings[0].budgetTransfers[0].amount must be a string or number"],
+    [makeDocument({ spendings: [{ month: 202609, budgetTransfers: [{ fromCategoryId: "food", toCategoryId: "car", amount: "abc" }], items: [] }] }), 'spendings[0].budgetTransfers[0].amount "abc" is not a valid number'],
     [makeDocument({ spendings: [{ month: 202609, items: [], note: 12 }] }), "spendings[0].note must be a string"],
   ])("rejects invalid input with a useful path: %s", (input, message) => {
     expect(() => parseRootJson(input)).toThrow(new ValidationError(message));

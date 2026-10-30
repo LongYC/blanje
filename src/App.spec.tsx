@@ -139,6 +139,54 @@ describe("App monthly table views", () => {
     });
   });
 
+  it("persists item and note changes only in the selected month", async () => {
+    const user = userEvent.setup();
+    const otherMonth = { month: 202602, note: "Other month", items: [...userData.spendings[0]!.items] };
+    localStorage.setItem("blanje:user_data", JSON.stringify({
+      ...userData,
+      spendings: [...userData.spendings, otherMonth],
+    }));
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Food item list menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Show items" }));
+    const coffeeRow = screen.getByRole("row", { name: /Coffee/ });
+    await user.click(within(coffeeRow).getByRole("button", { name: "Item actions" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit" }));
+    const nameInput = screen.getByRole("textbox", { name: "New item name" });
+    await user.clear(nameInput);
+    await user.type(nameInput, "Espresso");
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    const editedRow = screen.getByRole("row", { name: /Espresso/ });
+    await user.click(within(editedRow).getByRole("button", { name: "Item actions" }));
+    await user.click(screen.getByRole("menuitem", { name: "Ignore" }));
+    let savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]?.items[0]).toMatchObject({ name: "Espresso", ignore: true });
+
+    await user.click(within(screen.getByRole("row", { name: /Espresso/ })).getByRole("button", { name: "Item actions" }));
+    await user.click(screen.getByRole("menuitem", { name: "Unignore" }));
+    savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]?.items[0]).not.toHaveProperty("ignore");
+
+    await user.click(within(screen.getByRole("row", { name: /Espresso/ })).getByRole("button", { name: "Item actions" }));
+    await user.click(screen.getByRole("menuitem", { name: "Move down" }));
+    await user.click(screen.getByRole("button", { name: "Open add form for Food" }));
+    await user.type(screen.getByRole("textbox", { name: "New item name" }), "Cake");
+    await user.type(screen.getByRole("textbox", { name: "New amount" }), "4.00");
+    await user.selectOptions(screen.getByRole("combobox", { name: "Account" }), "card");
+    await user.click(screen.getByRole("button", { name: "Add" }));
+    await user.click(screen.getByRole("button", { name: "Edit note" }));
+    await user.type(screen.getByRole("textbox", { name: "Note" }), "Monthly note");
+
+    savedData = JSON.parse(localStorage.getItem("blanje:user_data") ?? "null") as UserData;
+    expect(savedData.spendings[0]?.items.map(({ name }) => name)).toEqual(["Cake", "Tea", "Espresso", "Train"]);
+    expect(savedData.spendings[0]?.note).toBe("Monthly note");
+    expect(savedData.spendings[1]).toEqual(otherMonth);
+    const appData = JSON.parse(localStorage.getItem("blanje:app_data") ?? "null") as { lastEdited: string };
+    expect(appData.lastEdited).toMatch(/^\d{4}-\d{2}-\d{2}_\d{4}_\d{2}$/);
+  });
+
   it("persists a category budget edit for the selected month only", async () => {
     const user = userEvent.setup();
     const dataWithSecondMonth: UserData = {

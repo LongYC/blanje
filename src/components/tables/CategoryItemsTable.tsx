@@ -23,7 +23,7 @@ interface CategoryItemsTableProps {
   onMoveItemDown: (index: number) => void;
   onDeleteItem: (index: number) => void;
   onEditBudget: (categoryId: string, budget: string | null) => void;
-  onBudgetEditorStateChange: (categoryId: string, isOpen: boolean) => void;
+  onBudgetEditorOpenChange: (categoryId: string, isOpen: boolean) => void;
 }
 
 const rowStyles: ItemRowStyles = {
@@ -52,7 +52,7 @@ export function CategoryItemsTable({
   onMoveItemDown,
   onDeleteItem,
   onEditBudget,
-  onBudgetEditorStateChange,
+  onBudgetEditorOpenChange,
 }: CategoryItemsTableProps) {
   const { categoryId, categoryName, groupedItems, total, percentage } = categoryGroup;
 
@@ -71,9 +71,9 @@ export function CategoryItemsTable({
 
   useEffect(() => {
     if (!isBudgetFormOpen) return;
-    onBudgetEditorStateChange(categoryId, true);
-    return () => onBudgetEditorStateChange(categoryId, false);
-  }, [categoryId, isBudgetFormOpen, onBudgetEditorStateChange]);
+    onBudgetEditorOpenChange(categoryId, true);
+    return () => onBudgetEditorOpenChange(categoryId, false);
+  }, [categoryId, isBudgetFormOpen, onBudgetEditorOpenChange]);
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -198,7 +198,7 @@ export function CategoryItemsTable({
           <ItemEditor
             categoryId={categoryId}
             accountOptions={accounts}
-            onAddOrUpdate={onAddItem}
+            onSave={onAddItem}
             onDismiss={() => setIsAddFormOpen(false)}
           />
         )}

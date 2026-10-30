@@ -13,7 +13,7 @@ import {
   saveHiddenAccounts,
   saveLastEdited,
 } from "./storage";
-import { type UserData, type Item } from "./data";
+import { type UserData, type Item, type MonthlySpending } from "./data";
 import { AccountsTable } from "./components/tables/AccountsTable";
 import { AppHeader } from "./components/AppHeader";
 import { ScrollToTopButton } from "./components/ScrollToTopButton";
@@ -54,7 +54,7 @@ export function App() {
   // nothing has been edited since the current file was loaded.
   const [lastEdited, setLastEdited] = useState<string>(() => readLastEdited());
 
-  const handleBudgetEditorStateChange = useCallback((categoryId: string, isOpen: boolean) => {
+  const handleBudgetEditorOpenChange = useCallback((categoryId: string, isOpen: boolean) => {
     setEditingBudgetCategoryIds((current) => {
       if (current.has(categoryId) === isOpen) return current;
       const next = new Set(current);
@@ -128,73 +128,52 @@ export function App() {
     saveLastEdited(stamp);
   }
 
-  // Apply an edit to a single item within the selected month, then persist.
-  function handleEditSpending(index: number, patch: Partial<Item>) {
+  function updateSelectedMonth(update: (month: MonthlySpending) => MonthlySpending) {
     if (!userData || selectedMonth === null) return;
-    const newUserData: UserData = {
+    updateAndSaveUserData({
       ...userData,
       spendings: userData.spendings.map((month) =>
-        month.month !== selectedMonth
-          ? month
-          : {
-              ...month,
-              items: month.items.map((item, i) =>
-                i === index ? { ...item, ...patch } : item,
-              ),
-            },
+        month.month === selectedMonth ? update(month) : month,
       ),
-    };
-    updateAndSaveUserData(newUserData);
+    });
+  }
+
+  // Apply an edit to a single item within the selected month, then persist.
+  function handleEditItem(index: number, patch: Partial<Item>) {
+    updateSelectedMonth((month) => ({
+      ...month,
+      items: month.items.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, ...patch } : item,
+      ),
+    }));
   }
 
   // Toggle whether an item is ignored in totals, then persist. Unignoring drops
   // the `ignore` property entirely so a saved file never carries `ignore: false`.
   function handleToggleIgnore(index: number) {
-    if (!userData || selectedMonth === null) return;
-    const newUserData: UserData = {
-      ...userData,
-      spendings: userData.spendings.map((month) =>
-        month.month !== selectedMonth
-          ? month
-          : {
-              ...month,
-              items: month.items.map((item, i) => {
-                if (i !== index) return item;
-                if (item.ignore) {
-                  const { ignore: _ignore, ...rest } = item;
-                  return rest;
-                }
-                return { ...item, ignore: true };
-              }),
-            },
-      ),
-    };
-    updateAndSaveUserData(newUserData);
+    updateSelectedMonth((month) => ({
+      ...month,
+      items: month.items.map((item, itemIndex) => {
+        if (itemIndex !== index) return item;
+        if (item.ignore) {
+          const { ignore: _ignore, ...rest } = item;
+          return rest;
+        }
+        return { ...item, ignore: true };
+      }),
+    }));
   }
 
   function handleDeleteItem(index: number) {
-    if (!userData || selectedMonth === null) return;
-    const newUserData: UserData = {
-      ...userData,
-      spendings: userData.spendings.map((month) =>
-        month.month !== selectedMonth
-          ? month
-          : { ...month, items: month.items.filter((_, itemIndex) => itemIndex !== index) },
-      ),
-    };
-    updateAndSaveUserData(newUserData);
+    updateSelectedMonth((month) => ({
+      ...month,
+      items: month.items.filter((_, itemIndex) => itemIndex !== index),
+    }));
   }
 
   // Update the free-form note on the selected month, then persist.
   function handleEditNote(note: string) {
-    if (!userData || selectedMonth === null) return;
-    const newUserData: UserData = {
-      ...userData,
-      spendings: userData.spendings.map((month) =>
-        month.month !== selectedMonth ? month : { ...month, note },
-      ),
-    };
-    updateAndSaveUserData(newUserData);
+    updateSelectedMonth((month) => ({ ...month, note }));
   }
 
   // Move the item at `index` after the next item in the same category.
@@ -207,52 +186,30 @@ export function App() {
     const reorderedItems = moveItemDown(monthEntry.items, index);
     if (reorderedItems === monthEntry.items) return;
 
-    const newUserData: UserData = {
-      ...userData,
-      spendings: userData.spendings.map((monthlySpending) =>
-        monthlySpending.month !== selectedMonth ? monthlySpending : { ...monthlySpending, items: reorderedItems },
-      ),
-    };
-    updateAndSaveUserData(newUserData);
+    updateSelectedMonth((month) => ({ ...month, items: reorderedItems }));
   }
 
   function handleAddItem(newItem: Item) {
-    if (!userData || selectedMonth === null) return;
-    const newUserData: UserData = {
-      ...userData,
-      spendings: userData.spendings.map((month) =>
-        month.month === selectedMonth
-          ? { ...month, items: [newItem, ...month.items] }
-          : month,
-      ),
-    };
-    updateAndSaveUserData(newUserData);
+    updateSelectedMonth((month) => ({ ...month, items: [newItem, ...month.items] }));
   }
 
   function handleEditBudget(categoryId: string, budget: string | null) {
-    if (!userData || selectedMonth === null) return;
-    const newUserData: UserData = {
-      ...userData,
-      spendings: userData.spendings.map((month) => {
-        if (month.month !== selectedMonth) return month;
+    updateSelectedMonth((month) => {
+      const budgets = { ...month.budgets };
+      if (budget === null) {
+        delete budgets[categoryId];
+      } else {
+        budgets[categoryId] = budget;
+      }
 
-        const budgets = { ...month.budgets };
-        if (budget === null) {
-          delete budgets[categoryId];
-        } else {
-          budgets[categoryId] = budget;
-        }
-
-        const updatedMonth = { ...month };
-        if (Object.keys(budgets).length === 0) {
-          delete updatedMonth.budgets;
-        } else {
-          updatedMonth.budgets = budgets;
-        }
-        return updatedMonth;
-      }),
-    };
-    updateAndSaveUserData(newUserData);
+      const updatedMonth = { ...month };
+      if (Object.keys(budgets).length === 0) {
+        delete updatedMonth.budgets;
+      } else {
+        updatedMonth.budgets = budgets;
+      }
+      return updatedMonth;
+    });
   }
 
   function handleDownload() {
@@ -331,7 +288,7 @@ export function App() {
             hidden={hidden}
             totalSpentInCents={totalSpentInCents}
             editingIndex={editingIndex}
-            onEditItem={handleEditSpending}
+            onEditItem={handleEditItem}
             onCancelEdit={() => setEditingIndex(null)}
             onStartEdit={setEditingIndex}
             onToggleIgnore={handleToggleIgnore}
@@ -351,7 +308,7 @@ export function App() {
               hidden={hidden}
               totalSpentInCents={totalSpentInCents}
               editingIndex={editingIndex}
-              onEditItem={handleEditSpending}
+              onEditItem={handleEditItem}
               onCancelEdit={() => setEditingIndex(null)}
               onStartEdit={setEditingIndex}
               onAddItem={handleAddItem}
@@ -359,7 +316,7 @@ export function App() {
               onMoveItemDown={handleMoveItemDown}
               onDeleteItem={handleDeleteItem}
               onEditBudget={handleEditBudget}
-              onBudgetEditorStateChange={handleBudgetEditorStateChange}
+              onBudgetEditorOpenChange={handleBudgetEditorOpenChange}
             />;
           })
         )}

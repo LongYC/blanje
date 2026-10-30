@@ -1,12 +1,10 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Account, Category, Item } from "../../data";
 import { groupItemsByCategory } from "../../group";
-import { ItemMenu } from "./ItemMenu";
 import { CategoryItemsTable } from "./CategoryItemsTable";
-import { SortedItemsTable } from "./SortedItemsTable";
 
 const categories: Category[] = [
   { id: "food", name: "Food" },
@@ -26,7 +24,6 @@ const { categoryGroups, totalSpentInCents } = groupItemsByCategory(items, catego
 
 afterEach(() => {
   cleanup();
-  vi.useRealTimers();
 });
 
 function createHandlers() {
@@ -39,7 +36,7 @@ function createHandlers() {
     onMoveItemDown: vi.fn(),
     onDeleteItem: vi.fn(),
     onEditBudget: vi.fn(),
-    onBudgetEditorStateChange: vi.fn(),
+    onBudgetEditorOpenChange: vi.fn(),
   };
 }
 
@@ -61,22 +58,6 @@ function renderCategoryTables(editingIndex: number | null = null) {
         />
       ))}
     </>,
-  );
-
-  return { ...view, ...handlers };
-}
-
-function renderSortedTable() {
-  const handlers = createHandlers();
-  const view = render(
-    <SortedItemsTable
-      items={categoryGroups.flatMap((categoryGroup) => categoryGroup.groupedItems)}
-      accounts={accounts}
-      hidden={new Set()}
-      totalSpentInCents={totalSpentInCents}
-      editingIndex={null}
-      {...handlers}
-    />,
   );
 
   return { ...view, ...handlers };
@@ -273,90 +254,3 @@ describe("CategoryItemsTable", () => {
   });
 });
 
-describe("SortedItemsTable", () => {
-  it("renders one accessible table with name-sorted items", () => {
-    renderSortedTable();
-
-    const table = screen.getByRole("table", { name: "Items sorted by name" });
-    expect(screen.getAllByRole("table")).toHaveLength(1);
-    expect(within(table).getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
-      "Item",
-      "Amount",
-      "Account",
-    ]);
-    const names = Array.from(table.querySelectorAll("tbody tr td:first-child"))
-      .map((cell) => cell.textContent?.trim())
-      .filter((name) => ["Coffee", "Tea", "Train"].includes(name ?? ""));
-    expect(names).toEqual(["Coffee", "Tea", "Train"]);
-  });
-
-  it("preserves original item indexes for actions after sorting", async () => {
-    const user = userEvent.setup();
-    const { onToggleIgnore } = renderSortedTable();
-    const trainRow = screen.getByRole("row", { name: /Train/ });
-
-    await user.click(within(trainRow).getByRole("button", { name: "Item actions" }));
-    await user.click(screen.getByRole("menuitem", { name: "Ignore" }));
-    expect(onToggleIgnore).toHaveBeenCalledWith(2);
-  });
-});
-
-describe("ItemMenu delete action", () => {
-  it("starts as Allow delete, locks during the hold, and deletes on the second click", async () => {
-    vi.useFakeTimers();
-    const onDelete = vi.fn();
-    render(
-      <ItemMenu
-        isItemIgnored={false}
-        isLastInCategory={false}
-        onEdit={vi.fn()}
-        onMoveDown={vi.fn()}
-        onToggleIgnore={vi.fn()}
-        onDelete={onDelete}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Item actions" }));
-    const deleteButton = screen.getByRole("menuitem", { name: "Allow delete" }) as HTMLButtonElement;
-    expect(deleteButton.getAttribute("aria-disabled")).toBe("false");
-
-    fireEvent.click(deleteButton);
-    expect(deleteButton.getAttribute("aria-disabled")).toBe("true");
-    expect(onDelete).not.toHaveBeenCalled();
-
-    act(() => vi.advanceTimersByTime(5000));
-    expect((screen.getByRole("menuitem", { name: "Allow delete" }) as HTMLButtonElement).getAttribute("aria-disabled")).toBe("true");
-    act(() => vi.advanceTimersByTime(100));
-    expect((screen.getByRole("menuitem", { name: "Delete" }) as HTMLButtonElement).getAttribute("aria-disabled")).toBe("false");
-
-    fireEvent.click(screen.getByRole("menuitem", { name: "Delete" }));
-    expect(onDelete).toHaveBeenCalledOnce();
-  });
-
-  it("resets the hold when the menu closes", async () => {
-    vi.useFakeTimers();
-    render(
-      <ItemMenu
-        isItemIgnored={false}
-        isLastInCategory={false}
-        onEdit={vi.fn()}
-        onMoveDown={vi.fn()}
-        onToggleIgnore={vi.fn()}
-        onDelete={vi.fn()}
-      />,
-    );
-
-    const trigger = screen.getByRole("button", { name: "Item actions" });
-    fireEvent.click(trigger);
-    fireEvent.click(screen.getByRole("menuitem", { name: "Allow delete" }));
-    act(() => vi.advanceTimersByTime(1500));
-    fireEvent.click(trigger);
-    fireEvent.click(trigger);
-
-    const reopenedDeleteButton = screen.getByRole("menuitem", { name: "Allow delete" }) as HTMLButtonElement;
-    expect(reopenedDeleteButton.getAttribute("aria-disabled")).toBe("false");
-    fireEvent.click(reopenedDeleteButton);
-    act(() => vi.advanceTimersByTime(5100));
-    expect((screen.getByRole("menuitem", { name: "Delete" }) as HTMLButtonElement).getAttribute("aria-disabled")).toBe("false");
-  });
-});

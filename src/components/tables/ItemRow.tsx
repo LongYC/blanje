@@ -59,7 +59,7 @@ export function ItemRow({
       categoryId={groupedItem.categoryId}
       accountOptions={accounts}
       groupedItemInEdit={groupedItem}
-      onAddOrUpdate={(itemPatch) => {
+      onSave={(itemPatch) => {
         onEditItem(groupedItem.index, itemPatch);
       }}
       onDismiss={onCancelEdit}

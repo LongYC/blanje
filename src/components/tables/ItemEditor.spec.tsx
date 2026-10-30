@@ -17,7 +17,7 @@ afterEach(() => {
 });
 
 function renderEditor(props: Partial<ComponentProps<typeof ItemEditor>> = {}) {
-  const onAddOrUpdate = vi.fn();
+  const onSave = vi.fn();
   const onDismiss = vi.fn();
 
   const view = render(
@@ -26,7 +26,7 @@ function renderEditor(props: Partial<ComponentProps<typeof ItemEditor>> = {}) {
         <ItemEditor
           categoryId="food"
           accountOptions={accountOptions}
-          onAddOrUpdate={onAddOrUpdate}
+          onSave={onSave}
           onDismiss={onDismiss}
           {...props}
         />
@@ -34,13 +34,13 @@ function renderEditor(props: Partial<ComponentProps<typeof ItemEditor>> = {}) {
     </table>,
   );
 
-  return { ...view, onAddOrUpdate, onDismiss };
+  return { ...view, onSave, onDismiss };
 }
 
 describe("ItemEditor", () => {
   it("submits a valid item and dismisses", async () => {
     const user = userEvent.setup();
-    const { onAddOrUpdate, onDismiss } = renderEditor();
+    const { onSave, onDismiss } = renderEditor();
 
     const nameInput = screen.getByLabelText("New item name");
     const amountInput = screen.getByLabelText("New amount");
@@ -52,7 +52,7 @@ describe("ItemEditor", () => {
     await user.type(screen.getByLabelText("Labels"), "milk, milk, sugar");
     await user.click(screen.getByRole("button", { name: /add/i }));
 
-    expect(onAddOrUpdate).toHaveBeenCalledWith({
+    expect(onSave).toHaveBeenCalledWith({
       categoryId: "food",
       name: "Coffee",
       amount: "3.50",
@@ -93,13 +93,13 @@ describe("ItemEditor", () => {
 
   it("does not submit when the form is invalid", async () => {
     const user = userEvent.setup();
-    const { onAddOrUpdate } = renderEditor();
+    const { onSave } = renderEditor();
 
     await user.type(screen.getByLabelText("New amount"), "5.00");
     await user.selectOptions(screen.getByLabelText("Account"), "checking");
     await user.click(screen.getByRole("button", { name: /^add$/i }));
 
-    expect(onAddOrUpdate).not.toHaveBeenCalled();
+    expect(onSave).not.toHaveBeenCalled();
     expect(screen.getByLabelText("New item name")).toBeTruthy();
   });
 
@@ -115,7 +115,7 @@ describe("ItemEditor", () => {
 
   it("toggles the amount sign before submitting", async () => {
     const user = userEvent.setup();
-    const { onAddOrUpdate } = renderEditor();
+    const { onSave } = renderEditor();
 
     await user.type(screen.getByLabelText("New item name"), "Taxi");
     await user.click(screen.getByRole("button", { name: /toggle negative amount/i }));
@@ -123,7 +123,7 @@ describe("ItemEditor", () => {
     await user.selectOptions(screen.getByLabelText("Account"), "checking");
     await user.click(screen.getByRole("button", { name: /^add$/i }));
 
-    expect(onAddOrUpdate).toHaveBeenCalledWith({
+    expect(onSave).toHaveBeenCalledWith({
       categoryId: "food",
       name: "Taxi",
       amount: "-12.00",
@@ -134,7 +134,7 @@ describe("ItemEditor", () => {
 
   it("supports editing an existing item with undo and update flow", async () => {
     const user = userEvent.setup();
-    const { onAddOrUpdate } = renderEditor({
+    const { onSave } = renderEditor({
       groupedItemInEdit: {
         categoryId: "food",
         name: "Original",
@@ -172,7 +172,7 @@ describe("ItemEditor", () => {
     await user.type(nameInput, "Updated again");
     await user.click(screen.getByRole("button", { name: /^update$/i }));
 
-    expect(onAddOrUpdate).toHaveBeenCalledWith({
+    expect(onSave).toHaveBeenCalledWith({
       categoryId: "food",
       name: "Updated again",
       amount: "5.00",

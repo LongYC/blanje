@@ -7,7 +7,7 @@ interface ItemEditorProps {
   categoryId: string;
   accountOptions: Account[];
   groupedItemInEdit?: GroupedItem;
-  onAddOrUpdate: (item: Item) => void;
+  onSave: (item: Item) => void;
   onDismiss: () => void;
 }
 
@@ -15,7 +15,7 @@ export function ItemEditor({
   categoryId,
   accountOptions,
   groupedItemInEdit,
-  onAddOrUpdate,
+  onSave,
   onDismiss
 }: ItemEditorProps) {
   const originalName = groupedItemInEdit?.name ?? "";
@@ -72,7 +72,7 @@ export function ItemEditor({
       .map((label) => label.trim())
       .filter((label) => label !== "");
 
-    onAddOrUpdate({
+    onSave({
       categoryId,
       name: name.trim(),
       amount: amount.trim(),
